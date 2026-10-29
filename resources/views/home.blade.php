@@ -97,29 +97,23 @@
 
         <div class="category-grid">
 
-            <a href="#" class="category-card">
-                <div class="category-icon">🍚</div>
-                <h3>Masakan Indonesia</h3>
-                <p>Resep nusantara</p>
-            </a>
+            @forelse ($categories as $category)
 
-            <a href="#" class="category-card">
-                <div class="category-icon">🍗</div>
-                <h3>Ayam</h3>
-                <p>Olahan ayam</p>
-            </a>
+                <a href="#" class="category-card">
 
-            <a href="#" class="category-card">
-                <div class="category-icon">🍜</div>
-                <h3>Mie & Pasta</h3>
-                <p>Berbagai olahan mie</p>
-            </a>
+                    <div class="category-icon">🍽️</div>
 
-            <a href="#" class="category-card">
-                <div class="category-icon">🍰</div>
-                <h3>Kue & Dessert</h3>
-                <p>Manis dan lezat</p>
-            </a>
+                    <h3>{{ $category->nama_kategori }}</h3>
+
+                    <p>Jelajahi resep pilihan</p>
+
+                </a>
+
+            @empty
+
+                <p>Belum ada kategori masakan.</p>
+
+            @endforelse
 
         </div>
 
@@ -149,131 +143,62 @@
 
         <div class="recipe-grid">
 
-            <!-- RESEP 1 -->
-            <div class="recipe-card">
+            @forelse ($recipes as $recipe)
 
-                <div class="recipe-image">
-                    <img
-                        src="https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=700&q=80"
-                        alt="Nasi Goreng"
-                    >
+                <div class="recipe-card">
 
-                    <span class="recipe-badge">
-                        Mudah
-                    </span>
+                    <div class="recipe-image">
 
-                    <button class="favorite-btn">
-                        ♡
-                    </button>
-                </div>
+                        @if ($recipe->foto)
+                            <img
+                                src="{{ asset('storage/' . $recipe->foto) }}"
+                                alt="{{ $recipe->nama_resep }}"
+                            >
+                        @else
+                            <div class="recipe-placeholder" style="display: flex; align-items: center; justify-content: center; height: 200px; background: #f3f4f6; font-size: 3rem;">
+                                🍲
+                            </div>
+                        @endif
 
-                <div class="recipe-content">
+                        <span class="recipe-badge">
+                            {{ $recipe->tingkat_kesulitan }}
+                        </span>
 
-                    <span class="recipe-category">
-                        MASAKAN INDONESIA
-                    </span>
+                        <button class="favorite-btn">
+                            ♡
+                        </button>
 
-                    <h3>Nasi Goreng Spesial</h3>
+                    </div>
 
-                    <p>
-                        Nasi goreng sederhana dengan
-                        rasa gurih dan nikmat.
-                    </p>
+                    <div class="recipe-content">
 
-                    <div class="recipe-info">
-                        <span>⏱ 20 Menit</span>
-                        <span>👤 2 Porsi</span>
+                        <span class="recipe-category">
+                            {{ $recipe->category->nama_kategori ?? 'Umum' }}
+                        </span>
+
+                        <h3>{{ $recipe->nama_resep }}</h3>
+
+                        <p>
+                            {{ $recipe->deskripsi ?? 'Resep masakan pilihan untuk dicoba di rumah.' }}
+                        </p>
+
+                        <div class="recipe-info">
+                            <span>⏱ {{ $recipe->waktu_masak }} Menit</span>
+                            <span>👤 {{ $recipe->porsi }} Porsi</span>
+                        </div>
+
                     </div>
 
                 </div>
 
-            </div>
+            @empty
 
+                <p>
+                    Belum ada resep yang tersedia.
+                    Resep akan muncul setelah ditambahkan ke database.
+                </p>
 
-            <!-- RESEP 2 -->
-            <div class="recipe-card">
-
-                <div class="recipe-image">
-
-                    <img
-                        src="https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=700&q=80"
-                        alt="Chicken Katsu"
-                    >
-
-                    <span class="recipe-badge">
-                        Sedang
-                    </span>
-
-                    <button class="favorite-btn">
-                        ♡
-                    </button>
-
-                </div>
-
-                <div class="recipe-content">
-
-                    <span class="recipe-category">
-                        AYAM
-                    </span>
-
-                    <h3>Chicken Katsu</h3>
-
-                    <p>
-                        Ayam crispy dengan tekstur
-                        renyah di luar dan lembut di dalam.
-                    </p>
-
-                    <div class="recipe-info">
-                        <span>⏱ 35 Menit</span>
-                        <span>👤 3 Porsi</span>
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- RESEP 3 -->
-            <div class="recipe-card">
-
-                <div class="recipe-image">
-
-                    <img
-                        src="https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=700&q=80"
-                        alt="Mie Goreng"
-                    >
-
-                    <span class="recipe-badge">
-                        Mudah
-                    </span>
-
-                    <button class="favorite-btn">
-                        ♡
-                    </button>
-
-                </div>
-
-                <div class="recipe-content">
-
-                    <span class="recipe-category">
-                        MIE
-                    </span>
-
-                    <h3>Mie Goreng Spesial</h3>
-
-                    <p>
-                        Mie goreng dengan bumbu
-                        sederhana yang menggugah selera.
-                    </p>
-
-                    <div class="recipe-info">
-                        <span>⏱ 15 Menit</span>
-                        <span>👤 2 Porsi</span>
-                    </div>
-
-                </div>
-
-            </div>
+            @endforelse
 
         </div>
 
