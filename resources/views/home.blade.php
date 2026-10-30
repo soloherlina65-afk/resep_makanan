@@ -1,3 +1,4 @@
+
 @extends('app')
 
 @section('title', 'Resep Kita - Temukan Inspirasi Masakan')
@@ -14,8 +15,8 @@
 
         <div class="nav-menu">
             <a href="/" class="active">Beranda</a>
-            <a href="#">Resep</a>
-            <a href="#">Kategori</a>
+            <a href="#resep">Resep</a>
+            <a href="#kategori">Kategori</a>
         </div>
 
         <div class="nav-actions">
@@ -49,28 +50,26 @@
                 setiap momen bersama keluarga.
             </p>
 
-            <!-- SEARCH -->
-            <div class="search-box">
+            <form action="#resep" method="GET" class="search-box">
                 <input
                     type="text"
+                    name="search"
                     placeholder="Cari resep masakan..."
                 >
 
-                <button>
+                <button type="submit">
                     🔍 Cari Resep
                 </button>
-            </div>
+            </form>
 
         </div>
 
         <div class="hero-image">
-
             <div class="hero-circle"></div>
 
             <div class="food-emoji">
                 🍛
             </div>
-
         </div>
 
     </div>
@@ -79,29 +78,32 @@
 
 
 <!-- KATEGORI -->
-<section class="category-section">
+<section class="category-section" id="kategori">
 
     <div class="section-container">
 
         <div class="section-header">
+
             <div>
                 <span class="section-label">JELAJAHI</span>
                 <h2>Kategori Masakan</h2>
             </div>
 
-            <a href="#" class="see-all">
+            <a href="#kategori" class="see-all">
                 Lihat Semua →
             </a>
-        </div>
 
+        </div>
 
         <div class="category-grid">
 
             @forelse ($categories as $category)
 
-                <a href="#" class="category-card">
+                <a href="#resep" class="category-card">
 
-                    <div class="category-icon">🍽️</div>
+                    <div class="category-icon">
+                        🍽️
+                    </div>
 
                     <h3>{{ $category->nama_kategori }}</h3>
 
@@ -123,7 +125,7 @@
 
 
 <!-- RESEP TERBARU -->
-<section class="recipe-section">
+<section class="recipe-section" id="resep">
 
     <div class="section-container">
 
@@ -134,7 +136,7 @@
                 <h2>Resep Terbaru</h2>
             </div>
 
-            <a href="#" class="see-all">
+            <a href="#resep" class="see-all">
                 Lihat Semua →
             </a>
 
@@ -145,58 +147,99 @@
 
             @forelse ($recipes as $recipe)
 
-                <div class="recipe-card">
+                <!-- KARTU RESEP -->
+                <a
+                    href="{{ route('recipes.show', $recipe->id) }}"
+                    class="recipe-card-link"
+                    style="text-decoration: none; color: inherit; display: block;"
+                >
 
-                    <div class="recipe-image">
+                    <div class="recipe-card">
 
-                        @if ($recipe->foto)
-                            <img
-                                src="{{ asset('storage/' . $recipe->foto) }}"
-                                alt="{{ $recipe->nama_resep }}"
-                            >
-                        @else
-                            <div class="recipe-placeholder" style="display: flex; align-items: center; justify-content: center; height: 200px; background: #f3f4f6; font-size: 3rem;">
-                                🍲
+                        <div class="recipe-image">
+
+                            @if ($recipe->foto)
+
+                                <img
+                                    src="{{ asset('storage/' . $recipe->foto) }}"
+                                    alt="{{ $recipe->nama_resep }}"
+                                >
+
+                            @else
+
+                                <div class="recipe-placeholder"
+                                    style="
+                                        display:flex;
+                                        align-items:center;
+                                        justify-content:center;
+                                        height:220px;
+                                        background:#f3f4f6;
+                                        font-size:3rem;
+                                    ">
+                                    🍲
+                                </div>
+
+                            @endif
+
+                            <span class="recipe-badge">
+                                {{ $recipe->tingkat_kesulitan }}
+                            </span>
+
+                            <span class="favorite-btn">
+                                ♡
+                            </span>
+
+                        </div>
+
+
+                        <div class="recipe-content">
+
+                            <span class="recipe-category">
+                                {{ $recipe->category->nama_kategori ?? 'Umum' }}
+                            </span>
+
+                            <h3>
+                                {{ $recipe->nama_resep }}
+                            </h3>
+
+                            <p>
+                                {{ $recipe->deskripsi ?? 'Resep masakan pilihan untuk dicoba di rumah.' }}
+                            </p>
+
+                            <div class="recipe-info">
+
+                                <span>
+                                    ⏱ {{ $recipe->waktu_masak }} Menit
+                                </span>
+
+                                <span>
+                                    👤 {{ $recipe->porsi }} Porsi
+                                </span>
+
                             </div>
-                        @endif
 
-                        <span class="recipe-badge">
-                            {{ $recipe->tingkat_kesulitan }}
-                        </span>
-
-                        <button class="favorite-btn">
-                            ♡
-                        </button>
-
-                    </div>
-
-                    <div class="recipe-content">
-
-                        <span class="recipe-category">
-                            {{ $recipe->category->nama_kategori ?? 'Umum' }}
-                        </span>
-
-                        <h3>{{ $recipe->nama_resep }}</h3>
-
-                        <p>
-                            {{ $recipe->deskripsi ?? 'Resep masakan pilihan untuk dicoba di rumah.' }}
-                        </p>
-
-                        <div class="recipe-info">
-                            <span>⏱ {{ $recipe->waktu_masak }} Menit</span>
-                            <span>👤 {{ $recipe->porsi }} Porsi</span>
                         </div>
 
                     </div>
 
-                </div>
+                </a>
 
             @empty
 
-                <p>
-                    Belum ada resep yang tersedia.
-                    Resep akan muncul setelah ditambahkan ke database.
-                </p>
+                <div class="empty-recipe">
+
+                    <div style="font-size:50px;">
+                        🍲
+                    </div>
+
+                    <h3>Belum Ada Resep</h3>
+
+                    <p>
+                        Belum ada resep yang tersedia.
+                        Resep akan muncul setelah ditambahkan ke database.
+                    </p>
+
+                </div>
 
             @endforelse
 
@@ -257,8 +300,8 @@
             <h3>Menu</h3>
 
             <a href="/">Beranda</a>
-            <a href="#">Resep</a>
-            <a href="#">Kategori</a>
+            <a href="#resep">Resep</a>
+            <a href="#kategori">Kategori</a>
 
         </div>
 
