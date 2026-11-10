@@ -53,22 +53,16 @@
 
     </div>
 
-
     <div class="detail-content">
 
         <section class="detail-section">
 
             <h2>🥕 Bahan-Bahan</h2>
 
-            @forelse ($recipe->ingredients as $ingredient)
+            @forelse ($recipe->bahan as $bahan)
 
                 <div class="ingredient-item">
-                    <span>{{ $ingredient->nama_bahan }}</span>
-
-                    <strong>
-                        {{ $ingredient->pivot->jumlah }}
-                        {{ $ingredient->pivot->satuan }}
-                    </strong>
+                    <span>{{ $bahan->nama_bahan }}</span>
                 </div>
 
             @empty
@@ -79,20 +73,19 @@
 
         </section>
 
-
         <section class="detail-section">
 
             <h2>👩‍🍳 Langkah Memasak</h2>
 
-            @forelse ($recipe->steps->sortBy('nomor_langkah') as $step)
+            @forelse ($recipe->steps as $step)
 
                 <div class="step-item">
 
                     <div class="step-number">
-                        {{ $step->nomor_langkah }}
+                        {{ $step->urutan }}
                     </div>
 
-                    <p>{{ $step->instruksi }}</p>
+                    <p>{{ $step->deskripsi }}</p>
 
                 </div>
 

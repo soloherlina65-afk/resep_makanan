@@ -19,21 +19,28 @@ class Recipe extends Model
         'tingkat_kesulitan',
     ];
 
-    // Relasi kategori resep
+    // Relasi ke tabel categories
     public function category()
     {
         return $this->belongsTo(Category::class, 'category_id');
     }
 
-    // Relasi bahan-bahan resep
-    public function ingredients()
+    // Relasi ke tabel bahans
+    public function bahan()
     {
-        return $this->hasMany(Ingredient::class, 'recipe_id');
+        return $this->hasMany(Bahan::class, 'recipe_id');
     }
 
-    // Relasi langkah-langkah memasak
+    // Relasi ke tabel steps
     public function steps()
     {
-        return $this->hasMany(Step::class, 'recipe_id');
+        return $this->hasMany(Step::class, 'recipe_id')
+                    ->orderBy('urutan');
+    }
+
+    // Relasi ke tabel users
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
