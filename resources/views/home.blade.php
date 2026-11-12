@@ -14,14 +14,14 @@
         </a>
 
         <div class="nav-menu">
-            <a href="/" class="active">Beranda</a>
-            <a href="#resep">Resep</a>
+            <a href="/" class="{{ $search ? '' : 'active' }}">Beranda</a>
+            <a href="#resep" class="{{ $search ? 'active' : '' }}">Resep</a>
             <a href="#kategori">Kategori</a>
         </div>
 
         <div class="nav-actions">
-            <a href="#" class="login-btn">Masuk</a>
-            <a href="#" class="register-btn">Daftar</a>
+            <a href="{{ route('login') }}" class="login-btn">Masuk</a>
+            <a href="{{ route('register') }}" class="register-btn">Daftar</a>
         </div>
 
     </div>
@@ -29,32 +29,36 @@
 
 
 <!-- HERO -->
-<section class="hero">
+<section class="hero {{ $search ? 'search-hero' : '' }}">
 
     <div class="hero-container">
 
         <div class="hero-content">
 
-            <div class="hero-label">
-                🍳 SPESIAL HARI INI
-            </div>
+            @if (!$search)
+                <div class="hero-label">🍳 SPESIAL HARI INI</div>
+            @endif
 
             <h1>
                 TEMUKAN INSPIRASI
                 <span>MASAKAN FAVORITMU</span>
             </h1>
 
-            <p>
-                Temukan berbagai resep masakan lezat,
-                praktis, dan mudah dibuat untuk menemani
-                setiap momen bersama keluarga.
-            </p>
+            @if (!$search)
+                <p>
+                    Temukan berbagai resep masakan lezat,
+                    praktis, dan mudah dibuat untuk menemani
+                    setiap momen bersama keluarga.
+                </p>
+            @endif
 
-            <form action="#resep" method="GET" class="search-box">
+            <form action="{{ route('home') }}" method="GET" class="search-box">
                 <input
                     type="text"
                     name="search"
+                    value="{{ $search }}"
                     placeholder="Cari resep masakan..."
+                    aria-label="Cari resep masakan"
                 >
 
                 <button type="submit">
@@ -78,6 +82,7 @@
 
 
 <!-- KATEGORI -->
+@if (!$search)
 <section class="category-section" id="kategori">
 
     <div class="section-container">
@@ -122,23 +127,35 @@
     </div>
 
 </section>
+@endif
 
 
 <!-- RESEP TERBARU -->
-<section class="recipe-section" id="resep">
+<section class="recipe-section {{ $search ? 'search-results-section' : '' }}" id="resep">
 
     <div class="section-container">
+
+        @if ($search)
+            <div class="search-result-banner">
+                <div>
+                    <span class="section-label">HASIL PENCARIAN</span>
+                    <h2>Resep untuk “{{ $search }}”</h2>
+                    <p>{{ $recipes->count() }} resep ditemukan. Pilih resep untuk melihat bahan dan langkah memasaknya.</p>
+                </div>
+                <a class="clear-search" href="{{ route('home') }}">× Hapus pencarian</a>
+            </div>
+        @endif
 
         <div class="section-header">
 
             <div>
-                <span class="section-label">INSPIRASI MASAK</span>
-                <h2>Resep Terbaru</h2>
+                <span class="section-label">{{ $search ? 'PILIHAN RESEP' : 'INSPIRASI MASAK' }}</span>
+                <h2>{{ $search ? 'Temukan Resep Favoritmu' : 'Resep Terbaru' }}</h2>
             </div>
 
-            <a href="#resep" class="see-all">
-                Lihat Semua →
-            </a>
+            @if (!$search)
+                <a href="#resep" class="see-all">Lihat Semua →</a>
+            @endif
 
         </div>
 
@@ -148,20 +165,46 @@
             @forelse ($recipes as $recipe)
 
                 <!-- KARTU RESEP -->
-                <a
-                    href="{{ route('recipes.show', $recipe->id) }}"
+                <div
                     class="recipe-card-link"
-                    style="text-decoration: none; color: inherit; display: block;"
+                    role="link"
+                    tabindex="0"
+                    data-href="{{ route('recipes.show', $recipe->id) }}"
+                    onclick="window.location.href = this.dataset.href"
+                    onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); window.location.href = this.dataset.href; }"
+                    style="text-decoration: none; color: inherit; display: block; cursor: pointer;"
                 >
 
                     <div class="recipe-card">
 
                         <div class="recipe-image">
 
-                            @if ($recipe->foto)
+                            @php
+                                $recipeImage = $recipe->foto;
+                                if (!$recipeImage && strcasecmp(trim($recipe->nama_resep), 'Ayam Kecap') === 0) {
+                                    $recipeImage = 'images/ayamkecap.png';
+                                }
+                                if (!$recipeImage && strcasecmp(trim($recipe->nama_resep), 'Udang Saus Padang') === 0) {
+                                    $recipeImage = 'images/udangsauspadang.png';
+                                }
+                                if (!$recipeImage && strcasecmp(trim($recipe->nama_resep), 'Nasi Goreng Spesial') === 0) {
+                                    $recipeImage = 'images/nasigorengspesial.png';
+                                }
+                                if (!$recipeImage && strcasecmp(trim($recipe->nama_resep), 'Pancake Klasik Madu') === 0) {
+                                    $recipeImage = 'images/pancakeklasikmadu.png';
+                                }
+                                if (!$recipeImage && strcasecmp(trim($recipe->nama_resep), 'Mocalatte Spesial') === 0) {
+                                    $recipeImage = 'images/mocalatte.png';
+                                }
+                                if (!$recipeImage && strcasecmp(trim($recipe->nama_resep), 'Waterlemon') === 0) {
+                                    $recipeImage = 'images/waterlemon.png';
+                                }
+                            @endphp
+
+                            @if ($recipeImage)
 
                                 <img
-                                    src="{{ asset('storage/' . $recipe->foto) }}"
+                                    src="{{ str_starts_with($recipeImage, 'images/') ? asset($recipeImage) : asset('storage/' . $recipeImage) }}"
                                     alt="{{ $recipe->nama_resep }}"
                                 >
 
@@ -186,7 +229,16 @@
                             </span>
 
                             <span class="favorite-btn">
-                                ♡
+                                @auth
+                                    <form method="POST" action="{{ route('recipes.reaction', $recipe) }}"
+                                        onclick="event.stopPropagation()">
+                                        @csrf
+                                        <input type="hidden" name="type" value="favorite">
+                                        <button type="submit" aria-label="Simpan ke favorit">♡</button>
+                                    </form>
+                                @else
+                                    <a href="{{ route('login') }}" onclick="event.stopPropagation()">♡</a>
+                                @endauth
                             </span>
 
                         </div>
@@ -206,6 +258,13 @@
                                 {{ $recipe->deskripsi ?? 'Resep masakan pilihan untuk dicoba di rumah.' }}
                             </p>
 
+                            <div style="margin-top:10px; color:#7a8f5c; font-size:12px;">
+                                👤 Diposting oleh
+                                <strong style="color:#5f7446;">
+                                    {{ $recipe->user?->name ?? 'Tim Resep Kita' }}
+                                </strong>
+                            </div>
+
                             <div class="recipe-info">
 
                                 <span>
@@ -222,7 +281,7 @@
 
                     </div>
 
-                </a>
+                </div>
 
             @empty
 
@@ -232,12 +291,32 @@
                         🍲
                     </div>
 
-                    <h3>Belum Ada Resep</h3>
+                    <h3>{{ $search ? 'Resep Tidak Ditemukan' : 'Belum Ada Resep' }}</h3>
 
                     <p>
-                        Belum ada resep yang tersedia.
-                        Resep akan muncul setelah ditambahkan ke database.
+                        {{ $search
+                            ? 'Kami tidak menemukan resep yang cocok dengan “' . $search . '”. Coba periksa ejaan atau gunakan kata kunci yang lebih umum.'
+                            : 'Belum ada resep yang tersedia. Resep akan muncul setelah ditambahkan ke database.' }}
                     </p>
+
+                    @if ($search)
+                        <div class="search-suggestions">
+                            <strong>COBA KATA KUNCI LAIN</strong>
+                            <div>
+                                @foreach (['ayam', 'telur', 'tempe', 'sayur', 'sambal', 'kue'] as $suggestion)
+                                    <a href="{{ route('home', ['search' => $suggestion]) }}">⌕ {{ $suggestion }}</a>
+                                @endforeach
+                            </div>
+                        </div>
+                        <div class="search-tips">
+                            <strong>Tips pencarian</strong>
+                            <p>✓ Periksa kembali ejaan kata kunci.</p>
+                            <p>✓ Gunakan nama bahan atau kategori, misalnya “ikan” atau “sarapan”.</p>
+                            <p>✓ Coba kata yang lebih umum agar hasil lebih banyak.</p>
+                        </div>
+                        <a class="clear-search empty-search-link" href="{{ route('home') }}">Hapus pencarian</a>
+                        <a class="browse-categories-link" href="{{ route('home') }}#kategori">Lihat semua kategori</a>
+                    @endif
 
                 </div>
 
@@ -267,7 +346,7 @@
             inspirasi masakan baru.
         </p>
 
-        <a href="#" class="cta-button">
+        <a href="{{ auth()->check() ? route('recipes.create') : route('login') }}" class="cta-button">
             Tambahkan Resep →
         </a>
 
@@ -310,8 +389,8 @@
 
             <h3>Bantuan</h3>
 
-            <a href="#">Tentang Kami</a>
-            <a href="#">Kontak</a>
+            <a href="{{ route('about') }}">Tentang Kami</a>
+            <a href="{{ route('contact') }}">Kontak</a>
             <a href="#">FAQ</a>
 
         </div>
