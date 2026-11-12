@@ -4,7 +4,7 @@
     justify-content: center;
     align-items: center;
     padding: 50px 20px;
-    background: #fffaf3;
+    background: #f4f8ef;
 }
 
 .auth-card {
@@ -46,30 +46,30 @@
 .auth-logo {
     font-size: 25px;
     font-weight: 800;
-    color: #3d291b;
+    color: #30402a;
     margin-bottom: 35px;
 }
 
 .auth-logo span {
-    color: #ed8734;
+    color: #7a8f5c;
 }
 
 .auth-form h1 {
     font-size: 30px;
-    color: #3d291b;
+    color: #30402a;
     font-weight: 800;
     margin-bottom: 8px;
 }
 
 .auth-desc {
-    color: #888;
+    color: #6f8060;
     margin-bottom: 30px;
 }
 
 .auth-input {
     width: 100%;
     padding: 14px 16px;
-    border: 1px solid #eadfd2;
+    border: 1px solid #d5e0c5;
     border-radius: 10px;
     margin-top: 8px;
     margin-bottom: 18px;
@@ -77,12 +77,12 @@
 }
 
 .auth-input:focus {
-    border-color: #ed8734;
+    border-color: #7a8f5c;
     box-shadow: 0 0 0 3px rgba(237,135,52,.12);
 }
 
 .auth-label {
-    color: #493626;
+    color: #3f5635;
     font-size: 14px;
     font-weight: 600;
 }
@@ -92,7 +92,7 @@
     border: none;
     padding: 15px;
     border-radius: 10px;
-    background: #ed8734;
+    background: #7a8f5c;
     color: white;
     font-weight: 700;
     cursor: pointer;
@@ -100,18 +100,18 @@
 }
 
 .auth-button:hover {
-    background: #d87324;
+    background: #7a8f5c;
 }
 
 .auth-footer {
     text-align: center;
     margin-top: 25px;
-    color: #777;
+    color: #6f8060;
     font-size: 14px;
 }
 
 .auth-footer a {
-    color: #ed8734;
+    color: #7a8f5c;
     font-weight: 700;
     text-decoration: none;
 }

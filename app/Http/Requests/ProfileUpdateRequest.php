@@ -18,6 +18,11 @@ class ProfileUpdateRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($this->user()->id)],
+            'bio' => ['nullable', 'string', 'max:200'],
+            'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'notify_new_recipes' => ['nullable', 'boolean'],
+            'notify_likes' => ['nullable', 'boolean'],
+            'notify_favorites' => ['nullable', 'boolean'],
         ];
     }
 }

@@ -1,89 +1,238 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="id">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login</title>
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=poppins:400,500,600,700&display=swap" rel="stylesheet" />
+    <title>Masuk - Resep Kita</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <style>body{font-family:'Poppins',sans-serif;}</style>
+    <style>
+        * { box-sizing: border-box; }
+        :root { --sage: #7a8f5c; --sage-light: #e4ebd8; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: #242424;
+            background: #fffaf0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            background: #fffaf0;
+        }
+        .login-form-wrap {
+            width: min(45%, 520px);
+            margin-left: max(5vw, 30px);
+            padding: 48px clamp(28px, 5vw, 70px);
+            position: relative;
+            z-index: 1;
+            border-radius: 18px;
+            background: #fffdf8;
+            box-shadow: 0 12px 30px rgba(90, 55, 20, 0.1);
+        }
+        .brand-dot {
+            position: absolute;
+            top: 18px;
+            left: 18px;
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            background: #7a8f5c;
+            box-shadow: 0 0 0 3px #e4ebd8;
+        }
+        .login-form-wrap h1 {
+            margin: 0 0 8px;
+            font-size: 24px;
+            font-weight: 700;
+            color: #65231d;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 24px;
+            color: #7a8f5c;
+            font-size: 11px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+        .back-link:hover { color: var(--sage); }
+        .login-form-wrap .intro {
+            margin: 0 0 24px;
+            color: #6c5748;
+            font-size: 10px;
+        }
+        .intro a, .login-options a {
+            color: #7a8f5c;
+            font-weight: 700;
+            text-decoration: none;
+        }
+        .login-field {
+            width: 100%;
+            height: 40px;
+            margin-bottom: 12px;
+            padding: 0 16px;
+            border: 0;
+            border-radius: 2px;
+            outline: 0;
+            background: #fff;
+            color: #30251f;
+            font-size: 11px;
+            border: 1px solid #eee4d4;
+        }
+        .password-wrap { position: relative; }
+        .password-wrap .login-field { padding-right: 42px; }
+        .password-toggle {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            border: 0;
+            padding: 0;
+            background: transparent;
+            color: #7a8f5c;
+            cursor: pointer;
+            font-size: 15px;
+        }
+        .login-field:focus { box-shadow: 0 0 0 2px var(--sage-light); border-color: var(--sage); }
+        .login-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 2px 0 15px;
+            color: #6c5748;
+            font-size: 9px;
+        }
+        .remember {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+        .remember input { accent-        color: var(--sage); }
+        .login-button, .google-button {
+            width: 100%;
+            height: 40px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+        .login-button {
+            border: 0;
+            color: #fff;
+            background: #7a8f5c;
+            box-shadow: 0 5px 12px rgba(163, 50, 41, 0.2);
+            cursor: pointer;
+        }
+        .login-button:hover { background: #7a8f5c; }
+        .google-button {
+            margin-top: 8px;
+            border: 1px solid #eee4d4;
+            background: #fffdf8;
+            color: #30251f;
+        }
+        .google-button:disabled { cursor: not-allowed; }
+        .google-icon { color: #4285f4; font-size: 15px; margin-right: 5px; }
+        .auth-error {
+            margin: -7px 0 8px;
+            color: #dc2626;
+            font-size: 10px;
+        }
+        .login-art {
+            position: absolute;
+            top: 50%;
+            right: -170px;
+            width: 700px;
+            height: 700px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #f4c95d;
+            transform: translateY(-50%);
+        }
+        .login-plate {
+            width: 540px;
+            height: 540px;
+            padding: 25px;
+            border-radius: 50%;
+            background: #fffdf8;
+        }
+        .login-plate img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        @media (max-width: 900px) {
+            .login-form-wrap { width: min(92%, 500px); margin: auto; padding: 42px 28px; }
+            .login-art { opacity: .16; right: -360px; z-index: 0; }
+        }
+    </style>
 </head>
-<body class="bg-white min-h-screen overflow-x-hidden">
-<div class="relative min-h-screen flex items-center">
+<body>
+<main class="login-page">
+    <span class="brand-dot" aria-hidden="true"></span>
+    <section class="login-form-wrap">
+        <a class="back-link" href="{{ url('/') }}">← Kembali</a>
+        <h1>Masuk</h1>
+        <p class="intro">Belum punya akun? <a href="{{ route('register') }}">Daftar</a></p>
 
-    {{-- Logo kecil kiri atas --}}
-    <div class="absolute top-5 left-5 w-4 h-4 rounded-full bg-orange-400"></div>
+        <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    {{-- ====== FORM LOGIN ====== --}}
-    <div class="relative z-10 w-full lg:w-1/2 px-8 sm:px-16 lg:px-24 py-12">
-        <div class="max-w-md mx-auto lg:mx-0">
-            <h1 class="text-3xl font-bold text-gray-900">Login</h1>
-            <p class="mt-3 text-sm text-gray-700">
-                Don't have an account?
-                <a href="{{ route('register') }}" class="text-sky-500 font-medium hover:underline">Sign up</a>
-            </p>
+        <form method="POST" action="{{ route('login') }}">
+            @csrf
+            <input class="login-field" type="email" name="email" value="{{ old('email') }}"
+                required autofocus autocomplete="username" placeholder="Alamat email">
+            @error('email')
+                <p class="auth-error">{{ $message }}</p>
+            @enderror
 
-            <x-auth-session-status class="mt-4" :status="session('status')" />
+            <div class="password-wrap">
+                <input class="login-field" id="login-password" type="password" name="password"
+                    required autocomplete="current-password" placeholder="Kata sandi">
+                <button class="password-toggle" type="button" data-password-target="login-password"
+                    aria-label="Tampilkan password" aria-pressed="false">◉</button>
+            </div>
+            @error('password')
+                <p class="auth-error">{{ $message }}</p>
+            @enderror
 
-            <form method="POST" action="{{ route('login') }}" class="mt-8 space-y-4">
-                @csrf
+            <div class="login-options">
+                <label class="remember">
+                    <input type="checkbox" name="remember">
+                    <span>Ingat saya</span>
+                </label>
+                @if (Route::has('password.request'))
+                    <a href="{{ route('password.request') }}">Lupa kata sandi?</a>
+                @endif
+            </div>
 
-                <div>
-                    <input type="email" name="email" value="{{ old('email') }}" required autofocus
-                           placeholder="Email address"
-                           class="w-full rounded-md border-0 bg-gray-50 px-5 py-4 text-sm text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-orange-400">
-                    @error('email')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
-                </div>
+            <button class="login-button" type="submit">Masuk</button>
+            <button class="google-button" type="button" disabled>
+                <span class="google-icon">G</span> Masuk dengan Google
+            </button>
+        </form>
+    </section>
 
-                <div>
-                    <input type="password" name="password" required autocomplete="current-password"
-                           placeholder="Password"
-                           class="w-full rounded-md border-0 bg-gray-50 px-5 py-4 text-sm text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-orange-400">
-                    @error('password')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
-                </div>
-
-                <div class="flex items-center justify-between text-sm text-gray-700 pt-1">
-                    <label class="inline-flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" name="remember"
-                               class="rounded border-gray-300 text-orange-400 focus:ring-orange-400">
-                        Remember me
-                    </label>
-                    @if (Route::has('password.request'))
-                        <a href="{{ route('password.request') }}" class="hover:text-orange-500">Forget Password?</a>
-                    @endif
-                </div>
-
-                <button type="submit"
-                        class="w-full rounded-md bg-orange-400 py-3.5 text-sm font-medium text-white hover:bg-orange-500 transition">
-                    Log in
-                </button>
-
-                {{-- Ganti '#' dengan route Socialite jika sudah dipasang, mis. route('auth.google') --}}
-                <a href="#"
-                   class="flex items-center justify-center gap-3 w-full rounded-md border border-gray-200 bg-white py-3.5 text-sm text-gray-700 hover:bg-gray-50 transition">
-                    <svg class="w-5 h-5" viewBox="0 0 48 48">
-                        <path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.5 17.7 9.5 24 9.5z"/>
-                        <path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/>
-                        <path fill="#FBBC05" d="M10.5 28.7c-.5-1.5-.8-3-.8-4.7s.3-3.2.8-4.7l-7.9-6.1C.9 16.4 0 20.1 0 24s.9 7.6 2.6 10.8l7.9-6.1z"/>
-                        <path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.9 2.3-8.4 2.3-6.3 0-11.6-4-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/>
-                    </svg>
-                    Log in with google
-                </a>
-            </form>
+    <aside class="login-art" aria-label="Hidangan pasta">
+        <div class="login-plate">
+            <img src="images/ayam.png" alt="Hidangan ayam">
         </div>
-    </div>
-
-    {{-- ====== DEKORASI LINGKARAN + GAMBAR (kanan) ====== --}}
-    <div class="hidden lg:block absolute top-1/2 -translate-y-1/2 -right-40 w-[820px] h-[820px]">
-        {{-- Lingkaran oranye --}}
-        <div class="absolute inset-0 rounded-full bg-orange-400"></div>
-        {{-- Piring putih --}}
-        <div class="absolute inset-[90px] rounded-full bg-gray-100 shadow-xl"></div>
-        {{-- Gambar makanan (letakkan di public/images/pasta.png, sebaiknya PNG bulat/transparan) --}}
-        <img src="{{ asset('images/pasta.png') }}" alt="Pasta"
-             class="absolute inset-[130px] w-[560px] h-[560px] rounded-full object-cover">
-    </div>
-</div>
+    </aside>
+</main>
+<script>
+    document.querySelectorAll('[data-password-target]').forEach(function (button) {
+        button.addEventListener('click', function () {
+            const input = document.getElementById(button.dataset.passwordTarget);
+            const visible = input.type === 'password';
+            input.type = visible ? 'text' : 'password';
+            button.textContent = visible ? '◉' : '◌';
+            button.setAttribute('aria-label', visible ? 'Sembunyikan password' : 'Tampilkan password');
+            button.setAttribute('aria-pressed', String(visible));
+        });
+    });
+</script>
 </body>
 </html>
