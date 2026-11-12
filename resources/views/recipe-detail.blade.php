@@ -67,6 +67,22 @@
         font-size: 14px;
     }
 
+    .recipe-author {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 8px;
+        padding: 8px 13px;
+        border-radius: 18px;
+        background: #e4ebd8;
+        color: #5f7446;
+        font-size: 12px;
+    }
+
+    .recipe-author strong {
+        color: #5f7446;
+    }
+
     .recipe-image {
         width: 100%;
         height: 430px;
@@ -75,6 +91,46 @@
         margin-bottom: 30px;
         box-shadow: 0 10px 30px rgba(80, 50, 20, 0.08);
         border: 1px solid #f3e6de;
+    }
+
+    .recipe-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin: -10px 0 30px;
+    }
+
+    .recipe-actions form {
+        margin: 0;
+    }
+
+    .recipe-actions button,
+    .reaction-login {
+        display: inline-flex;
+        align-items: center;
+        min-height: 38px;
+        padding: 8px 16px;
+        border: 1px solid #f0d8c8;
+        border-radius: 20px;
+        background: #fff;
+        color: #7a8f5c;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .recipe-actions button:hover,
+    .recipe-actions button.active {
+        background: #7a8f5c;
+        border-color: #7a8f5c;
+        color: #fff;
+    }
+
+    .reaction-count {
+        color: #8c644d;
+        font-size: 12px;
     }
 
     .no-image {
@@ -280,11 +336,38 @@
             <p>
                 {{ $recipe->deskripsi ?? 'Temukan cara membuat hidangan lezat ini dengan mudah dan praktis.' }}
             </p>
+
+            <div class="recipe-author">
+                <span>👤</span>
+                <span>Diposting oleh <strong>{{ $recipe->user?->name ?? 'Tim Resep Kita' }}</strong></span>
+            </div>
         </div>
 
-        @if ($recipe->foto)
+        @php
+            $recipeImage = $recipe->foto;
+            if (!$recipeImage && strcasecmp(trim($recipe->nama_resep), 'Ayam Kecap') === 0) {
+                $recipeImage = 'images/ayamkecap.png';
+            }
+            if (!$recipeImage && strcasecmp(trim($recipe->nama_resep), 'Udang Saus Padang') === 0) {
+                $recipeImage = 'images/udangsauspadang.png';
+            }
+            if (!$recipeImage && strcasecmp(trim($recipe->nama_resep), 'Nasi Goreng Spesial') === 0) {
+                $recipeImage = 'images/nasigorengspesial.png';
+            }
+            if (!$recipeImage && strcasecmp(trim($recipe->nama_resep), 'Pancake Klasik Madu') === 0) {
+                $recipeImage = 'images/pancakeklasikmadu.png';
+            }
+            if (!$recipeImage && strcasecmp(trim($recipe->nama_resep), 'Mocalatte Spesial') === 0) {
+                $recipeImage = 'images/mocalatte.png';
+            }
+            if (!$recipeImage && strcasecmp(trim($recipe->nama_resep), 'Waterlemon') === 0) {
+                $recipeImage = 'images/waterlemon.png';
+            }
+        @endphp
+
+        @if ($recipeImage)
             <img
-                src="{{ asset('storage/' . $recipe->foto) }}"
+                src="{{ str_starts_with($recipeImage, 'images/') ? asset($recipeImage) : asset('storage/' . $recipeImage) }}"
                 alt="{{ $recipe->nama_resep }}"
                 class="recipe-image"
             >
@@ -294,6 +377,33 @@
                 Foto resep belum tersedia
             </div>
         @endif
+
+        @php
+            $userLike = auth()->check() && $recipe->likes()->where('user_id', auth()->id())->exists();
+            $userFavorite = auth()->check() && $recipe->favorites()->where('user_id', auth()->id())->exists();
+        @endphp
+
+        <div class="recipe-actions">
+            @auth
+                <form method="POST" action="{{ route('recipes.reaction', $recipe) }}">
+                    @csrf
+                    <input type="hidden" name="type" value="like">
+                    <button type="submit" class="{{ $userLike ? 'active' : '' }}">
+                        {{ $userLike ? '♥ Disukai' : '♡ Suka' }}
+                    </button>
+                </form>
+                <form method="POST" action="{{ route('recipes.reaction', $recipe) }}">
+                    @csrf
+                    <input type="hidden" name="type" value="favorite">
+                    <button type="submit" class="{{ $userFavorite ? 'active' : '' }}">
+                        {{ $userFavorite ? '★ Tersimpan' : '☆ Favorit' }}
+                    </button>
+                </form>
+            @else
+                <a href="{{ route('login') }}" class="reaction-login">Masuk untuk menyukai atau menyimpan resep</a>
+            @endauth
+            <span class="reaction-count">♥ {{ $recipe->likes()->count() }} suka</span>
+        </div>
 
         <div class="recipe-info">
 

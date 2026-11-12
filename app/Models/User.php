@@ -21,6 +21,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'bio',
+        'avatar',
+        'notify_new_recipes',
+        'notify_likes',
+        'notify_favorites',
     ];
 
     /**
@@ -40,5 +45,23 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'notify_new_recipes' => 'boolean',
+        'notify_likes' => 'boolean',
+        'notify_favorites' => 'boolean',
     ];
+
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class)->where('type', 'favorite');
+    }
+
+    public function likedRecipes()
+    {
+        return $this->hasMany(Favorite::class)->where('type', 'like');
+    }
+
+    public function recipes()
+    {
+        return $this->hasMany(Recipe::class);
+    }
 }

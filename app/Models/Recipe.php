@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Recipe extends Model
 {
+    use HasFactory;
+
     protected $table = 'recipes';
 
     protected $fillable = [
@@ -19,28 +22,40 @@ class Recipe extends Model
         'tingkat_kesulitan',
     ];
 
-    // Relasi ke tabel categories
+    protected $casts = [
+        'category_id' => 'integer',
+        'waktu_masak' => 'integer',
+        'porsi' => 'integer',
+    ];
+
     public function category()
     {
         return $this->belongsTo(Category::class, 'category_id');
     }
 
-    // Relasi ke tabel bahans
-    public function bahan()
+    public function user()
     {
-        return $this->hasMany(Bahan::class, 'recipe_id');
+        return $this->belongsTo(User::class);
     }
 
-    // Relasi ke tabel steps
+    public function bahan()
+    {
+        return $this->hasMany(ResepBahan::class, 'recipe_id');
+    }
+
     public function steps()
     {
         return $this->hasMany(Step::class, 'recipe_id')
                     ->orderBy('urutan');
     }
 
-    // Relasi ke tabel users
-    public function user()
+    public function likes()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->hasMany(Favorite::class)->where('type', 'like');
+    }
+
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class)->where('type', 'favorite');
     }
 }

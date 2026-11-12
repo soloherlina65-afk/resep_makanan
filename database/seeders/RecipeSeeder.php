@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Category;
 use App\Models\Recipe;
-use App\Models\Bahan;
+use App\Models\ResepBahan;
 
 class RecipeSeeder extends Seeder
 {
@@ -26,10 +26,10 @@ class RecipeSeeder extends Seeder
         ]);
 
         // Masukkan bahan untuk Resep 1
-        Bahan::create(['recipe_id' => $resep1->id, 'nama_bahan' => '2 piring nasi putih']);
-        Bahan::create(['recipe_id' => $resep1->id, 'nama_bahan' => '2 siung bawang putih, cincang']);
-        Bahan::create(['recipe_id' => $resep1->id, 'nama_bahan' => '1 butir telur ayam']);
-        Bahan::create(['recipe_id' => $resep1->id, 'nama_bahan' => '2 sendok makan kecap manis']);
+        ResepBahan::create(['recipe_id' => $resep1->id, 'nama_bahan' => '2 piring nasi putih']);
+        ResepBahan::create(['recipe_id' => $resep1->id, 'nama_bahan' => '2 siung bawang putih, cincang']);
+        ResepBahan::create(['recipe_id' => $resep1->id, 'nama_bahan' => '1 butir telur ayam']);
+        ResepBahan::create(['recipe_id' => $resep1->id, 'nama_bahan' => '2 sendok makan kecap manis']);
 
         // 3. Buat Contoh Resep 2
         $resep2 = Recipe::create([
@@ -42,9 +42,10 @@ class RecipeSeeder extends Seeder
         ]);
 
         // Masukkan bahan untuk Resep 2
-        Bahan::create(['recipe_id' => $resep2->id, 'nama_bahan' => '1 cup tepung terigu']);
-        Bahan::create(['recipe_id' => $resep2->id, 'nama_bahan' => '1 sdt baking powder']);
-        Bahan::create(['recipe_id' => $resep2->id, 'nama_bahan' => '1 butir telur']);
-        Bahan::create(['recipe_id' => $resep2->id, 'nama_bahan' => '3/4 cup susu cair']);
+        ResepBahan::create(['recipe_id' => $resep2->id, 'nama_bahan' => '1 cup tepung terigu']);
+        ResepBahan::create(['recipe_id' => $resep2->id, 'nama_bahan' => '1 sdt baking powder']);
+        ResepBahan::create(['recipe_id' => $resep2->id, 'nama_bahan' => '1 butir telur']);
+        ResepBahan::create(['recipe_id' => $resep2->id, 'nama_bahan' => '3/4 cup susu cair']);
+
     }
 }
