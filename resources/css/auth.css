@@ -1,0 +1,143 @@
+.auth-wrapper {
+    min-height: 85vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 50px 20px;
+    background: #fffaf3;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 1000px;
+    min-height: 570px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: white;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 15px 45px rgba(75, 45, 20, .10);
+}
+
+.auth-image {
+    background: linear-gradient(rgba(40,25,10,.35), rgba(40,25,10,.45)),
+    url('https://images.unsplash.com/photo-1547592180-85f173990554?w=1000')
+    center/cover;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 45px;
+    color: white;
+}
+
+.auth-image h2 {
+    font-size: 34px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.auth-form {
+    padding: 55px 45px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.auth-logo {
+    font-size: 25px;
+    font-weight: 800;
+    color: #3d291b;
+    margin-bottom: 35px;
+}
+
+.auth-logo span {
+    color: #ed8734;
+}
+
+.auth-form h1 {
+    font-size: 30px;
+    color: #3d291b;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.auth-desc {
+    color: #888;
+    margin-bottom: 30px;
+}
+
+.auth-input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #eadfd2;
+    border-radius: 10px;
+    margin-top: 8px;
+    margin-bottom: 18px;
+    outline: none;
+}
+
+.auth-input:focus {
+    border-color: #ed8734;
+    box-shadow: 0 0 0 3px rgba(237,135,52,.12);
+}
+
+.auth-label {
+    color: #493626;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.auth-button {
+    width: 100%;
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    background: #ed8734;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 8px;
+}
+
+.auth-button:hover {
+    background: #d87324;
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 25px;
+    color: #777;
+    font-size: 14px;
+}
+
+.auth-footer a {
+    color: #ed8734;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.auth-error {
+    color: #dc2626;
+    font-size: 13px;
+    margin-top: -12px;
+    margin-bottom: 12px;
+}
+
+@media(max-width: 768px) {
+    .auth-card {
+        grid-template-columns: 1fr;
+    }
+
+    .auth-image {
+        min-height: 220px;
+        padding: 30px;
+    }
+
+    .auth-image h2 {
+        font-size: 25px;
+    }
+
+    .auth-form {
+        padding: 35px 25px;
+    }
+}   
