@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\ReviewController;
@@ -27,6 +28,9 @@ Route::patch('/team-members', [TeamMemberController::class, 'update'])
     ->name('team-members.update');
 Route::get('/recipes', [RecipeController::class, 'index'])->name('recipes.index');
 Route::middleware('auth')->group(function () {
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
+    Route::post('/notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
     Route::get('/recipes/create', [RecipeController::class, 'create'])->name('recipes.create');
     Route::get('/recipes/{recipe}/edit', [RecipeController::class, 'edit'])->name('recipes.edit');
     Route::get('/my-recipes', [RecipeController::class, 'mine'])->name('recipes.mine');
@@ -53,6 +57,7 @@ Route::get('/dashboard', function () {
         'favorites' => auth()->user()->favorites()->with('recipe.category')->latest()->get(),
         'likedRecipes' => auth()->user()->likedRecipes()->with('recipe.category')->latest()->get(),
         'userRecipes' => auth()->user()->recipes()->with('category')->latest()->get(),
+        'unreadNotificationsCount' => auth()->user()->unreadNotifications()->count(),
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 

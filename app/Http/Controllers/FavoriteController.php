@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Favorite;
 use App\Models\Recipe;
+use App\Notifications\ActivityNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -28,6 +29,21 @@ class FavoriteController extends Controller
                 'recipe_id' => $recipe->id,
                 'type' => $type,
             ]);
+
+            if ($recipe->user_id && $recipe->user_id !== $request->user()->id) {
+                $owner = $recipe->user;
+                $preference = $type === 'like' ? 'notify_likes' : 'notify_favorites';
+
+                if ($owner->{$preference}) {
+                    $activity = $type === 'like' ? 'like' : 'favorite';
+                    $verb = $type === 'like' ? 'menyukai' : 'menambahkan ke favorit';
+                    $owner->notify(new ActivityNotification(
+                        $activity,
+                        $request->user()->name . ' ' . $verb . ' resep "' . $recipe->nama_resep . '".',
+                        $recipe->id,
+                    ));
+                }
+            }
         }
 
         return back();

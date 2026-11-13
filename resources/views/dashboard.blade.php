@@ -161,7 +161,12 @@
                 <p class="dashboard-subtitle">Kelola profil dan kumpulan resep favoritmu.</p>
             </div>
             <div class="topbar-user">
-                <span class="notification" aria-label="Notifikasi">♧<span class="notification-badge">2</span></span>
+                <a class="notification" href="{{ route('notifications.index') }}" aria-label="Notifikasi">
+                    ♧
+                    @if ($unreadNotificationsCount > 0)
+                        <span class="notification-badge">{{ $unreadNotificationsCount > 99 ? '99+' : $unreadNotificationsCount }}</span>
+                    @endif
+                </a>
                 <span class="user-avatar">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
                 <span>⌄</span>
             </div>

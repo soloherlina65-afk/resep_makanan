@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Recipe;
 use App\Models\Review;
+use App\Notifications\ActivityNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -42,6 +43,18 @@ class ReviewController extends Controller
             ['recipe_id' => $recipe->id],
             $validated,
         );
+
+        if ($recipe->user_id && $recipe->user_id !== $request->user()->id) {
+            $owner = $recipe->user;
+
+            if ($owner->notify_likes) {
+                $owner->notify(new ActivityNotification(
+                    'review',
+                    $request->user()->name . ' memberi rating ' . $validated['rating'] . '/5 pada resep "' . $recipe->nama_resep . '".',
+                    $recipe->id,
+                ));
+            }
+        }
 
         return back()->with('success', 'Rating dan komentar berhasil disimpan.');
     }
