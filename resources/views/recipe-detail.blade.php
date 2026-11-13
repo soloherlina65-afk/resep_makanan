@@ -437,6 +437,52 @@
         line-height: 1.7;
     }
 
+    .review-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 9px;
+    }
+
+    .review-actions button {
+        padding: 5px 10px;
+        border: 1px solid #eadfd5;
+        border-radius: 14px;
+        background: #fff;
+        color: #7a8f5c;
+        font: inherit;
+        font-size: 11px;
+        cursor: pointer;
+    }
+
+    .review-actions .delete-review {
+        color: #b54c2f;
+    }
+
+    .review-edit-form {
+        display: none;
+        margin-top: 12px;
+        padding: 14px;
+        border-radius: 12px;
+        background: #faf6f0;
+    }
+
+    .review-edit-form.is-visible {
+        display: block;
+    }
+
+    .review-edit-form select {
+        width: 100%;
+        height: 35px;
+        margin-bottom: 8px;
+        padding: 0 9px;
+        border: 1px solid #eadfd5;
+        border-radius: 8px;
+        background: #fff;
+        color: #51443d;
+        font: inherit;
+        font-size: 12px;
+    }
+
     @media (max-width: 650px) {
         .recipe-header h1 {
             font-size: 26px;
@@ -673,6 +719,35 @@
                     @if ($review->comment)
                         <p class="review-comment">{{ $review->comment }}</p>
                     @endif
+                    @auth
+                        @if ($review->user_id === auth()->id())
+                            <div class="review-actions">
+                                <button type="button" data-review-toggle="{{ $review->id }}">Edit</button>
+                                <form method="POST" action="{{ route('reviews.destroy', $review) }}"
+                                    onsubmit="return confirm('Hapus komentar ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="delete-review" type="submit">Hapus</button>
+                                </form>
+                            </div>
+                            <form id="review-edit-{{ $review->id }}" class="review-edit-form"
+                                method="POST" action="{{ route('reviews.update', $review) }}">
+                                @csrf
+                                @method('PATCH')
+                                <label for="review-rating-{{ $review->id }}">Rating</label>
+                                <select id="review-rating-{{ $review->id }}" name="rating" required>
+                                    @for ($star = 5; $star >= 1; $star--)
+                                        <option value="{{ $star }}" @selected($review->rating === $star)>
+                                            {{ $star }} bintang
+                                        </option>
+                                    @endfor
+                                </select>
+                                <textarea class="review-textarea" name="comment" maxlength="1000"
+                                    placeholder="Tulis komentar...">{{ $review->comment }}</textarea>
+                                <button class="review-submit" type="submit">Simpan perubahan</button>
+                            </form>
+                        @endif
+                    @endauth
                 </article>
             @empty
                 <p class="empty-message">Belum ada rating atau komentar.</p>
@@ -681,5 +756,14 @@
 
     </div>
 </section>
+
+<script>
+    document.querySelectorAll('[data-review-toggle]').forEach(function (button) {
+        button.addEventListener('click', function () {
+            const form = document.getElementById('review-edit-' + button.dataset.reviewToggle);
+            form.classList.toggle('is-visible');
+        });
+    });
+</script>
 
 @endsection

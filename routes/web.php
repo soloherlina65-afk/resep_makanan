@@ -36,6 +36,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/recipes/{recipe}', [RecipeController::class, 'update'])->name('recipes.update');
     Route::delete('/recipes/{recipe}', [RecipeController::class, 'destroy'])->name('recipes.destroy');
     Route::post('/recipes/{recipe}/reviews', [ReviewController::class, 'store'])->name('recipes.reviews.store');
+    Route::patch('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 });
 Route::get('/recipes/{id}', [RecipeController::class, 'show'])->name('recipes.show');
 Route::post('/recipes/{recipe}/reaction', [FavoriteController::class, 'toggle'])
