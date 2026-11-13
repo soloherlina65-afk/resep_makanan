@@ -1,7 +1,7 @@
 
 @extends('app')
 
-@section('title', 'Resep Kita - Temukan Inspirasi Masakan')
+@section('title', 'Racikara - Temukan Inspirasi Masakan')
 
 @section('content')
 
@@ -10,7 +10,7 @@
     <div class="nav-container">
 
         <a href="/" class="logo">
-            RESEP<span>KITA</span>
+            <img src="{{ asset('images/racikara-logo.png') }}" alt="Racikara">
         </a>
 
         <div class="nav-menu">
@@ -104,10 +104,10 @@
 
             @forelse ($categories as $category)
 
-                <a href="#resep" class="category-card">
+                <a href="{{ route('home', ['search' => $category->nama_kategori]) }}#resep" class="category-card">
 
-                    <div class="category-icon">
-                        🍽️
+                    <div class="category-icon" aria-hidden="true">
+                        ♨
                     </div>
 
                     <h3>{{ $category->nama_kategori }}</h3>
@@ -261,7 +261,7 @@
                             <div style="margin-top:10px; color:#7a8f5c; font-size:12px;">
                                 👤 Diposting oleh
                                 <strong style="color:#5f7446;">
-                                    {{ $recipe->user?->name ?? 'Tim Resep Kita' }}
+                                    {{ $recipe->user?->name ?? 'Tim Racikara' }}
                                 </strong>
                             </div>
 
@@ -288,7 +288,7 @@
                 <div class="empty-recipe">
 
                     <div style="font-size:50px;">
-                        🍲
+                        ♨
                     </div>
 
                     <h3>{{ $search ? 'Resep Tidak Ditemukan' : 'Belum Ada Resep' }}</h3>
@@ -363,7 +363,7 @@
         <div class="footer-brand">
 
             <div class="footer-logo">
-                RESEP<span>KITA</span>
+                <img src="{{ asset('images/racikara-logo.png') }}" alt="Racikara">
             </div>
 
             <p>
@@ -399,7 +399,7 @@
 
 
     <div class="footer-bottom">
-        © 2026 Resep Kita. Semua hak dilindungi.
+        © 2026 Racikara. Semua hak dilindungi.
     </div>
 
 </footer>

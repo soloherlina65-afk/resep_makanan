@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Masuk - Resep Kita</title>
+    <title>Masuk - Racikara</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         * { box-sizing: border-box; }
@@ -19,41 +19,51 @@
             min-height: 100vh;
             display: flex;
             align-items: center;
+            justify-content: center;
             overflow: hidden;
             position: relative;
             background: #fffaf0;
         }
         .login-form-wrap {
-            width: min(45%, 520px);
-            margin-left: max(5vw, 30px);
-            padding: 48px clamp(28px, 5vw, 70px);
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 44px 24px;
             position: relative;
             z-index: 1;
-            border-radius: 18px;
-            background: #fffdf8;
-            box-shadow: 0 12px 30px rgba(90, 55, 20, 0.1);
+            background: #f4f8ef;
         }
-        .brand-dot {
-            position: absolute;
-            top: 18px;
-            left: 18px;
-            width: 13px;
-            height: 13px;
+        .login-form-wrap form,
+        .login-form-wrap .intro {
+            width: min(100%, 460px);
+            margin-right: auto;
+            margin-left: auto;
+        }
+        .auth-logo {
+            display: block;
+            width: 78px;
+            height: 78px;
+            margin: 0 auto 18px;
             border-radius: 50%;
-            background: #7a8f5c;
-            box-shadow: 0 0 0 3px #e4ebd8;
+            object-fit: cover;
+            object-position: center;
         }
         .login-form-wrap h1 {
             margin: 0 0 8px;
-            font-size: 24px;
+            text-align: center;
+            font-size: 27px;
             font-weight: 700;
-            color: #65231d;
+            color: #30402a;
         }
         .back-link {
+            position: absolute;
+            top: 24px;
+            left: 28px;
             display: inline-flex;
             align-items: center;
             gap: 5px;
-            margin-bottom: 24px;
             color: #7a8f5c;
             font-size: 11px;
             font-weight: 700;
@@ -61,9 +71,12 @@
         }
         .back-link:hover { color: var(--sage); }
         .login-form-wrap .intro {
-            margin: 0 0 24px;
+            margin: 0 0 22px;
+            text-align: center;
             color: #6c5748;
             font-size: 10px;
+            margin-right: auto;
+            margin-left: auto;
         }
         .intro a, .login-options a {
             color: #7a8f5c;
@@ -76,7 +89,7 @@
             margin-bottom: 12px;
             padding: 0 16px;
             border: 0;
-            border-radius: 2px;
+            border-radius: 9px;
             outline: 0;
             background: #fff;
             color: #30251f;
@@ -114,7 +127,7 @@
         .login-button, .google-button {
             width: 100%;
             height: 40px;
-            border-radius: 4px;
+            border-radius: 9px;
             font-size: 10px;
             font-weight: 700;
         }
@@ -122,7 +135,7 @@
             border: 0;
             color: #fff;
             background: #7a8f5c;
-            box-shadow: 0 5px 12px rgba(163, 50, 41, 0.2);
+            box-shadow: 0 5px 12px rgba(95, 116, 70, 0.2);
             cursor: pointer;
         }
         .login-button:hover { background: #7a8f5c; }
@@ -139,42 +152,15 @@
             color: #dc2626;
             font-size: 10px;
         }
-        .login-art {
-            position: absolute;
-            top: 50%;
-            right: -170px;
-            width: 700px;
-            height: 700px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background: #f4c95d;
-            transform: translateY(-50%);
-        }
-        .login-plate {
-            width: 540px;
-            height: 540px;
-            padding: 25px;
-            border-radius: 50%;
-            background: #fffdf8;
-        }
-        .login-plate img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-        }
         @media (max-width: 900px) {
-            .login-form-wrap { width: min(92%, 500px); margin: auto; padding: 42px 28px; }
-            .login-art { opacity: .16; right: -360px; z-index: 0; }
+            .login-form-wrap { padding-right: 20px; padding-left: 20px; }
         }
     </style>
 </head>
 <body>
 <main class="login-page">
-    <span class="brand-dot" aria-hidden="true"></span>
     <section class="login-form-wrap">
+        <img class="auth-logo" src="{{ asset('images/racikara-logo.png') }}" alt="Racikara">
         <a class="back-link" href="{{ url('/') }}">← Kembali</a>
         <h1>Masuk</h1>
         <p class="intro">Belum punya akun? <a href="{{ route('register') }}">Daftar</a></p>
@@ -216,11 +202,6 @@
         </form>
     </section>
 
-    <aside class="login-art" aria-label="Hidangan pasta">
-        <div class="login-plate">
-            <img src="images/ayam.png" alt="Hidangan ayam">
-        </div>
-    </aside>
 </main>
 <script>
     document.querySelectorAll('[data-password-target]').forEach(function (button) {

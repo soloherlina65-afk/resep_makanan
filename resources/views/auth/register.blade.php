@@ -3,37 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buat akun - Resep Kita</title>
+    <title>Buat akun - Racikara</title>
     <style>
         * { box-sizing: border-box; }
         :root { --sage: #7a8f5c; --sage-light: #e4ebd8; }
         body {
             margin: 0;
             min-height: 100vh;
-            padding: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #fffaf5;
+            background: #f4f8ef;
             color: #542313;
             font-family: Figtree, Arial, Helvetica, sans-serif;
         }
         .signup-card {
-            width: min(100%, 1060px);
-            min-height: 700px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            overflow: hidden;
-            border: 1px solid #f0dfd2;
-            border-radius: 22px;
-            background: #fffdf9;
-            box-shadow: 0 18px 45px rgba(104, 51, 15, .12);
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            background: #f4f8ef;
         }
         .signup-form-side {
+            position: relative;
+            width: min(100% - 48px, 460px);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 52px clamp(32px, 8vw, 82px);
+            padding: 52px 0;
+        }
+        .signup-form-side form { width: 100%; }
+        .auth-logo {
+            display: block;
+            width: 78px;
+            height: 78px;
+            margin: 0 auto 18px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center;
         }
         .signup-title {
             margin: 0;
@@ -43,8 +51,9 @@
             font-weight: 850;
         }
         .back-link {
-            align-self: flex-start;
-            margin-bottom: 22px;
+            position: fixed;
+            top: 24px;
+            left: 28px;
             color: #5f7446;
             font-size: 12px;
             font-weight: 700;
@@ -118,32 +127,16 @@
         }
         .login-redirect a { color: var(--sage); font-weight: 800; text-decoration: none; }
         .login-redirect a:hover { color: #5f7446; }
-        .signup-image-side {
-            min-height: 100%;
-            margin: 18px 18px 18px 0;
-            overflow: hidden;
-            border-radius: 16px;
-            background: #ffd39b;
-        }
-        .signup-image-side img {
-            display: block;
-            width: 100%;
-            height: 100%;
-            min-height: 664px;
-            object-fit: cover;
-        }
         @media (max-width: 700px) {
-            body { padding: 12px; }
-            .signup-card { grid-template-columns: 1fr; min-height: auto; }
-            .signup-form-side { padding: 42px 28px; }
-            .signup-image-side { min-height: 260px; margin: 12px 12px 0; order: -1; }
-            .signup-image-side img { min-height: 260px; }
+            .signup-form-side { width: min(100% - 40px, 460px); padding: 42px 0; }
+            .back-link { top: 20px; left: 20px; }
         }
     </style>
 </head>
 <body>
 <main class="signup-card">
     <section class="signup-form-side">
+        <img class="auth-logo" src="{{ asset('images/racikara-logo.png') }}" alt="Racikara">
         <a class="back-link" href="{{ url('/') }}">← Kembali</a>
         <h1 class="signup-title">Buat akun</h1>
         <p class="signup-subtitle">Daftar dengan email dan kata sandi yang valid.</p>
@@ -197,9 +190,6 @@
 
         <p class="login-redirect">Sudah punya akun? <a href="{{ route('login') }}">Masuk</a></p>
     </section>
-    <aside class="signup-image-side" aria-label="Hidangan makanan">
-        <img src="{{ asset('images/plate.png') }}" alt="Hidangan makanan">
-    </aside>
 </main>
 <script>
     document.querySelectorAll('[data-password-target]').forEach(function (button) {

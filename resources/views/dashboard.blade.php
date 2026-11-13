@@ -16,7 +16,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name', 'Resep Kita') }}</title>
+    <title>{{ config('app.name', 'Racikara') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         :root {
@@ -35,6 +35,7 @@
         .dashboard-sidebar { width: 218px; flex: 0 0 218px; padding: 27px 16px; background: #fff; border-right: 1px solid var(--dash-line); }
         .dashboard-brand { display: flex; align-items: center; gap: 9px; padding: 0 10px 31px; color: var(--dash-brown); font-size: 21px; font-weight: 900; line-height: .9; }
         .dashboard-brand span { color: var(--dash-orange-dark); }
+        .dashboard-logo { width: 82px; height: 82px; border-radius: 50%; object-fit: cover; object-position: center; }
         .brand-chef { display: grid; place-items: center; width: 39px; height: 39px; color: var(--dash-orange-dark); font-size: 31px; }
         .sidebar-label { margin: 0 10px 12px; color: #6f8060; font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
         .dashboard-nav { display: grid; gap: 5px; }
@@ -130,8 +131,7 @@
 <div class="dashboard-shell">
     <aside class="dashboard-sidebar">
         <a class="dashboard-brand" href="{{ route('home') }}">
-            <span class="brand-chef">♨</span>
-            <span>RESEP<br><span>KITA</span></span>
+            <img class="dashboard-logo" src="{{ asset('images/racikara-logo.png') }}" alt="Racikara">
         </a>
         <p class="sidebar-label">Menu utama</p>
         <nav class="dashboard-nav" aria-label="Navigasi dashboard">

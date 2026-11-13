@@ -1,11 +1,11 @@
 @extends('app')
 
-@section('title', 'Kontak - ResepKita')
+@section('title', 'Kontak - Racikara')
 
 @section('content')
 <nav class="navbar">
     <div class="nav-container">
-        <a href="{{ route('home') }}" class="logo">RESEP<span>KITA</span></a>
+        <a href="{{ route('home') }}" class="logo"><img src="{{ asset('images/racikara-logo.png') }}" alt="Racikara"></a>
         <div class="nav-menu">
             <a href="{{ route('home') }}">Beranda</a>
             <a href="{{ route('home') }}#resep">Resep</a>
@@ -29,7 +29,7 @@
         <div class="contact-container">
             <span class="about-label">HUBUNGI KAMI</span>
             <h1>ADA PERTANYAAN?<br><span>KAMI SIAP MEMBANTU</span></h1>
-            <p>Punya saran resep, kendala akun, atau ingin berkolaborasi? Tulis pesanmu dan tim ResepKita akan membalas secepatnya.</p>
+            <p>Punya saran resep, kendala akun, atau ingin berkolaborasi? Tulis pesanmu dan tim Racikara akan membalas secepatnya.</p>
         </div>
     </section>
 
@@ -61,7 +61,7 @@
         <div class="faq-list">
             <details open><summary>Bagaimana cara mengirim resep buatanku?<span>−</span></summary><p>Masuk ke akunmu, buka menu My Recipes, lalu pilih Tambah Resep. Isi bahan, langkah, dan foto, kemudian kirim untuk ditinjau tim kami.</p></details>
             <details><summary>Saya lupa password, apa yang harus dilakukan?<span>+</span></summary><p>Pilih menu Masuk lalu klik Lupa Password. Ikuti petunjuk yang dikirim ke alamat email akunmu.</p></details>
-            <details><summary>Apakah ResepKita bisa diajak kerja sama?<span>+</span></summary><p>Tentu. Kirimkan detail kerja sama melalui formulir kontak di atas.</p></details>
+            <details><summary>Apakah Racikara bisa diajak kerja sama?<span>+</span></summary><p>Tentu. Kirimkan detail kerja sama melalui formulir kontak di atas.</p></details>
         </div>
     </section>
 
@@ -72,7 +72,7 @@
 </main>
 
 <footer>
-    <div class="footer-container"><div class="footer-brand"><div class="footer-logo">RESEP<span>KITA</span></div><p>Temukan inspirasi masakan lezat untuk setiap hari.</p></div><div class="footer-column"><h3>Menu</h3><a href="{{ route('home') }}">Beranda</a><a href="{{ route('home') }}#resep">Resep</a><a href="{{ route('home') }}#kategori">Kategori</a></div><div class="footer-column"><h3>Bantuan</h3><a href="{{ route('about') }}">Tentang Kami</a><a href="{{ route('contact') }}">Kontak</a><a href="#faq">FAQ</a></div></div>
-    <div class="footer-bottom">© 2026 ResepKita. Semua hak dilindungi.</div>
+    <div class="footer-container"><div class="footer-brand"><div class="footer-logo"><img src="{{ asset('images/racikara-logo.png') }}" alt="Racikara"></div><p>Temukan inspirasi masakan lezat untuk setiap hari.</p></div><div class="footer-column"><h3>Menu</h3><a href="{{ route('home') }}">Beranda</a><a href="{{ route('home') }}#resep">Resep</a><a href="{{ route('home') }}#kategori">Kategori</a></div><div class="footer-column"><h3>Bantuan</h3><a href="{{ route('about') }}">Tentang Kami</a><a href="{{ route('contact') }}">Kontak</a><a href="#faq">FAQ</a></div></div>
+    <div class="footer-bottom">© 2026 Racikara. Semua hak dilindungi.</div>
 </footer>
 @endsection

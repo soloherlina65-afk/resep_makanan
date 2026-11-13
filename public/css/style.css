@@ -682,10 +682,21 @@ a {
 }
 
 .logo {
+    display: flex;
+    align-items: center;
     font-size: 25px;
     font-weight: 800;
     color: #7a8f5c;
     letter-spacing: -1px;
+}
+
+.logo img {
+    display: block;
+    width: 82px;
+    height: 82px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center;
 }
 
 .logo span {
@@ -1026,7 +1037,9 @@ a {
 }
 
 .search-results-section .empty-recipe {
-    max-width: 560px;
+    grid-column: 1 / -1;
+    width: 100%;
+    max-width: 760px;
     margin: 25px auto 0;
     text-align: center;
 }
@@ -1185,7 +1198,9 @@ a {
     align-items: center;
     justify-content: center;
 
-    font-size: 30px;
+    color: #5f7446;
+    font-size: 26px;
+    font-weight: 800;
 
     margin-bottom: 18px;
 }
@@ -1437,6 +1452,15 @@ footer {
 .footer-logo {
     font-size: 25px;
     font-weight: 800;
+}
+
+.footer-logo img {
+    display: block;
+    width: 104px;
+    height: 104px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center;
 }
 
 .footer-logo span {

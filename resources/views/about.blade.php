@@ -1,11 +1,11 @@
 @extends('app')
 
-@section('title', 'Tentang Kami - ResepKita')
+@section('title', 'Tentang Kami - Racikara')
 
 @section('content')
 <nav class="navbar">
     <div class="nav-container">
-        <a href="{{ route('home') }}" class="logo">RESEP<span>KITA</span></a>
+        <a href="{{ route('home') }}" class="logo"><img src="{{ asset('images/racikara-logo.png') }}" alt="Racikara"></a>
         <div class="nav-menu">
             <a href="{{ route('home') }}">Beranda</a>
             <a href="{{ route('home') }}#resep">Resep</a>
@@ -29,7 +29,7 @@
             <div>
                 <span class="about-label">TENTANG KAMI</span>
                 <h1>BERBAGI RESEP,<br><span>MENYATUKAN KELUARGA</span></h1>
-                <p>ResepKita lahir dari satu keyakinan sederhana: masakan rumahan yang enak seharusnya mudah dibuat siapa saja. Kami mengumpulkan resep praktis dari dapur Nusantara agar setiap momen bersama keluarga terasa lebih hangat.</p>
+                <p>Racikara lahir dari satu keyakinan sederhana: masakan rumahan yang enak seharusnya mudah dibuat siapa saja. Kami mengumpulkan resep praktis dari dapur Nusantara agar setiap momen bersama keluarga terasa lebih hangat.</p>
                 <div class="about-actions">
                     <a class="about-primary-button" href="{{ route('home') }}#resep">Jelajahi Resep</a>
                     <a class="about-secondary-button" href="{{ route('register') }}">Gabung Komunitas</a>
@@ -53,8 +53,8 @@
         <div class="story-copy">
             <span class="about-label">CERITA KAMI</span>
             <h2>Dimulai dari meja makan keluarga</h2>
-            <p>ResepKita dibuat oleh sekelompok pecinta masakan yang sering kesulitan menemukan resep yang jelas, takarannya pas, dan bahannya mudah dicari. Dari sana kami mulai menyusun koleksi resep yang diuji langsung di dapur.</p>
-            <p>Kini ResepKita menjadi tempat berbagi bagi siapa pun yang ingin memasak, mencoba, dan menginspirasi orang lain.</p>
+            <p>Racikara dibuat oleh sekelompok pecinta masakan yang sering kesulitan menemukan resep yang jelas, takarannya pas, dan bahannya mudah dicari. Dari sana kami mulai menyusun koleksi resep yang diuji langsung di dapur.</p>
+            <p>Kini Racikara menjadi tempat berbagi bagi siapa pun yang ingin memasak, mencoba, dan menginspirasi orang lain.</p>
         </div>
     </section>
 
@@ -68,7 +68,7 @@
     </section>
 
     <section class="about-container about-team">
-        <div class="about-section-heading"><span class="about-label">TIM KAMI</span><h2>Orang-orang di balik ResepKita</h2><p>Tim kecil yang gemar memasak, mencoba, dan berbagi.</p></div>
+        <div class="about-section-heading"><span class="about-label">TIM KAMI</span><h2>Orang-orang di balik Racikara</h2><p>Tim kecil yang gemar memasak, mencoba, dan berbagi.</p></div>
         <div class="team-grid">
             @foreach ($teamMembers as $member)
                 <article>
@@ -125,7 +125,7 @@
 </main>
 
 <footer>
-    <div class="footer-container"><div class="footer-brand"><div class="footer-logo">RESEP<span>KITA</span></div><p>Temukan inspirasi masakan lezat untuk setiap hari.</p></div><div class="footer-column"><h3>Menu</h3><a href="{{ route('home') }}">Beranda</a><a href="{{ route('home') }}#resep">Resep</a><a href="{{ route('home') }}#kategori">Kategori</a></div><div class="footer-column"><h3>Bantuan</h3><a href="{{ route('about') }}">Tentang Kami</a><a href="{{ route('contact') }}">Kontak</a><a href="#">FAQ</a></div></div>
-    <div class="footer-bottom">© 2026 ResepKita. Semua hak dilindungi.</div>
+    <div class="footer-container"><div class="footer-brand"><div class="footer-logo"><img src="{{ asset('images/racikara-logo.png') }}" alt="Racikara"></div><p>Temukan inspirasi masakan lezat untuk setiap hari.</p></div><div class="footer-column"><h3>Menu</h3><a href="{{ route('home') }}">Beranda</a><a href="{{ route('home') }}#resep">Resep</a><a href="{{ route('home') }}#kategori">Kategori</a></div><div class="footer-column"><h3>Bantuan</h3><a href="{{ route('about') }}">Tentang Kami</a><a href="{{ route('contact') }}">Kontak</a><a href="#">FAQ</a></div></div>
+    <div class="footer-bottom">© 2026 Racikara. Semua hak dilindungi.</div>
 </footer>
 @endsection

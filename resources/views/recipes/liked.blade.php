@@ -14,7 +14,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Resep yang Disukai - Resep Kita</title>
+    <title>Resep yang Disukai - Racikara</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         :root { --orange:#7a8f5c; --orange-dark:#5f7446; --sage:#7a8f5c; --sage-light:#e4ebd8; --brown:#542313; --muted:#806b61; --line:#ead9cc; }
@@ -58,7 +58,7 @@
         .card-actions { display:flex; align-items:center; justify-content:space-between; gap:6px; margin-top:13px; padding-top:10px; border-top:1px solid #eadfd8; }
         .detail-link { color:var(--sage); font-size:12px; font-weight:700; text-decoration:none; }
         .remove-button { border:0; background:transparent; color:#b54c2f; font:inherit; font-size:11px; cursor:pointer; }
-        .empty { margin-top:12px; padding:55px 20px; border:1px dashed #e2c6b5; border-radius:15px; background:#fffdf9; text-align:center; }
+        .empty { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:calc(100vh - 220px); margin-top:12px; padding:20px; text-align:center; }
         .empty strong { display:block; margin:8px 0 5px; font-size:18px; }
         .empty p { margin:0 0 17px; color:var(--muted); font-size:13px; }
         .browse { display:inline-block; padding:10px 17px; border-radius:20px; background:var(--orange); color:#fff; font-size:12px; font-weight:800; text-decoration:none; }
@@ -80,7 +80,7 @@
 <body>
 <div class="liked-shell">
     <aside class="liked-sidebar">
-        <a class="brand" href="{{ route('home') }}"><span class="brand-icon">♨</span><span>RESEP<br><span>KITA</span></span></a>
+        <a class="brand" href="{{ route('home') }}"><img class="sidebar-logo" style="width: 82px; height: 82px; border-radius: 50%; object-fit: cover; object-position: center;" src="{{ asset('images/racikara-logo.png') }}" alt="Racikara"></a>
         <p class="menu-label">Menu utama</p>
         <nav class="side-nav">
             <a href="{{ route('home') }}"><span class="nav-icon">⌂</span>Beranda</a>

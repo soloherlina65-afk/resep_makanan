@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Pengaturan Profil - Resep Kita</title>
+    <title>Pengaturan Profil - Racikara</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         :root { --orange:#7a8f5c; --orange-dark:#5f7446; --sage:#7a8f5c; --sage-light:#e4ebd8; --brown:#542313; --muted:#806b61; --line:#f0dfd2; }
@@ -85,7 +85,7 @@
 <body>
 <div class="settings-shell">
     <aside class="settings-sidebar">
-        <a class="brand" href="{{ route('home') }}"><span class="brand-icon">♨</span><span>RESEP<br><span>KITA</span></span></a>
+        <a class="brand" href="{{ route('home') }}"><img class="sidebar-logo" style="width: 82px; height: 82px; border-radius: 50%; object-fit: cover; object-position: center;" src="{{ asset('images/racikara-logo.png') }}" alt="Racikara"></a>
         <p class="menu-label">Menu utama</p>
         <nav class="side-nav">
             <a href="{{ route('home') }}"><span class="nav-icon">⌂</span>Beranda</a>

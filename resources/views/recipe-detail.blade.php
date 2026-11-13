@@ -1,6 +1,6 @@
 @extends('app')
 
-@section('title', $recipe->nama_resep . ' - Resep Kita')
+@section('title', $recipe->nama_resep . ' - Racikara')
 
 @section('content')
 
@@ -339,7 +339,7 @@
 
             <div class="recipe-author">
                 <span>👤</span>
-                <span>Diposting oleh <strong>{{ $recipe->user?->name ?? 'Tim Resep Kita' }}</strong></span>
+                <span>Diposting oleh <strong>{{ $recipe->user?->name ?? 'Tim Racikara' }}</strong></span>
             </div>
         </div>
 
