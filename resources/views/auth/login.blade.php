@@ -156,6 +156,14 @@
             color: #dc2626;
             font-size: 10px;
         }
+        .google-error {
+            width: min(100%, 460px);
+            margin: 0 auto 14px;
+            color: #dc2626;
+            font-size: 10px;
+            line-height: 1.5;
+            text-align: center;
+        }
         @media (max-width: 900px) {
             .login-form-wrap { padding-right: 20px; padding-left: 20px; }
         }
@@ -171,7 +179,7 @@
 
         <x-auth-session-status class="mb-4" :status="session('status')" />
         @error('google')
-            <p class="auth-error">{{ $message }}</p>
+            <p class="google-error">{{ $message }}</p>
         @enderror
 
         <form method="POST" action="{{ route('login') }}">
