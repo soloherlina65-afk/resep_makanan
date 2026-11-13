@@ -8,6 +8,7 @@ use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\TeamMemberController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FollowController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +29,11 @@ Route::patch('/team-members', [TeamMemberController::class, 'update'])
     ->name('team-members.update');
 Route::get('/recipes', [RecipeController::class, 'index'])->name('recipes.index');
 Route::middleware('auth')->group(function () {
+    Route::post('/users/{id}/follow', [FollowController::class, 'follow'])
+    ->name('users.follow');
+
+Route::delete('/users/{id}/unfollow', [FollowController::class, 'unfollow'])
+    ->name('users.unfollow');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
     Route::post('/notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
@@ -66,6 +72,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    // Profil Publik Pengguna
+Route::get('/users/{id}', [FollowController::class, 'show'])
+    ->name('users.show');
+
+// Daftar Followers
+Route::get('/users/{id}/followers', [FollowController::class, 'followers'])
+    ->name('users.followers');
+
+// Daftar Following
+Route::get('/users/{id}/following', [FollowController::class, 'following'])
+    ->name('users.following');
+    
 });
+
 
 require __DIR__.'/auth.php';
