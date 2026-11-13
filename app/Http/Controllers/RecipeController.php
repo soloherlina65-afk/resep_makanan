@@ -13,25 +13,8 @@ class RecipeController extends Controller
 {
     public function mine(Request $request)
     {
-        $categoryId = $request->integer('category');
-        $search = trim((string) $request->input('search', ''));
-        $recipesQuery = $request->user()->recipes()->with('category')->latest();
-
-        if ($categoryId) {
-            $recipesQuery->where('category_id', $categoryId);
-        }
-        if ($search !== '') {
-            $recipesQuery->where(function ($query) use ($search) {
-                $query->where('nama_resep', 'like', '%' . $search . '%')
-                    ->orWhere('deskripsi', 'like', '%' . $search . '%');
-            });
-        }
-
         return view('recipes.mine', [
-            'recipes' => $recipesQuery->get(),
-            'categories' => Category::orderBy('nama_kategori')->get(),
-            'selectedCategory' => $categoryId,
-            'search' => $search,
+            'recipes' => $request->user()->recipes()->with('category')->latest()->get(),
         ]);
     }
 
