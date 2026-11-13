@@ -4,6 +4,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RecipeController;
+use App\Http\Controllers\TeamMemberController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,6 +21,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/tentang-kami', [HomeController::class, 'about'])->name('about');
 Route::get('/kontak', [HomeController::class, 'contact'])->name('contact');
+Route::patch('/team-members', [TeamMemberController::class, 'update'])
+    ->middleware(['auth', 'admin'])
+    ->name('team-members.update');
 Route::get('/recipes', [RecipeController::class, 'index'])->name('recipes.index');
 Route::middleware('auth')->group(function () {
     Route::get('/recipes/create', [RecipeController::class, 'create'])->name('recipes.create');

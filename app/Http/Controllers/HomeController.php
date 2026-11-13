@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Recipe;
+use App\Models\TeamMember;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -43,7 +44,9 @@ class HomeController extends Controller
 
     public function about()
     {
-        return view('about');
+        return view('about', [
+            'teamMembers' => TeamMember::orderBy('position')->get(),
+        ]);
     }
 
     public function contact()

@@ -48,6 +48,7 @@ class User extends Authenticatable
         'notify_new_recipes' => 'boolean',
         'notify_likes' => 'boolean',
         'notify_favorites' => 'boolean',
+        'is_admin' => 'boolean',
     ];
 
     public function favorites()

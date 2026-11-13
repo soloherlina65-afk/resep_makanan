@@ -70,16 +70,57 @@
     <section class="about-container about-team">
         <div class="about-section-heading"><span class="about-label">TIM KAMI</span><h2>Orang-orang di balik ResepKita</h2><p>Tim kecil yang gemar memasak, mencoba, dan berbagi.</p></div>
         <div class="team-grid">
-            <article><span>A</span><strong>Nama Anggota</strong><small>Pendiri & Kepala Dapur</small></article>
-            <article><span>B</span><strong>Nama Anggota</strong><small>Pengembang Web</small></article>
-            <article><span>C</span><strong>Nama Anggota</strong><small>Desainer</small></article>
-            <article><span>D</span><strong>Nama Anggota</strong><small>Kurator Resep</small></article>
+            @foreach ($teamMembers as $member)
+                <article>
+            @if ($member->photo)
+                <img class="team-member-photo" src="{{ asset('storage/' . $member->photo) }}" alt="Foto {{ $member->name }}">
+            @else
+                <span>{{ $member->initial }}</span>
+            @endif
+            <strong>{{ $member->name }}</strong>
+            <small>{{ $member->division }}</small>
+                </article>
+            @endforeach
         </div>
+
+        @auth
+            @if (auth()->user()->is_admin)
+            @if (session('status'))
+                <p class="team-status">{{ session('status') }}</p>
+            @endif
+
+            <form method="POST" action="{{ route('team-members.update') }}" class="team-edit-form" enctype="multipart/form-data">
+                @csrf
+                @method('PATCH')
+                <h3>Edit anggota dan divisi</h3>
+                <div class="team-edit-grid">
+                    @foreach ($teamMembers as $index => $member)
+                        <div class="team-edit-card">
+                            <input type="hidden" name="members[{{ $index }}][id]" value="{{ $member->id }}">
+                            <label>
+                                Nama anggota
+                                <input type="text" name="members[{{ $index }}][name]" value="{{ old("members.$index.name", $member->name) }}" maxlength="100" required>
+                            </label>
+                            <label>
+                                Divisi
+                                <input type="text" name="members[{{ $index }}][division]" value="{{ old("members.$index.division", $member->division) }}" maxlength="100" required>
+                            </label>
+                            <label>
+                                Foto anggota
+                                <input type="file" name="members[{{ $index }}][photo]" accept="image/jpeg,image/png,image/webp">
+                            </label>
+                        </div>
+                    @endforeach
+                </div>
+                <button type="submit">Simpan perubahan</button>
+            </form>
+            @endif
+        @endauth
     </section>
 
     <section class="about-container about-join">
         <div><h2>Siap memasak bersama kami?</h2><p>Daftar gratis, simpan resep favoritmu, dan bagikan masakan terbaikmu dengan komunitas.</p></div>
-        <a href="{{ auth()->check() ? route('recipes.create') : route('register') }}">Daftar Sekarang</a>
+        <a href="{{ route('register') }}">Daftar Sekarang</a>
     </section>
 </main>
 
