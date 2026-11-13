@@ -21,6 +21,7 @@ class RecipeController extends Controller
     public function favorites(Request $request)
     {
         $categoryId = $request->integer('category');
+        $search = trim((string) $request->input('search', ''));
         $favoritesQuery = $request->user()->favorites()->with('recipe.category')->latest();
 
         if ($categoryId) {
@@ -28,17 +29,25 @@ class RecipeController extends Controller
                 $query->where('category_id', $categoryId);
             });
         }
+        if ($search !== '') {
+            $favoritesQuery->whereHas('recipe', function ($query) use ($search) {
+                $query->where('nama_resep', 'like', '%' . $search . '%')
+                    ->orWhere('deskripsi', 'like', '%' . $search . '%');
+            });
+        }
 
         return view('recipes.favorites', [
             'favorites' => $favoritesQuery->get(),
             'categories' => Category::orderBy('nama_kategori')->get(),
             'selectedCategory' => $categoryId,
+            'search' => $search,
         ]);
     }
 
     public function liked(Request $request)
     {
         $categoryId = $request->integer('category');
+        $search = trim((string) $request->input('search', ''));
         $likedQuery = $request->user()->likedRecipes()->with('recipe.category')->latest();
 
         if ($categoryId) {
@@ -46,11 +55,18 @@ class RecipeController extends Controller
                 $query->where('category_id', $categoryId);
             });
         }
+        if ($search !== '') {
+            $likedQuery->whereHas('recipe', function ($query) use ($search) {
+                $query->where('nama_resep', 'like', '%' . $search . '%')
+                    ->orWhere('deskripsi', 'like', '%' . $search . '%');
+            });
+        }
 
         return view('recipes.liked', [
             'likedRecipes' => $likedQuery->get(),
             'categories' => Category::orderBy('nama_kategori')->get(),
             'selectedCategory' => $categoryId,
+            'search' => $search,
         ]);
     }
 

@@ -41,6 +41,11 @@
         .category-bar { display:flex; gap:9px; overflow-x:auto; padding:3px 0 14px; }
         .category-chip { flex:0 0 auto; padding:9px 15px; border:1px solid var(--line); border-radius:20px; background:#fffdf9; color:#5f4438; font-size:12px; text-decoration:none; }
         .category-chip:hover,.category-chip.active { border-color:var(--sage); background:var(--sage-light); color:#5f7446; }
+        .recipe-search { display:flex; gap:9px; margin-bottom:14px; }
+        .recipe-search input { flex:1; min-width:0; height:40px; padding:0 14px; border:1px solid var(--line); border-radius:10px; background:#fff; color:var(--brown); outline:0; font:inherit; font-size:13px; }
+        .recipe-search input:focus { border-color:var(--sage); box-shadow:0 0 0 3px rgba(122,143,92,.14); }
+        .recipe-search button { border:0; border-radius:10px; padding:0 18px; background:var(--sage); color:#fff; font:inherit; font-size:13px; font-weight:700; cursor:pointer; }
+        .recipe-search button:hover { background:var(--orange-dark); }
         .liked-toolbar { display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border:1px solid var(--line); border-radius:15px; background:#fffdf9; }
         .liked-toolbar h2 { margin:0; font-size:18px; }
         .liked-toolbar h2 span { color:var(--orange); font-size:24px; }
@@ -99,11 +104,16 @@
             <div class="top-user"><span>♧</span><span class="avatar">{{ strtoupper(substr(auth()->user()->name,0,1)) }}</span>⌄</div>
         </header>
         <nav class="category-bar" aria-label="Filter kategori">
-            <a class="category-chip {{ !$selectedCategory ? 'active' : '' }}" href="{{ route('recipes.liked') }}">Semua</a>
+            <a class="category-chip {{ !$selectedCategory ? 'active' : '' }}" href="{{ route('recipes.liked', $search ? ['search' => $search] : []) }}">Semua</a>
             @foreach ($categories as $category)
-                <a class="category-chip {{ $selectedCategory == $category->id ? 'active' : '' }}" href="{{ route('recipes.liked', ['category' => $category->id]) }}">{{ $category->nama_kategori }}</a>
+                <a class="category-chip {{ $selectedCategory == $category->id ? 'active' : '' }}" href="{{ route('recipes.liked', array_filter(['category' => $category->id, 'search' => $search])) }}">{{ $category->nama_kategori }}</a>
             @endforeach
         </nav>
+        <form class="recipe-search" method="GET" action="{{ route('recipes.liked') }}">
+            <input type="search" name="search" value="{{ $search }}" placeholder="Cari resep yang disukai..." aria-label="Cari resep yang disukai">
+            @if ($selectedCategory)<input type="hidden" name="category" value="{{ $selectedCategory }}">@endif
+            <button type="submit">Cari</button>
+        </form>
         <section class="liked-toolbar"><h2><span>♥</span> Resep Disukai</h2><span class="count">{{ $likedRecipes->count() }} resep disukai</span></section>
         @if ($likedRecipes->isNotEmpty())
             <section class="recipe-grid">
