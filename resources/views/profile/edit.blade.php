@@ -96,7 +96,7 @@
         </nav>
         <hr class="side-divider">
         <a href="{{ route('profile.edit') }}" class="side-nav active"><span class="nav-icon">⚙</span>Pengaturan Profil</a>
-        <form method="POST" action="{{ route('logout') }}">@csrf<button type="submit" class="logout"><span class="nav-icon">↪</span>Logout</button></form>
+        <form method="POST" action="{{ route('logout') }}" data-logout-form>@csrf<button type="submit" class="logout"><span class="nav-icon">↪</span>Logout</button></form>
     </aside>
     <main class="settings-main">
         <header class="settings-top"><div><h1>Pengaturan Profil</h1><p>Kelola informasi akun dan preferensi kamu.</p></div><div class="top-user"><span>♧</span><span class="avatar-small">{{ strtoupper(substr($user->name,0,1)) }}</span>⌄</div></header>

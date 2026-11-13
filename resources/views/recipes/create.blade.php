@@ -94,7 +94,7 @@
         </nav>
         <hr class="side-divider">
         <a href="{{ route('profile.edit') }}" class="side-nav"><span class="nav-icon">⚙</span>Pengaturan Profil</a>
-        <form method="POST" action="{{ route('logout') }}">@csrf<button class="logout" type="submit"><span class="nav-icon">↪</span>Logout</button></form>
+        <form method="POST" action="{{ route('logout') }}" data-logout-form>@csrf<button class="logout" type="submit"><span class="nav-icon">↪</span>Logout</button></form>
     </aside>
     <main class="create-main">
         <header class="topbar">

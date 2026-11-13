@@ -143,7 +143,7 @@
         </nav>
         <hr class="sidebar-divider">
         <a href="{{ route('profile.edit') }}" class="dashboard-nav"><span class="nav-icon">⚙</span>Pengaturan Profil</a>
-        <form method="POST" action="{{ route('logout') }}">
+        <form method="POST" action="{{ route('logout') }}" data-logout-form>
             @csrf
             <button type="submit" class="dashboard-logout"><span class="nav-icon">↪</span>Logout</button>
         </form>
