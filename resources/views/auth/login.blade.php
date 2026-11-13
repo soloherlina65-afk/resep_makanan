@@ -170,6 +170,9 @@
         <p class="intro">Belum punya akun? <a href="{{ route('register') }}">Daftar</a></p>
 
         <x-auth-session-status class="mb-4" :status="session('status')" />
+        @error('google')
+            <p class="auth-error">{{ $message }}</p>
+        @enderror
 
         <form method="POST" action="{{ route('login') }}">
             @csrf
