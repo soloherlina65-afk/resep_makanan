@@ -110,7 +110,8 @@
                             <h3 title="{{ $recipe->nama_resep }}">{{ $recipe->nama_resep }}</h3>
                             <p class="recipe-meta">Waktu memasak: {{ $recipe->waktu_masak }} menit</p>
                             <div class="card-actions">
-                                <a href="{{ route('recipes.show',$recipe) }}">✎ Lihat resep</a>
+                                <a href="{{ route('recipes.edit',$recipe) }}">✎ Edit</a>
+                                <a href="{{ route('recipes.show',$recipe) }}">Lihat resep →</a>
                                 <form method="POST" action="{{ route('recipes.destroy',$recipe) }}" onsubmit="return confirm('Hapus resep ini?')">
                                     @csrf @method('DELETE')
                                     <button type="submit">♜ Hapus</button>

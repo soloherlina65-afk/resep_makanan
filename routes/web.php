@@ -28,10 +28,12 @@ Route::patch('/team-members', [TeamMemberController::class, 'update'])
 Route::get('/recipes', [RecipeController::class, 'index'])->name('recipes.index');
 Route::middleware('auth')->group(function () {
     Route::get('/recipes/create', [RecipeController::class, 'create'])->name('recipes.create');
+    Route::get('/recipes/{recipe}/edit', [RecipeController::class, 'edit'])->name('recipes.edit');
     Route::get('/my-recipes', [RecipeController::class, 'mine'])->name('recipes.mine');
     Route::get('/favorites', [RecipeController::class, 'favorites'])->name('recipes.favorites');
     Route::get('/liked-recipes', [RecipeController::class, 'liked'])->name('recipes.liked');
     Route::post('/recipes', [RecipeController::class, 'store'])->name('recipes.store');
+    Route::put('/recipes/{recipe}', [RecipeController::class, 'update'])->name('recipes.update');
     Route::delete('/recipes/{recipe}', [RecipeController::class, 'destroy'])->name('recipes.destroy');
     Route::post('/recipes/{recipe}/reviews', [ReviewController::class, 'store'])->name('recipes.reviews.store');
 });

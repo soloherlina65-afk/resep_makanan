@@ -91,6 +91,18 @@ class RecipeController extends Controller
         ]);
     }
 
+    public function edit(Request $request, Recipe $recipe)
+    {
+        abort_unless($recipe->user_id === $request->user()->id, 403);
+
+        $recipe->load(['category', 'bahan', 'steps']);
+
+        return view('recipes.create', [
+            'categories' => Category::orderBy('nama_kategori')->get(),
+            'recipe' => $recipe,
+        ]);
+    }
+
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
@@ -144,6 +156,69 @@ class RecipeController extends Controller
 
         return redirect()->route('recipes.show', $recipe)
             ->with('success', 'Resep berhasil diposting.');
+    }
+
+    public function update(Request $request, Recipe $recipe): RedirectResponse
+    {
+        abort_unless($recipe->user_id === $request->user()->id, 403);
+
+        $validated = $request->validate([
+            'nama_resep' => ['required', 'string', 'max:255'],
+            'category_id' => ['required', 'exists:categories,id'],
+            'deskripsi' => ['required', 'string'],
+            'waktu_masak' => ['required', 'integer', 'min:1', 'max:1440'],
+            'porsi' => ['required', 'integer', 'min:1', 'max:100'],
+            'tingkat_kesulitan' => ['required', 'in:Mudah,Sedang,Sulit'],
+            'foto' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'bahan' => ['required', 'array', 'min:1'],
+            'bahan.*' => ['required', 'string', 'max:255'],
+            'langkah' => ['required', 'array', 'min:1'],
+            'langkah.*' => ['required', 'string', 'max:1000'],
+        ], [
+            'bahan.required' => 'Tambahkan minimal satu bahan.',
+            'bahan.*.required' => 'Nama bahan tidak boleh kosong.',
+            'langkah.required' => 'Tambahkan minimal satu langkah.',
+            'langkah.*.required' => 'Deskripsi langkah tidak boleh kosong.',
+        ]);
+
+        $oldPhoto = $recipe->foto;
+
+        DB::transaction(function () use ($validated, $request, $recipe) {
+            if ($request->hasFile('foto')) {
+                $validated['foto'] = $request->file('foto')->store('recipes', 'public');
+            }
+
+            $recipe->update([
+                'category_id' => $validated['category_id'],
+                'nama_resep' => $validated['nama_resep'],
+                'deskripsi' => $validated['deskripsi'],
+                'foto' => $validated['foto'] ?? $recipe->foto,
+                'waktu_masak' => $validated['waktu_masak'],
+                'porsi' => $validated['porsi'],
+                'tingkat_kesulitan' => $validated['tingkat_kesulitan'],
+            ]);
+
+            $recipe->bahan()->delete();
+            $recipe->steps()->delete();
+
+            foreach ($validated['bahan'] as $ingredient) {
+                $recipe->bahan()->create(['nama_bahan' => $ingredient]);
+            }
+
+            foreach ($validated['langkah'] as $order => $step) {
+                $recipe->steps()->create([
+                    'urutan' => $order + 1,
+                    'deskripsi' => $step,
+                ]);
+            }
+        });
+
+        if ($request->hasFile('foto') && $oldPhoto && ! str_starts_with($oldPhoto, 'images/')) {
+            Storage::disk('public')->delete($oldPhoto);
+        }
+
+        return redirect()->route('recipes.show', $recipe)
+            ->with('success', 'Resep berhasil diperbarui.');
     }
 
     /**

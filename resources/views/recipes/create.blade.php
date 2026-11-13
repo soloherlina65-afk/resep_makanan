@@ -1,10 +1,16 @@
+@php
+    $recipe = $recipe ?? null;
+    $isEditing = $recipe !== null;
+    $ingredientValues = old('bahan', $isEditing ? $recipe->bahan->pluck('nama_bahan')->all() : ['']);
+    $stepValues = old('langkah', $isEditing ? $recipe->steps->pluck('deskripsi')->all() : ['']);
+@endphp
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Posting Resep Baru - Racikara</title>
+    <title>{{ $isEditing ? 'Edit Resep' : 'Posting Resep Baru' }} - Racikara</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         :root { --orange: #7a8f5c; --orange-dark: #5f7446; --sage: #7a8f5c; --sage-light: #e4ebd8; --brown: #542313; --muted: #806b61; --line: #f0dfd2; }
@@ -103,26 +109,27 @@
         </header>
         <section class="share-banner"><span class="pot">🍲</span><div><h2>Bagikan Resep Andalanmu!</h2><p>Tulis resep masakan favoritmu dan inspirasi untuk orang lain.</p></div></section>
 
-        <form class="form-card" method="POST" action="{{ route('recipes.store') }}" enctype="multipart/form-data">
+        <form class="form-card" method="POST" action="{{ $isEditing ? route('recipes.update', $recipe) : route('recipes.store') }}" enctype="multipart/form-data">
             @csrf
-            <div class="form-heading"><span class="form-heading-icon">♨</span><div><h2>Posting Resep Baru</h2><p>Lengkapi informasi resep dengan detail agar lebih mudah diikuti.</p></div></div>
+            @if ($isEditing) @method('PUT') @endif
+            <div class="form-heading"><span class="form-heading-icon">♨</span><div><h2>{{ $isEditing ? 'Edit Resep' : 'Posting Resep Baru' }}</h2><p>Lengkapi informasi resep dengan detail agar lebih mudah diikuti.</p></div></div>
             @if ($errors->any()) <div class="error" style="margin: 12px 0;">Periksa kembali data resep yang kamu masukkan.</div> @endif
             <div class="create-grid">
                 <div>
-                    <div class="field"><label for="nama_resep">Nama Resep <span class="required">*</span></label><input class="input" id="nama_resep" name="nama_resep" value="{{ old('nama_resep') }}" placeholder="Masukkan nama resep..." required>@error('nama_resep')<div class="error">{{ $message }}</div>@enderror</div>
-                    <div class="field"><label for="category_search">Kategori <span class="required">*</span></label><div class="category-search"><input class="input" id="category_search" name="category_name" list="category_options" value="{{ old('category_name') }}" placeholder="Cari atau pilih kategori..." autocomplete="off" required><input type="hidden" id="category_id" name="category_id" value="{{ old('category_id') }}"><datalist id="category_options">@foreach ($categories as $category)<option value="{{ $category->nama_kategori }}" data-id="{{ $category->id }}"></option>@endforeach</datalist></div><div class="category-hint">Ketik nama kategori untuk mencari, lalu pilih saran yang tersedia.</div><div id="category-error" class="error" hidden>Pilih kategori dari daftar yang tersedia.</div>@error('category_id')<div class="error">{{ $message }}</div>@enderror</div>
-                    <div class="field"><label for="deskripsi">Deskripsi Resep <span class="required">*</span></label><textarea class="textarea" id="deskripsi" name="deskripsi" placeholder="Ceritakan sedikit tentang resep ini..." required>{{ old('deskripsi') }}</textarea>@error('deskripsi')<div class="error">{{ $message }}</div>@enderror</div>
+                    <div class="field"><label for="nama_resep">Nama Resep <span class="required">*</span></label><input class="input" id="nama_resep" name="nama_resep" value="{{ old('nama_resep', $recipe?->nama_resep) }}" placeholder="Masukkan nama resep..." required>@error('nama_resep')<div class="error">{{ $message }}</div>@enderror</div>
+                    <div class="field"><label for="category_search">Kategori <span class="required">*</span></label><div class="category-search"><input class="input" id="category_search" name="category_name" list="category_options" value="{{ old('category_name', $recipe?->category?->nama_kategori) }}" placeholder="Cari atau pilih kategori..." autocomplete="off" required><input type="hidden" id="category_id" name="category_id" value="{{ old('category_id', $recipe?->category_id) }}"><datalist id="category_options">@foreach ($categories as $category)<option value="{{ $category->nama_kategori }}" data-id="{{ $category->id }}"></option>@endforeach</datalist></div><div class="category-hint">Ketik nama kategori untuk mencari, lalu pilih saran yang tersedia.</div><div id="category-error" class="error" hidden>Pilih kategori dari daftar yang tersedia.</div>@error('category_id')<div class="error">{{ $message }}</div>@enderror</div>
+                    <div class="field"><label for="deskripsi">Deskripsi Resep <span class="required">*</span></label><textarea class="textarea" id="deskripsi" name="deskripsi" placeholder="Ceritakan sedikit tentang resep ini..." required>{{ old('deskripsi', $recipe?->deskripsi) }}</textarea>@error('deskripsi')<div class="error">{{ $message }}</div>@enderror</div>
                     <div class="three-fields">
-                        <div class="field"><label for="waktu_masak">Waktu Masak</label><input class="input" id="waktu_masak" type="number" min="1" name="waktu_masak" value="{{ old('waktu_masak') }}" placeholder="Contoh: 30" required></div>
-                        <div class="field"><label for="porsi">Porsi</label><input class="input" id="porsi" type="number" min="1" name="porsi" value="{{ old('porsi') }}" placeholder="Contoh: 4" required></div>
-                        <div class="field"><label for="tingkat_kesulitan">Tingkat Kesulitan</label><select class="select" id="tingkat_kesulitan" name="tingkat_kesulitan" required><option value="">Pilih tingkat kesulitan</option>@foreach (['Mudah', 'Sedang', 'Sulit'] as $level)<option @selected(old('tingkat_kesulitan') === $level)>{{ $level }}</option>@endforeach</select></div>
+                        <div class="field"><label for="waktu_masak">Waktu Masak</label><input class="input" id="waktu_masak" type="number" min="1" name="waktu_masak" value="{{ old('waktu_masak', $recipe?->waktu_masak) }}" placeholder="Contoh: 30" required></div>
+                        <div class="field"><label for="porsi">Porsi</label><input class="input" id="porsi" type="number" min="1" name="porsi" value="{{ old('porsi', $recipe?->porsi) }}" placeholder="Contoh: 4" required></div>
+                        <div class="field"><label for="tingkat_kesulitan">Tingkat Kesulitan</label><select class="select" id="tingkat_kesulitan" name="tingkat_kesulitan" required><option value="">Pilih tingkat kesulitan</option>@foreach (['Mudah', 'Sedang', 'Sulit'] as $level)<option @selected(old('tingkat_kesulitan', $recipe?->tingkat_kesulitan) === $level)>{{ $level }}</option>@endforeach</select></div>
                     </div>
-                    <div class="dynamic-panel"><div class="panel-top"><span class="panel-title">🧺 Bahan-Bahan <span class="required">*</span></span><button class="add-row" type="button" data-add="ingredients">+ Tambah Bahan</button></div><div id="ingredients">@foreach (old('bahan', ['']) as $ingredient)<div class="dynamic-row"><input class="input" name="bahan[]" value="{{ $ingredient }}" placeholder="Contoh: 2 siung bawang putih" required><button class="remove-row" type="button" aria-label="Hapus bahan">×</button></div>@endforeach</div></div>
-                    <div class="dynamic-panel" style="margin-top: 12px;"><div class="panel-top"><span class="panel-title">☷ Langkah-Langkah <span class="required">*</span></span><button class="add-row" type="button" data-add="steps">+ Tambah Langkah</button></div><div id="steps">@foreach (old('langkah', ['']) as $step)<div class="dynamic-row"><input class="input" name="langkah[]" value="{{ $step }}" placeholder="Tuliskan langkah memasak..." required><button class="remove-row" type="button" aria-label="Hapus langkah">×</button></div>@endforeach</div></div>
+                    <div class="dynamic-panel"><div class="panel-top"><span class="panel-title">🧺 Bahan-Bahan <span class="required">*</span></span><button class="add-row" type="button" data-add="ingredients">+ Tambah Bahan</button></div><div id="ingredients">@foreach ($ingredientValues as $ingredient)<div class="dynamic-row"><input class="input" name="bahan[]" value="{{ $ingredient }}" placeholder="Contoh: 2 siung bawang putih" required><button class="remove-row" type="button" aria-label="Hapus bahan">×</button></div>@endforeach</div></div>
+                    <div class="dynamic-panel" style="margin-top: 12px;"><div class="panel-top"><span class="panel-title">☷ Langkah-Langkah <span class="required">*</span></span><button class="add-row" type="button" data-add="steps">+ Tambah Langkah</button></div><div id="steps">@foreach ($stepValues as $step)<div class="dynamic-row"><input class="input" name="langkah[]" value="{{ $step }}" placeholder="Tuliskan langkah memasak..." required><button class="remove-row" type="button" aria-label="Hapus langkah">×</button></div>@endforeach</div></div>
                 </div>
-                <aside class="upload-panel"><span class="panel-title">📷 Foto Resep</span><small style="color: var(--muted);">Unggah foto menarik untuk resep kamu</small><label class="upload-box" for="foto"><span class="upload-icon">⇧</span><strong>Klik untuk upload foto</strong><small>atau drag & drop<br>Format: JPG, PNG | Maks: 2MB</small></label><input id="foto" name="foto" type="file" accept=".jpg,.jpeg,.png,.webp" hidden><img id="preview" class="preview" alt="Pratinjau foto resep">@error('foto')<div class="error">{{ $message }}</div>@enderror</aside>
+                <aside class="upload-panel"><span class="panel-title">📷 Foto Resep</span><small style="color: var(--muted);">Unggah foto menarik untuk resep kamu</small>@if ($recipe?->foto)<img class="preview" style="display:block;" src="{{ str_starts_with($recipe->foto, 'images/') ? asset($recipe->foto) : asset('storage/' . $recipe->foto) }}" alt="Foto {{ $recipe->nama_resep }}">@endif<label class="upload-box" for="foto"><span class="upload-icon">⇧</span><strong>{{ $isEditing ? 'Ganti foto resep' : 'Klik untuk upload foto' }}</strong><small>atau drag & drop<br>Format: JPG, PNG | Maks: 2MB</small></label><input id="foto" name="foto" type="file" accept=".jpg,.jpeg,.png,.webp" hidden><img id="preview" class="preview" alt="Pratinjau foto resep">@error('foto')<div class="error">{{ $message }}</div>@enderror</aside>
             </div>
-            <div class="form-actions"><a class="button back-button" href="{{ route('dashboard') }}">← &nbsp;Kembali</a><button class="button post-button" type="submit">➤ &nbsp;Posting Resep</button></div>
+            <div class="form-actions"><a class="button back-button" href="{{ route('recipes.mine') }}">← &nbsp;Kembali</a><button class="button post-button" type="submit">➤ &nbsp;{{ $isEditing ? 'Simpan Perubahan' : 'Posting Resep' }}</button></div>
         </form>
     </main>
 </div>
