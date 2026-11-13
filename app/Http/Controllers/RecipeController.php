@@ -161,7 +161,7 @@ class RecipeController extends Controller
     public function show($id)
     {
         // Mengambil resep beserta relasi kategori, bahan (ingredients), dan langkah (steps)
-      $recipe = Recipe::with(['category', 'bahan', 'steps', 'user'])->findOrFail($id);
+      $recipe = Recipe::with(['category', 'bahan', 'steps', 'user', 'reviews.user'])->findOrFail($id);
         // Mengarahkan ke view detail (sesuaikan path foldernya, misal: recipes.detail atau recipe-detail)
         return view('recipe-detail', compact('recipe'));
     }

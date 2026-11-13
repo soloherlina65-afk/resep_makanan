@@ -299,6 +299,144 @@
         padding: 15px;
     }
 
+    .review-summary {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0 0 20px;
+        color: #8c644d;
+        font-size: 13px;
+    }
+
+    .review-stars {
+        color: #e5a227;
+        font-size: 21px;
+        letter-spacing: 2px;
+    }
+
+    .review-form {
+        padding: 18px;
+        border-radius: 16px;
+        background: #faf6f0;
+        border: 1px solid #f3eae2;
+        margin-bottom: 22px;
+    }
+
+    .review-form label {
+        display: block;
+        margin-bottom: 8px;
+        color: #51443d;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .rating-options {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+        gap: 3px;
+        margin-bottom: 14px;
+    }
+
+    .rating-options input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .rating-options label {
+        margin: 0;
+        color: #d7c7b9;
+        cursor: pointer;
+        font-size: 28px;
+        line-height: 1;
+    }
+
+    .rating-options label:hover,
+    .rating-options label:hover ~ label,
+    .rating-options input:checked ~ label {
+        color: #e5a227;
+    }
+
+    .review-textarea {
+        width: 100%;
+        min-height: 88px;
+        resize: vertical;
+        padding: 11px 13px;
+        border: 1px solid #eadfd5;
+        border-radius: 10px;
+        outline: 0;
+        background: #fff;
+        color: #51443d;
+        font: inherit;
+        font-size: 13px;
+    }
+
+    .review-textarea:focus {
+        border-color: #7a8f5c;
+        box-shadow: 0 0 0 3px rgba(122, 143, 92, .14);
+    }
+
+    .review-submit {
+        margin-top: 10px;
+        padding: 10px 17px;
+        border: 0;
+        border-radius: 18px;
+        background: #7a8f5c;
+        color: #fff;
+        font: inherit;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .review-login {
+        color: #7a8f5c;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .review-item {
+        padding: 15px 0;
+        border-top: 1px solid #f1e5dc;
+    }
+
+    .review-item:first-of-type {
+        padding-top: 0;
+        border-top: 0;
+    }
+
+    .review-item-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 6px;
+    }
+
+    .review-item-header strong {
+        color: #432017;
+        font-size: 13px;
+    }
+
+    .review-item-date {
+        color: #a89587;
+        font-size: 11px;
+    }
+
+    .review-item .review-stars {
+        font-size: 15px;
+        letter-spacing: 1px;
+    }
+
+    .review-comment {
+        margin: 7px 0 0;
+        color: #615249;
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
     @media (max-width: 650px) {
         .recipe-header h1 {
             font-size: 26px;
@@ -473,6 +611,72 @@
                     Langkah memasak belum ditambahkan.
                 </p>
             @endif
+        </div>
+
+        @php
+            $averageRating = $recipe->reviews->avg('rating');
+            $userReview = auth()->check()
+                ? $recipe->reviews->firstWhere('user_id', auth()->id())
+                : null;
+        @endphp
+
+        <div class="detail-card">
+            <h2>⭐ Rating dan Komentar</h2>
+
+            <div class="review-summary">
+                <span class="review-stars" aria-label="{{ $averageRating ? number_format($averageRating, 1) . ' dari 5' : 'Belum ada rating' }}">
+                    @for ($star = 1; $star <= 5; $star++)
+                        {{ $averageRating && $star <= round($averageRating) ? '★' : '☆' }}
+                    @endfor
+                </span>
+                <span>
+                    {{ $averageRating ? number_format($averageRating, 1) . '/5' : 'Belum ada rating' }}
+                    ({{ $recipe->reviews->count() }} ulasan)
+                </span>
+            </div>
+
+            @auth
+                <form class="review-form" method="POST" action="{{ route('recipes.reviews.store', $recipe) }}">
+                    @csrf
+                    <label>Berikan rating kamu</label>
+                    <div class="rating-options">
+                        @for ($star = 5; $star >= 1; $star--)
+                            <input id="rating-{{ $star }}" type="radio" name="rating" value="{{ $star }}"
+                                @checked((int) old('rating', $userReview?->rating) === $star) required>
+                            <label for="rating-{{ $star }}" title="{{ $star }} bintang">★</label>
+                        @endfor
+                    </div>
+                    @error('rating') <p class="auth-error">{{ $message }}</p> @enderror
+                    <label for="review-comment">Komentar (opsional)</label>
+                    <textarea class="review-textarea" id="review-comment" name="comment"
+                        maxlength="1000" placeholder="Bagikan pendapatmu tentang resep ini...">{{ old('comment', $userReview?->comment) }}</textarea>
+                    @error('comment') <p class="auth-error">{{ $message }}</p> @enderror
+                    <button class="review-submit" type="submit">
+                        {{ $userReview ? 'Perbarui ulasan' : 'Kirim ulasan' }}
+                    </button>
+                </form>
+            @else
+                <p><a class="review-login" href="{{ route('login') }}">Masuk untuk memberi rating dan komentar.</a></p>
+            @endauth
+
+            @forelse ($recipe->reviews as $review)
+                <article class="review-item">
+                    <div class="review-item-header">
+                        <strong>{{ $review->user->name }}</strong>
+                        <span class="review-item-date">{{ $review->created_at->format('d M Y') }}</span>
+                    </div>
+                    <span class="review-stars" aria-label="{{ $review->rating }} dari 5">
+                        @for ($star = 1; $star <= 5; $star++)
+                            {{ $star <= $review->rating ? '★' : '☆' }}
+                        @endfor
+                    </span>
+                    @if ($review->comment)
+                        <p class="review-comment">{{ $review->comment }}</p>
+                    @endif
+                </article>
+            @empty
+                <p class="empty-message">Belum ada rating atau komentar.</p>
+            @endforelse
         </div>
 
     </div>

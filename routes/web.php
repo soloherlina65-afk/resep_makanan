@@ -4,6 +4,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RecipeController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\TeamMemberController;
 use Illuminate\Support\Facades\Route;
 
@@ -32,6 +33,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/liked-recipes', [RecipeController::class, 'liked'])->name('recipes.liked');
     Route::post('/recipes', [RecipeController::class, 'store'])->name('recipes.store');
     Route::delete('/recipes/{recipe}', [RecipeController::class, 'destroy'])->name('recipes.destroy');
+    Route::post('/recipes/{recipe}/reviews', [ReviewController::class, 'store'])->name('recipes.reviews.store');
 });
 Route::get('/recipes/{id}', [RecipeController::class, 'show'])->name('recipes.show');
 Route::post('/recipes/{recipe}/reaction', [FavoriteController::class, 'toggle'])

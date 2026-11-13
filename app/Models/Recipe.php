@@ -58,4 +58,9 @@ class Recipe extends Model
     {
         return $this->hasMany(Favorite::class)->where('type', 'favorite');
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class)->latest();
+    }
 }
