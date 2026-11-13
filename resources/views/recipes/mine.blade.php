@@ -38,6 +38,14 @@
         .topbar p { margin:4px 0 0; color:var(--muted); font-size:14px; }
         .top-user { display:flex; align-items:center; gap:10px; }
         .avatar { display:grid; place-items:center; width:38px; height:38px; border-radius:50%; background:#ffe0c5; color:#ad4b1b; font-weight:800; }
+        .category-bar { display:flex; gap:9px; overflow-x:auto; padding:3px 0 14px; }
+        .category-chip { flex:0 0 auto; padding:9px 15px; border:1px solid var(--line); border-radius:20px; background:#fffdf9; color:#5f4438; font-size:12px; text-decoration:none; }
+        .category-chip:hover,.category-chip.active { border-color:var(--sage); background:var(--sage-light); color:#5f7446; }
+        .recipe-search { display:flex; gap:9px; margin-bottom:14px; }
+        .recipe-search input { flex:1; min-width:0; height:40px; padding:0 14px; border:1px solid var(--line); border-radius:10px; background:#fff; color:var(--brown); outline:0; font:inherit; font-size:13px; }
+        .recipe-search input:focus { border-color:var(--sage); box-shadow:0 0 0 3px rgba(122,143,92,.14); }
+        .recipe-search button { border:0; border-radius:10px; padding:0 18px; background:var(--sage); color:#fff; font:inherit; font-size:13px; font-weight:700; cursor:pointer; }
+        .recipe-search button:hover { background:var(--orange-dark); }
         .recipes-toolbar { display:flex; align-items:center; justify-content:space-between; gap:15px; padding:14px 18px; border:1px solid var(--line); border-radius:15px; background:#fffdf9; }
         .recipes-toolbar h2 { margin:0; font-size:17px; }
         .recipes-toolbar h2 span { margin-right:8px; color:var(--orange); font-size:24px; }
@@ -94,6 +102,17 @@
             <div><h1>Resep Saya</h1><p>Kelola dan atur resep masakan yang kamu buat.</p></div>
             <div class="top-user"><span>♧</span><span class="avatar">{{ strtoupper(substr(auth()->user()->name,0,1)) }}</span>⌄</div>
         </header>
+        <nav class="category-bar" aria-label="Filter kategori">
+            <a class="category-chip {{ !$selectedCategory ? 'active' : '' }}" href="{{ route('recipes.mine', $search ? ['search' => $search] : []) }}">Semua</a>
+            @foreach ($categories as $category)
+                <a class="category-chip {{ $selectedCategory == $category->id ? 'active' : '' }}" href="{{ route('recipes.mine', array_filter(['category' => $category->id, 'search' => $search])) }}">{{ $category->nama_kategori }}</a>
+            @endforeach
+        </nav>
+        <form class="recipe-search" method="GET" action="{{ route('recipes.mine') }}">
+            <input type="search" name="search" value="{{ $search }}" placeholder="Cari resep buatanmu..." aria-label="Cari resep buatanmu">
+            @if ($selectedCategory)<input type="hidden" name="category" value="{{ $selectedCategory }}">@endif
+            <button type="submit">Cari</button>
+        </form>
         <section class="recipes-toolbar"><h2><span>▣</span>Resep Buatan Saya</h2><a class="add-recipe" href="{{ route('recipes.create') }}">＋ Tambah Resep Baru</a></section>
         @if (session('success'))<div class="success">{{ session('success') }}</div>@endif
         @if ($recipes->isNotEmpty())
