@@ -9,10 +9,7 @@
 <body class="min-h-screen bg-[#f4f8ef] font-sans text-[#30402a]">
     <main class="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-8">
         <header class="mb-8 flex items-center justify-between rounded-2xl border border-[#d5e0c5] bg-white px-5 py-4 shadow-sm">
-            <a class="flex items-center gap-3" href="{{ route('dashboard') }}">
-                <img class="h-12 w-12 rounded-full object-cover" src="{{ asset('images/racikara-logo.png') }}" alt="Racikara">
-                <span class="text-xl font-black tracking-tight text-[#30402a]">Raci<span class="text-[#7a8f5c]">kara</span></span>
-            </a>
+            <span class="text-xl font-black tracking-tight text-[#30402a]">Notifikasi Aktivitas</span>
             <a class="rounded-full bg-[#e4ebd8] px-4 py-2 text-sm font-bold text-[#5f7446] transition hover:bg-[#d5e0c5]" href="{{ route('dashboard') }}">
                 Dashboard
             </a>
