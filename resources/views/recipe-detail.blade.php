@@ -660,9 +660,9 @@
         </div>
 
         @php
-            $averageRating = $recipe->reviews->avg('rating');
+            $averageRating = $recipe->visibleReviews->avg('rating');
             $userReview = auth()->check()
-                ? $recipe->reviews->firstWhere('user_id', auth()->id())
+                ? $recipe->visibleReviews->firstWhere('user_id', auth()->id())
                 : null;
         @endphp
 
@@ -677,7 +677,7 @@
                 </span>
                 <span>
                     {{ $averageRating ? number_format($averageRating, 1) . '/5' : 'Belum ada rating' }}
-                    ({{ $recipe->reviews->count() }} ulasan)
+                    ({{ $recipe->visibleReviews->count() }} ulasan)
                 </span>
             </div>
 
@@ -705,7 +705,7 @@
                 <p><a class="review-login" href="{{ route('login') }}">Masuk untuk memberi rating dan komentar.</a></p>
             @endauth
 
-            @forelse ($recipe->reviews as $review)
+            @forelse ($recipe->visibleReviews as $review)
                 <article class="review-item">
                     <div class="review-item-header">
                         <strong>{{ $review->user->name }}</strong>

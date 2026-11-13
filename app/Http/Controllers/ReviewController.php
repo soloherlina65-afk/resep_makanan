@@ -9,6 +9,24 @@ use Illuminate\Http\Request;
 
 class ReviewController extends Controller
 {
+    public function adminIndex(): \Illuminate\Contracts\View\View
+    {
+        return view('admin.reviews', [
+            'reviews' => Review::with(['user', 'recipe'])
+                ->latest()
+                ->paginate(15),
+        ]);
+    }
+
+    public function toggleVisibility(Review $review): RedirectResponse
+    {
+        $review->update(['is_visible' => ! $review->is_visible]);
+
+        return back()->with('success', $review->is_visible
+            ? 'Komentar ditampilkan kembali.'
+            : 'Komentar disembunyikan.');
+    }
+
     public function store(Request $request, Recipe $recipe): RedirectResponse
     {
         $validated = $request->validate([
@@ -48,7 +66,10 @@ class ReviewController extends Controller
 
     public function destroy(Request $request, Review $review): RedirectResponse
     {
-        abort_unless($review->user_id === $request->user()->id, 403);
+        abort_unless(
+            $review->user_id === $request->user()->id || $request->user()->is_admin,
+            403,
+        );
 
         $review->delete();
 

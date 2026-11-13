@@ -37,7 +37,7 @@ class HomeController extends Controller
     public function show($id)
     {
         // Mencari resep berdasarkan ID beserta data kategori dan bahannya
-        $recipe = Recipe::with(['category', 'bahan', 'steps', 'user', 'reviews.user'])->findOrFail($id);
+        $recipe = Recipe::with(['category', 'bahan', 'steps', 'user', 'visibleReviews.user'])->findOrFail($id);
 
         return view('recipe-detail', compact('recipe'));
     }

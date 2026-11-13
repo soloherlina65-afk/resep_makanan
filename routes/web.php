@@ -39,6 +39,10 @@ Route::middleware('auth')->group(function () {
     Route::patch('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 });
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/reviews', [ReviewController::class, 'adminIndex'])->name('reviews.index');
+    Route::patch('/reviews/{review}/visibility', [ReviewController::class, 'toggleVisibility'])->name('reviews.visibility');
+});
 Route::get('/recipes/{id}', [RecipeController::class, 'show'])->name('recipes.show');
 Route::post('/recipes/{recipe}/reaction', [FavoriteController::class, 'toggle'])
     ->middleware('auth')

@@ -63,4 +63,9 @@ class Recipe extends Model
     {
         return $this->hasMany(Review::class)->latest();
     }
+
+    public function visibleReviews()
+    {
+        return $this->hasMany(Review::class)->where('is_visible', true)->latest();
+    }
 }

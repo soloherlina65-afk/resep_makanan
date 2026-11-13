@@ -14,10 +14,12 @@ class Review extends Model
         'recipe_id',
         'rating',
         'comment',
+        'is_visible',
     ];
 
     protected $casts = [
         'rating' => 'integer',
+        'is_visible' => 'boolean',
     ];
 
     public function user()
