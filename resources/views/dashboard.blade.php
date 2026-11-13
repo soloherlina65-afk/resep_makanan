@@ -52,8 +52,23 @@
         .dashboard-title { margin: 0; color: #30402a; font-size: clamp(29px, 4vw, 37px); font-weight: 850; }
         .dashboard-subtitle { margin: 3px 0 0; color: var(--dash-muted); font-size: 15px; }
         .topbar-user { display: flex; align-items: center; gap: 10px; }
-        .notification { position: relative; color: var(--dash-brown); font-size: 24px; }
+        .notification-menu { position: relative; }
+        .notification { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; color: var(--dash-brown); font-size: 24px; text-decoration: none; }
+        .notification:hover { background: var(--dash-sage-light); }
         .notification-badge { position: absolute; top: -7px; right: -8px; display: grid; place-items: center; width: 17px; height: 17px; border-radius: 50%; background: #7a8f5c; color: #fff; font-size: 10px; font-weight: 800; }
+        .notification-dropdown { position: absolute; z-index: 20; top: 45px; right: -58px; display: none; width: 330px; overflow: hidden; border: 1px solid var(--dash-line); border-radius: 14px; background: #fff; box-shadow: 0 12px 30px rgba(48, 64, 42, .16); }
+        .notification-dropdown.open { display: block; }
+        .notification-dropdown-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid var(--dash-line); }
+        .notification-dropdown-header strong { font-size: 14px; }
+        .notification-dropdown-header a, .notification-item button, .notification-dropdown-footer a { color: var(--dash-sage-dark); font-size: 11px; font-weight: 800; text-decoration: none; }
+        .notification-item { display: flex; align-items: flex-start; gap: 10px; padding: 12px 16px; border-bottom: 1px solid #eef2e8; }
+        .notification-item.unread { background: #f7faF3; }
+        .notification-item-icon { display: grid; place-items: center; width: 28px; height: 28px; flex: 0 0 28px; border-radius: 50%; background: var(--dash-sage-light); color: var(--dash-sage-dark); font-size: 14px; }
+        .notification-item p { margin: 0; color: var(--dash-brown); font-size: 11px; line-height: 1.4; }
+        .notification-item small { display: block; margin-top: 3px; color: var(--dash-muted); font-size: 10px; }
+        .notification-item button { margin-top: 5px; padding: 0; border: 0; background: none; cursor: pointer; }
+        .notification-empty { padding: 25px 16px; color: var(--dash-muted); font-size: 12px; text-align: center; }
+        .notification-dropdown-footer { padding: 11px 16px; background: var(--dash-cream); text-align: center; }
         .user-avatar, .profile-avatar { display: grid; place-items: center; border-radius: 50%; background: #e4ebd8; color: #5f7446; font-weight: 800; }
         .user-avatar { width: 38px; height: 38px; }
         .welcome-card { position: relative; display: flex; align-items: center; min-height: 164px; overflow: hidden; padding: 25px; border-radius: 16px; background: #5f7446; color: #fff; }
@@ -123,7 +138,8 @@
         }
         @media (max-width: 430px) {
             .recipe-list { grid-template-columns: repeat(2, 1fr); }
-            .topbar-user { display: none; }
+            .topbar-user { gap: 4px; }
+            .notification-dropdown { position: fixed; top: 75px; right: 12px; left: 12px; width: auto; }
         }
     </style>
 </head>
@@ -161,12 +177,36 @@
                 <p class="dashboard-subtitle">Kelola profil dan kumpulan resep favoritmu.</p>
             </div>
             <div class="topbar-user">
-                <a class="notification" href="{{ route('notifications.index') }}" aria-label="Notifikasi">
+                <div class="notification-menu">
+                    <button class="notification" type="button" aria-label="Buka notifikasi" data-notification-toggle>
                     ♧
                     @if ($unreadNotificationsCount > 0)
                         <span class="notification-badge">{{ $unreadNotificationsCount > 99 ? '99+' : $unreadNotificationsCount }}</span>
                     @endif
-                </a>
+                    </button>
+                    <div class="notification-dropdown" data-notification-dropdown>
+                        <div class="notification-dropdown-header">
+                            <strong>Notifikasi</strong>
+                            <a href="{{ route('notifications.index') }}">Lihat semua</a>
+                        </div>
+                        @forelse ($latestNotifications as $notification)
+                            <div class="notification-item {{ $notification->read_at ? '' : 'unread' }}">
+                                <span class="notification-item-icon">{{ ['like' => '♥', 'favorite' => '★', 'review' => '✎'][$notification->data['activity'] ?? 'review'] ?? '♧' }}</span>
+                                <div>
+                                    <p>{{ $notification->data['message'] ?? 'Ada aktivitas baru pada resep kamu.' }}</p>
+                                    <small>{{ $notification->created_at->diffForHumans() }}</small>
+                                    <form method="POST" action="{{ route('notifications.read', $notification->id) }}">
+                                        @csrf
+                                        <button type="submit">Lihat resep →</button>
+                                    </form>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="notification-empty">Belum ada notifikasi baru.</div>
+                        @endforelse
+                        <div class="notification-dropdown-footer"><a href="{{ route('notifications.index') }}">Buka semua notifikasi</a></div>
+                    </div>
+                </div>
                 <span class="user-avatar">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
                 <span>⌄</span>
             </div>
@@ -264,5 +304,20 @@
         </section>
     </main>
 </div>
+    <script>
+    const notificationToggle = document.querySelector('[data-notification-toggle]');
+    const notificationDropdown = document.querySelector('[data-notification-dropdown]');
+
+    notificationToggle?.addEventListener('click', function (event) {
+        event.stopPropagation();
+        notificationDropdown.classList.toggle('open');
+    });
+
+    document.addEventListener('click', function (event) {
+        if (!event.target.closest('.notification-menu')) {
+            notificationDropdown?.classList.remove('open');
+        }
+    });
+    </script>
 </body>
 </html>

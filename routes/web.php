@@ -58,6 +58,7 @@ Route::get('/dashboard', function () {
         'likedRecipes' => auth()->user()->likedRecipes()->with('recipe.category')->latest()->get(),
         'userRecipes' => auth()->user()->recipes()->with('category')->latest()->get(),
         'unreadNotificationsCount' => auth()->user()->unreadNotifications()->count(),
+        'latestNotifications' => auth()->user()->notifications()->latest()->limit(5)->get(),
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
