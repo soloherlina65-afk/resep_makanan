@@ -140,13 +140,17 @@
         }
         .login-button:hover { background: #7a8f5c; }
         .google-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             margin-top: 8px;
             border: 1px solid #eee4d4;
             background: #fffdf8;
             color: #30251f;
+            text-decoration: none;
         }
-        .google-button:disabled { cursor: not-allowed; }
-        .google-icon { color: #4285f4; font-size: 15px; margin-right: 5px; }
+        .google-button:hover { border-color: #c9b9aa; background: #fff; }
+        .google-icon { width: 18px; height: 18px; margin-right: 7px; }
         .auth-error {
             margin: -7px 0 8px;
             color: #dc2626;
@@ -196,9 +200,15 @@
             </div>
 
             <button class="login-button" type="submit">Masuk</button>
-            <button class="google-button" type="button" disabled>
-                <span class="google-icon">G</span> Masuk dengan Google
-            </button>
+            <a class="google-button" href="{{ route('google.redirect') }}">
+                <svg class="google-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path fill="#4285F4" d="M21.35 12.27c0-.72-.06-1.42-.18-2.09H12v3.96h5.24a4.48 4.48 0 0 1-1.94 2.94v2.45h3.14c1.84-1.69 2.91-4.18 2.91-7.26Z"/>
+                    <path fill="#34A853" d="M12 21.75c2.63 0 4.84-.87 6.45-2.36l-3.14-2.45c-.87.58-1.98.92-3.31.92-2.55 0-4.71-1.72-5.49-4.03H3.27v2.53A9.74 9.74 0 0 0 12 21.75Z"/>
+                    <path fill="#FBBC05" d="M6.51 13.83a5.85 5.85 0 0 1 0-3.66V7.64H3.27a9.75 9.75 0 0 0 0 8.72l3.24-2.53Z"/>
+                    <path fill="#EA4335" d="M12 6.14c1.43 0 2.72.49 3.74 1.46l2.8-2.8C16.84 3.23 14.63 2.25 12 2.25a9.74 9.74 0 0 0-8.73 5.39l3.24 2.53C7.29 7.86 9.45 6.14 12 6.14Z"/>
+                </svg>
+                Masuk dengan Google
+            </a>
         </form>
     </section>
 
