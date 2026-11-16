@@ -14,8 +14,8 @@
         </a>
 
         <div class="nav-menu">
-            <a href="/" class="{{ $search ? '' : 'active' }}">Beranda</a>
-            <a href="#resep" class="{{ $search ? 'active' : '' }}">Resep</a>
+            <a href="/" class="{{ $hasFilters ? '' : 'active' }}">Beranda</a>
+            <a href="#resep" class="{{ $hasFilters ? 'active' : '' }}">Resep</a>
             <a href="#kategori">Kategori</a>
         </div>
 
@@ -29,13 +29,13 @@
 
 
 <!-- HERO -->
-<section class="hero {{ $search ? 'search-hero' : '' }}">
+<section class="hero {{ $hasFilters ? 'search-hero' : '' }}">
 
     <div class="hero-container">
 
         <div class="hero-content">
 
-            @if (!$search)
+            @if (!$hasFilters)
                 <div class="hero-label">🍳 SPESIAL HARI INI</div>
             @endif
 
@@ -44,7 +44,7 @@
                 <span>MASAKAN FAVORITMU</span>
             </h1>
 
-            @if (!$search)
+            @if (!$hasFilters)
                 <p>
                     Temukan berbagai resep masakan lezat,
                     praktis, dan mudah dibuat untuk menemani
@@ -52,28 +52,40 @@
                 </p>
             @endif
 
-            <form action="{{ route('home') }}" method="GET" class="search-box">
-                <input
-                    type="text"
-                    name="search"
-                    value="{{ $search }}"
-                    placeholder="Cari resep masakan..."
-                    aria-label="Cari resep masakan"
-                >
+            <div class="search-autocomplete">
+                <form action="{{ route('home') }}" method="GET" class="search-box">
+                    <input type="hidden" name="category_id" value="{{ $categoryId }}">
+                    <input type="hidden" name="max_cook_time" value="{{ $maxCookTime }}">
+                    <input type="hidden" name="difficulty" value="{{ $difficulty }}">
+                    <input type="hidden" name="sort" value="{{ $sort }}">
+                    <input
+                        id="recipe-search"
+                        type="text"
+                        name="search"
+                        value="{{ $search }}"
+                        placeholder="Cari nama resep, bahan, atau kategori..."
+                        aria-label="Cari nama resep, bahan, atau kategori"
+                        aria-autocomplete="list"
+                        aria-controls="recipe-autocomplete-results"
+                        aria-expanded="false"
+                        autocomplete="off"
+                        data-suggestions-url="{{ route('recipes.suggestions') }}"
+                    >
 
-                <button type="submit">
-                    🔍 Cari Resep
-                </button>
-            </form>
+                    <button type="submit">
+                        🔍 Cari Resep
+                    </button>
+                </form>
 
-        </div>
-
-        <div class="hero-image">
-            <div class="hero-circle"></div>
-
-            <div class="food-emoji">
-                🍛
+                <div
+                    id="recipe-autocomplete-results"
+                    class="recipe-autocomplete-results"
+                    role="listbox"
+                    aria-label="Saran resep"
+                    hidden
+                ></div>
             </div>
+
         </div>
 
     </div>
@@ -104,15 +116,42 @@
 
             @forelse ($categories as $category)
 
-                <a href="{{ route('home', ['search' => $category->nama_kategori]) }}#resep" class="category-card">
+            @php
+                $categoryName = mb_strtolower($category->nama_kategori);
+                $categoryIcon = match (true) {
+                    str_contains($categoryName, 'minum') => '🥤',
+                    str_contains($categoryName, 'nusantara') => '🍛',
+                    str_contains($categoryName, 'ayam') => '🍗',
+                    str_contains($categoryName, 'seafood'),
+                    str_contains($categoryName, 'ikan'),
+                    str_contains($categoryName, 'udang') => '🦐',
+                    str_contains($categoryName, 'burger') => '🍔',
+                    str_contains($categoryName, 'pizza') => '🍕',
+                    str_contains($categoryName, 'pasta') => '🍝',
+                    str_contains($categoryName, 'mie'),
+                    str_contains($categoryName, 'mi ') => '🍜',
+                    str_contains($categoryName, 'nasi') => '🍚',
+                    str_contains($categoryName, 'bubur') => '🥣',
+                    str_contains($categoryName, 'sate') => '🍢',
+                    str_contains($categoryName, 'goreng') => '🍳',
+                    str_contains($categoryName, 'kue'),
+                    str_contains($categoryName, 'dessert') => '🍰',
+                    str_contains($categoryName, 'sayur') => '🥗',
+                    str_contains($categoryName, 'sandwich') => '🥪',
+                    str_contains($categoryName, 'kukus') => '♨️',
+                    str_contains($categoryName, 'panggang'),
+                    str_contains($categoryName, 'barbeku') => '🍖',
+                    default => '🍽️',
+                };
+            @endphp
 
-                    <div class="category-icon" aria-hidden="true">
-                        ♨
-                    </div>
+            <a href="{{ route('home', ['category_id' => $category->id]) }}#resep" class="category-card">
+
+                <div class="category-icon" aria-hidden="true">{{ $categoryIcon }}</div>
 
                     <h3>{{ $category->nama_kategori }}</h3>
 
-                    <p>Jelajahi resep pilihan</p>
+                <p>{{ $category->recipes_count }} resep tersedia</p>
 
                 </a>
 
@@ -135,25 +174,73 @@
 
     <div class="section-container">
 
-        @if ($search)
+        @if ($hasFilters)
             <div class="search-result-banner">
                 <div>
-                    <span class="section-label">HASIL PENCARIAN</span>
-                    <h2>Resep untuk “{{ $search }}”</h2>
-                    <p>{{ $recipes->count() }} resep ditemukan. Pilih resep untuk melihat bahan dan langkah memasaknya.</p>
+                    <span class="section-label">{{ $search ? 'HASIL PENCARIAN' : 'HASIL FILTER' }}</span>
+                    <h2>{{ $search ? 'Resep untuk “' . $search . '”' : 'Resep pilihanmu' }}</h2>
+                    <p>{{ $recipes->total() }} resep ditemukan. Pilih resep untuk melihat bahan dan langkah memasaknya.</p>
                 </div>
-                <a class="clear-search" href="{{ route('home') }}">× Hapus pencarian</a>
+                <a class="clear-search" href="{{ route('home') }}">× Hapus filter</a>
             </div>
         @endif
+
+        <form action="{{ route('home') }}" method="GET" class="recipe-filters">
+            <input type="hidden" name="search" value="{{ $search }}">
+
+            <label>
+                <span>Kategori</span>
+                <select name="category_id">
+                    <option value="">Semua kategori</option>
+                    @foreach ($categories as $category)
+                        <option value="{{ $category->id }}" @selected($categoryId === $category->id)>
+                            {{ $category->nama_kategori }}
+                        </option>
+                    @endforeach
+                </select>
+            </label>
+
+            <label>
+                <span>Waktu maksimal</span>
+                <select name="max_cook_time">
+                    <option value="">Semua waktu</option>
+                    @foreach ([30, 60, 90, 120] as $minutes)
+                        <option value="{{ $minutes }}" @selected($maxCookTime === $minutes)>
+                            Maks. {{ $minutes }} menit
+                        </option>
+                    @endforeach
+                </select>
+            </label>
+
+            <label>
+                <span>Tingkat kesulitan</span>
+                <select name="difficulty">
+                    <option value="">Semua tingkat</option>
+                    @foreach (['Mudah', 'Sedang', 'Sulit'] as $level)
+                        <option value="{{ $level }}" @selected($difficulty === $level)>{{ $level }}</option>
+                    @endforeach
+                </select>
+            </label>
+
+            <label>
+                <span>Urutkan</span>
+                <select name="sort">
+                    <option value="latest" @selected($sort === 'latest')>Terbaru</option>
+                    <option value="rating" @selected($sort === 'rating')>Rating tertinggi</option>
+                </select>
+            </label>
+
+            <button type="submit" class="filter-submit">Terapkan</button>
+        </form>
 
         <div class="section-header">
 
             <div>
-                <span class="section-label">{{ $search ? 'PILIHAN RESEP' : 'INSPIRASI MASAK' }}</span>
-                <h2>{{ $search ? 'Temukan Resep Favoritmu' : 'Resep Terbaru' }}</h2>
+                <span class="section-label">{{ $hasFilters ? 'PILIHAN RESEP' : 'INSPIRASI MASAK' }}</span>
+                <h2>{{ $hasFilters ? 'Temukan Resep Favoritmu' : 'Resep Terbaru' }}</h2>
             </div>
 
-            @if (!$search)
+            @if (!$hasFilters)
                 <a href="#resep" class="see-all">Lihat Semua →</a>
             @endif
 
@@ -277,6 +364,10 @@
 
                             </div>
 
+                            @if ($recipes->hasPages())
+                                <div class="recipe-pagination">{{ $recipes->links() }}</div>
+                            @endif
+
                         </div>
 
                     </div>
@@ -291,12 +382,16 @@
                         ♨
                     </div>
 
-                    <h3>{{ $search ? 'Resep Tidak Ditemukan' : 'Belum Ada Resep' }}</h3>
+                    <h3>{{ $hasFilters ? 'Resep Tidak Ditemukan' : 'Belum Ada Resep' }}</h3>
 
                     <p>
-                        {{ $search
-                            ? 'Kami tidak menemukan resep yang cocok dengan “' . $search . '”. Coba periksa ejaan atau gunakan kata kunci yang lebih umum.'
-                            : 'Belum ada resep yang tersedia. Resep akan muncul setelah ditambahkan ke database.' }}
+                        @if ($search)
+                            Kami tidak menemukan resep yang cocok dengan “{{ $search }}”. Coba kata kunci yang lebih umum.
+                        @elseif ($hasFilters)
+                            Tidak ada resep yang cocok dengan filter ini. Coba ubah kategori, waktu, atau tingkat kesulitannya.
+                        @else
+                            Belum ada resep yang tersedia. Resep akan muncul setelah ditambahkan ke database.
+                        @endif
                     </p>
 
                     @if ($search)
@@ -403,5 +498,7 @@
     </div>
 
 </footer>
+
+<script src="{{ asset('js/recipe-search.js') }}" defer></script>
 
 @endsection
