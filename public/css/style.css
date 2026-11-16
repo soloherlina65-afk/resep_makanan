@@ -199,6 +199,34 @@ body {
     font-size: 10px;
 }
 
+.contact-alert {
+    margin: 0 0 14px;
+    padding: 11px 12px;
+    border-radius: 9px;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.contact-alert-success {
+    border: 1px solid #cfe5c8;
+    background: #eff9ec;
+    color: #36753b;
+}
+
+.contact-alert-error {
+    border: 1px solid #f0c9bd;
+    background: #fff3ef;
+    color: #a3462e;
+}
+
+.contact-field-error {
+    display: block;
+    margin-top: 5px;
+    color: #a3462e;
+    font-size: 10px;
+    font-weight: 600;
+}
+
 .contact-form label {
     display: block;
     margin-bottom: 12px;
@@ -750,6 +778,14 @@ a {
     overflow: hidden;
 }
 
+.hero:not(.search-hero) {
+    background-image:
+        linear-gradient(90deg, rgba(244, 248, 239, 0.95) 0%, rgba(244, 248, 239, 0.90) 42%, rgba(244, 248, 239, 0.65) 68%, rgba(244, 248, 239, 0.20) 100%),
+        url('../images/hero-masakan.jpg');
+    background-position: center;
+    background-size: cover;
+}
+
 .hero.search-hero {
     min-height: 160px;
 }
@@ -772,10 +808,6 @@ a {
 
 .search-hero .search-box {
     max-width: 610px;
-}
-
-.search-hero .hero-image {
-    display: none;
 }
 
 .hero-container {
@@ -829,6 +861,17 @@ a {
 
 /* SEARCH */
 
+.search-autocomplete {
+    position: relative;
+    z-index: 5;
+    width: 100%;
+    max-width: 570px;
+}
+
+.search-hero .search-autocomplete {
+    max-width: 610px;
+}
+
 .search-box {
     width: 100%;
     max-width: 570px;
@@ -867,49 +910,170 @@ a {
     font-weight: 600;
 }
 
-
-/* HERO IMAGE */
-
-.hero-image {
-    width: 390px;
-    height: 390px;
-
-    position: relative;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.hero-circle {
-    width: 340px;
-    height: 340px;
-
-    background: #b7c8a0;
-
-    border-radius: 50%;
-
+.recipe-autocomplete-results {
     position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    right: 0;
+    z-index: 20;
+    overflow: hidden;
+    border: 1px solid #d5e0c5;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 12px 30px rgba(48, 64, 42, 0.18);
 }
 
-.food-emoji {
-    width: 270px;
-    height: 270px;
+.recipe-autocomplete-results[hidden] {
+    display: none;
+}
 
-    background: #f4f8ef;
-
-    border-radius: 50%;
-
+.recipe-autocomplete-result {
     display: flex;
     align-items: center;
-    justify-content: center;
-
-    font-size: 150px;
-
-    position: relative;
-
-    box-shadow: 0 15px 35px rgba(63, 86, 53, 0.15);
+    gap: 12px;
+    padding: 11px 14px;
+    color: #30402a;
+    text-decoration: none;
 }
+
+.recipe-autocomplete-result + .recipe-autocomplete-result {
+    border-top: 1px solid #edf1e8;
+}
+
+.recipe-autocomplete-result:hover,
+.recipe-autocomplete-result:focus {
+    outline: none;
+    background: #f4f8ef;
+}
+
+.recipe-autocomplete-result img,
+.recipe-autocomplete-placeholder {
+    flex: 0 0 48px;
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+}
+
+.recipe-autocomplete-result img {
+    object-fit: cover;
+}
+
+.recipe-autocomplete-placeholder {
+    display: grid;
+    place-items: center;
+    background: #e4ebd8;
+    font-size: 24px;
+}
+
+.recipe-autocomplete-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.recipe-autocomplete-copy strong {
+    overflow: hidden;
+    font-size: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.recipe-autocomplete-copy small {
+    color: #6f8060;
+    font-size: 12px;
+}
+
+.recipe-autocomplete-message {
+    margin: 0;
+    padding: 14px 16px;
+    color: #6f8060;
+    font-size: 13px;
+}
+
+.recipe-filters {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(130px, 1fr)) auto;
+    align-items: end;
+    gap: 12px;
+    margin-bottom: 30px;
+    padding: 16px;
+    border: 1px solid #e3eadb;
+    border-radius: 16px;
+    background: #f8faf5;
+}
+
+.recipe-filters label {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+}
+
+.recipe-filters label span {
+    color: #5f7446;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.recipe-filters select {
+    width: 100%;
+    min-height: 42px;
+    padding: 0 32px 0 11px;
+    border: 1px solid #d5e0c5;
+    border-radius: 9px;
+    background: #fff;
+    color: #30402a;
+    font: inherit;
+    font-size: 12px;
+}
+
+.filter-submit {
+    min-height: 42px;
+    padding: 0 17px;
+    border: 0;
+    border-radius: 9px;
+    background: #7a8f5c;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .2s ease;
+}
+
+.filter-submit:hover { background: #5f7446; }
+
+.recipe-pagination { margin-top: 30px; }
+.recipe-pagination nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.recipe-pagination nav > div:last-child { display: flex; align-items: center; gap: 4px; }
+.recipe-pagination nav a,
+.recipe-pagination nav button,
+.recipe-pagination nav span[aria-current="page"] > span,
+.recipe-pagination nav span[aria-disabled="true"] > span {
+    display: inline-flex;
+    min-width: 36px;
+    min-height: 36px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    border: 1px solid #d5e0c5;
+    border-radius: 9px;
+    background: #fff;
+    color: #5f7446;
+    font-size: 12px;
+    text-decoration: none;
+}
+.recipe-pagination nav span[aria-current="page"] > span {
+    border-color: #7a8f5c;
+    background: #7a8f5c;
+    color: #fff;
+}
+.recipe-pagination nav span[aria-disabled="true"] > span { color: #a0aa98; }
+.recipe-pagination nav a:hover { background: #edf3e6; }
 
 
 /* =========================
@@ -1521,6 +1685,13 @@ footer {
         display: none;
     }
 
+    .hero:not(.search-hero) {
+        background-image:
+            linear-gradient(180deg, rgba(244, 248, 239, 0.94) 0%, rgba(244, 248, 239, 0.87) 70%, rgba(244, 248, 239, 0.62) 100%),
+            url('../images/hero-masakan.jpg');
+        background-position: center;
+    }
+
     .hero-container {
         flex-direction: column;
 
@@ -1547,6 +1718,9 @@ footer {
     .search-box {
         margin: auto;
     }
+
+    .recipe-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .filter-submit { grid-column: 1 / -1; }
 
     .category-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -1733,21 +1907,8 @@ footer {
         width: 100%;
     }
 
-    .hero-image {
-        width: 280px;
-        height: 280px;
-    }
-
-    .hero-circle {
-        width: 250px;
-        height: 250px;
-    }
-
-    .food-emoji {
-        width: 200px;
-        height: 200px;
-        font-size: 110px;
-    }
+    .recipe-pagination nav { align-items: flex-start; flex-direction: column; }
+    .recipe-pagination nav > div:last-child { flex-wrap: wrap; }
 
     .section-container {
         padding: 60px 20px;
