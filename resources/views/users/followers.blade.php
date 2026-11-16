@@ -22,14 +22,11 @@
                 <a href="{{ route('users.show', $follower->id) }}"
                    class="d-flex align-items-center gap-3 text-decoration-none text-dark">
 
-                    <img
-                        src="{{ $follower->avatar ? asset('storage/' . $follower->avatar) : asset('images/default-avatar.png') }}"
-                        alt="Foto profil"
-                        width="50"
-                        height="50"
+                    <x-user-avatar
+                        :user="$follower"
                         class="rounded-circle"
-                        style="object-fit: cover;"
-                    >
+                        style="width:50px;height:50px;"
+                    />
 
                     <div>
                         <h6 class="fw-bold mb-1">{{ $follower->name }}</h6>

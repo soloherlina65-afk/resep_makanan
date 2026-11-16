@@ -8,14 +8,11 @@
     <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
         <div class="d-flex align-items-center gap-4 flex-wrap">
 
-            <img
-                src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('images/default-avatar.png') }}"
-                alt="Foto profil"
-                width="110"
-                height="110"
+            <x-user-avatar
+                :user="$user"
                 class="rounded-circle"
-                style="object-fit: cover;"
-            >
+                style="width:110px;height:110px;"
+            />
 
             <div class="flex-grow-1">
                 <h2 class="fw-bold mb-1">{{ $user->name }}</h2>
