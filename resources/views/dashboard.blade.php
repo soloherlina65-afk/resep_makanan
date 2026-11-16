@@ -156,6 +156,7 @@
             <a href="{{ route('recipes.favorites') }}"><span class="nav-icon">♡</span>Resep Favorit</a>
             <a href="{{ route('recipes.liked') }}"><span class="nav-icon">♥</span>Resep Disukai</a>
             <a href="{{ route('recipes.mine') }}"><span class="nav-icon">♨</span>Resep Saya</a>
+            <a href="{{ route('meal-plans.index') }}"><span class="nav-icon">▦</span>Menu Mingguan</a>
             @if ($user->is_admin)
                 <a href="{{ route('admin.reviews.index') }}"><span class="nav-icon">✓</span>Moderasi Komentar</a>
             @endif
@@ -207,7 +208,7 @@
                         <div class="notification-dropdown-footer"><a href="{{ route('notifications.index') }}">Buka semua notifikasi</a></div>
                     </div>
                 </div>
-                <span class="user-avatar">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
+                <x-user-avatar :user="$user" class="user-avatar" />
                 <span>⌄</span>
             </div>
         </header>
@@ -225,7 +226,7 @@
         </section>
 
         <section class="profile-card">
-            <div class="profile-avatar">{{ strtoupper(substr($user->name, 0, 1)) }}</div>
+            <x-user-avatar :user="$user" class="profile-avatar" />
             <div>
                 <small>Profil Pengguna</small>
                 <h3>{{ $user->name }}</h3>

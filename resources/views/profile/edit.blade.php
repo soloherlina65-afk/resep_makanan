@@ -99,13 +99,13 @@
         <form method="POST" action="{{ route('logout') }}" data-logout-form>@csrf<button type="submit" class="logout"><span class="nav-icon">↪</span>Logout</button></form>
     </aside>
     <main class="settings-main">
-        <header class="settings-top"><div><h1>Pengaturan Profil</h1><p>Kelola informasi akun dan preferensi kamu.</p></div><div class="top-user"><span>♧</span><span class="avatar-small">{{ strtoupper(substr($user->name,0,1)) }}</span>⌄</div></header>
+        <header class="settings-top"><div><h1>Pengaturan Profil</h1><p>Kelola informasi akun dan preferensi kamu.</p></div><div class="top-user"><span>♧</span><x-user-avatar :user="$user" class="avatar-small" />⌄</div></header>
         <div class="settings-grid">
             <section class="panel">
                 <h2 class="panel-title"><span>♟</span>Informasi Profil</h2>
                 <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">
                     @csrf @method('patch')
-                    <div class="profile-avatar">@if($user->avatar)<img src="{{ asset('storage/'.$user->avatar) }}" alt="Foto profil">@else{{ strtoupper(substr($user->name,0,1)) }}@endif</div>
+                    <x-user-avatar :user="$user" class="profile-avatar" />
                     <label class="upload-label" for="avatar">📷 &nbsp;Ubah Foto</label>
                     <input id="avatar" name="avatar" type="file" accept=".jpg,.jpeg,.png,.webp" hidden>
                     @error('avatar')<div class="error">{{ $message }}</div>@enderror
