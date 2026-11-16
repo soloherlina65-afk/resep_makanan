@@ -52,6 +52,21 @@ class User extends Authenticatable
         'is_admin' => 'boolean',
     ];
 
+    public function avatarUrl(): ?string
+    {
+        if (! $this->avatar) {
+            return null;
+        }
+
+        $scheme = parse_url($this->avatar, PHP_URL_SCHEME);
+
+        if (filter_var($this->avatar, FILTER_VALIDATE_URL) && in_array($scheme, ['http', 'https'], true)) {
+            return $this->avatar;
+        }
+
+        return asset('storage/' . ltrim($this->avatar, '/'));
+    }
+
     public function favorites()
     {
         return $this->hasMany(Favorite::class)->where('type', 'favorite');
@@ -70,6 +85,11 @@ class User extends Authenticatable
     public function reviews()
     {
         return $this->hasMany(Review::class);
+    }
+
+    public function mealPlans()
+    {
+        return $this->hasMany(MealPlan::class);
     }
     
     public function followers()
