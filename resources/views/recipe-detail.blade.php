@@ -106,7 +106,8 @@
     }
 
     .recipe-actions button,
-    .reaction-login {
+    .reaction-login,
+    .recipe-tool-button {
         display: inline-flex;
         align-items: center;
         min-height: 38px;
@@ -120,6 +121,50 @@
         text-decoration: none;
         cursor: pointer;
     }
+
+    .recipe-tool-button:hover { background: #e4ebd8; }
+
+    .meal-plan-add {
+        margin: 0 0 28px;
+        padding: 18px;
+        border: 1px solid #d5e0c5;
+        border-radius: 18px;
+        background: #f7f9f3;
+    }
+
+    .meal-plan-add h2 { margin: 0 0 6px; color: #30402a; font-size: 17px; }
+    .meal-plan-add > p { margin: 0 0 13px; color: #6f8060; font-size: 12px; }
+    .meal-plan-form { display: flex; align-items: end; gap: 10px; flex-wrap: wrap; }
+    .meal-plan-form label { display: grid; gap: 5px; color: #5f7446; font-size: 11px; font-weight: 700; }
+    .meal-plan-form input,
+    .meal-plan-form select {
+        min-height: 38px;
+        padding: 0 10px;
+        border: 1px solid #d5e0c5;
+        border-radius: 9px;
+        background: #fff;
+        color: #30402a;
+        font: inherit;
+        font-size: 12px;
+    }
+    .meal-plan-form button,
+    .meal-plan-login {
+        display: inline-flex;
+        min-height: 38px;
+        align-items: center;
+        justify-content: center;
+        padding: 0 14px;
+        border: 0;
+        border-radius: 9px;
+        background: #7a8f5c;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+    }
+    .meal-plan-form button:hover,
+    .meal-plan-login:hover { background: #5f7446; color: #fff; }
 
     .recipe-actions button:hover,
     .recipe-actions button.active {
@@ -239,24 +284,43 @@
         align-items: center;
     }
 
-    .ingredient-list li:last-child {
-        margin-bottom: 0;
+    .ingredient-list li input,
+    .step-check {
+        width: 18px;
+        height: 18px;
+        margin: 0 12px 0 0;
+        flex: 0 0 auto;
+        accent-color: #7a8f5c;
+        cursor: pointer;
     }
 
-    .ingredient-list li::before {
-        content: "✓";
-        background: #feebe1;
-        color: #e56b27;
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        display: inline-flex;
+    .ingredient-list li span,
+    .step-list li > span:last-child { flex: 1; }
+    .ingredient-list li input:checked + span,
+    .step-list li .step-check:checked ~ span:last-child { color: #89937f; text-decoration: line-through; }
+
+    .ingredient-toolbar {
+        display: flex;
         align-items: center;
-        justify-content: center;
-        font-size: 11px;
-        font-weight: bold;
-        margin-right: 14px;
-        flex-shrink: 0;
+        justify-content: space-between;
+        gap: 12px;
+        margin: -5px 0 16px;
+        color: #6f8060;
+        font-size: 12px;
+    }
+    .ingredient-toolbar label { display: inline-flex; align-items: center; gap: 8px; color: #5f7446; font-weight: 700; }
+    .ingredient-toolbar input {
+        width: 76px;
+        min-height: 36px;
+        padding: 0 8px;
+        border: 1px solid #d5e0c5;
+        border-radius: 8px;
+        color: #30402a;
+        font: inherit;
+    }
+
+    .ingredient-list li:last-child {
+        margin-bottom: 0;
     }
 
     .step-list li {
@@ -587,7 +651,47 @@
                 <a href="{{ route('login') }}" class="reaction-login">Masuk untuk menyukai atau menyimpan resep</a>
             @endauth
             <span class="reaction-count">♥ {{ $recipe->likes()->count() }} suka</span>
+            <button type="button" class="recipe-tool-button" data-share-recipe>Bagikan</button>
+            <button type="button" class="recipe-tool-button" onclick="window.print()">Cetak resep</button>
         </div>
+
+        @auth
+            <section class="meal-plan-add">
+                <h2>Tambahkan ke menu mingguan</h2>
+                <p>Jika slot waktu yang sama sudah terisi, resep sebelumnya akan diganti.</p>
+                @if ($errors->any())
+                    <p class="auth-error">{{ $errors->first() }}</p>
+                @endif
+                <form class="meal-plan-form" method="POST" action="{{ route('meal-plans.store') }}">
+                    @csrf
+                    <input type="hidden" name="recipe_id" value="{{ $recipe->id }}">
+                    <label>
+                        Tanggal
+                        <input
+                            type="date"
+                            name="planned_date"
+                            value="{{ now()->toDateString() }}"
+                            min="{{ now()->toDateString() }}"
+                            max="{{ now()->endOfWeek()->toDateString() }}"
+                            required
+                        >
+                    </label>
+                    <label>
+                        Waktu makan
+                        <select name="meal_type" required>
+                            <option value="breakfast">Sarapan</option>
+                            <option value="lunch">Makan siang</option>
+                            <option value="dinner">Makan malam</option>
+                            <option value="snack">Camilan</option>
+                        </select>
+                    </label>
+                    <button type="submit">＋ Rencanakan</button>
+                    <a class="meal-plan-login" href="{{ route('meal-plans.index') }}">Lihat menu</a>
+                </form>
+            </section>
+        @else
+            <a class="meal-plan-login" href="{{ route('login') }}">Masuk untuk merencanakan menu</a>
+        @endauth
 
         <div class="recipe-info">
 
@@ -623,9 +727,30 @@
             <h2>🥕 Bahan-bahan</h2>
 
             @if ($recipe->bahan->count() > 0)
-                <ul class="ingredient-list">
+                <div class="ingredient-toolbar">
+                    <span>Centang bahan yang sudah disiapkan.</span>
+                    <label>
+                        Porsi
+                        <input
+                            type="number"
+                            min="1"
+                            max="100"
+                            value="{{ $recipe->porsi ?: 1 }}"
+                            data-servings-control
+                            data-base-servings="{{ $recipe->porsi ?: 1 }}"
+                            aria-label="Sesuaikan jumlah porsi"
+                        >
+                    </label>
+                </div>
+            @endif
+
+            @if ($recipe->bahan->count() > 0)
+                <ul class="ingredient-list" data-recipe-checklist data-recipe-id="{{ $recipe->id }}">
                     @foreach ($recipe->bahan as $b)
-                        <li>{{ $b->nama_bahan }}</li>
+                        <li>
+                            <input type="checkbox" data-check-item="ingredient-{{ $b->id }}" aria-label="Tandai bahan {{ $b->nama_bahan }}">
+                            <span data-ingredient-text data-original="{{ $b->nama_bahan }}">{{ $b->nama_bahan }}</span>
+                        </li>
                     @endforeach
                 </ul>
             @else
@@ -639,12 +764,13 @@
             <h2>👩‍🍳 Langkah Memasak</h2>
 
             @if ($recipe->steps->count() > 0)
-                <ol class="step-list">
+                <ol class="step-list" data-recipe-checklist data-recipe-id="{{ $recipe->id }}">
                     @foreach ($recipe->steps as $step)
                         <li>
                             <span class="step-number">
                                 {{ $step->urutan }}
                             </span>
+                            <input class="step-check" type="checkbox" data-check-item="step-{{ $step->id }}" aria-label="Tandai langkah {{ $step->urutan }} selesai">
 
                             <span style="padding-top: 5px;">
                                 {{ $step->deskripsi }}
@@ -765,5 +891,102 @@
         });
     });
 </script>
+
+<script>
+    const recipeUrl = window.location.href;
+    const shareButton = document.querySelector('[data-share-recipe]');
+    if (shareButton) {
+        shareButton.addEventListener('click', async () => {
+            try {
+                if (navigator.share) {
+                    await navigator.share({ title: document.title, url: recipeUrl });
+                    return;
+                }
+
+                await navigator.clipboard.writeText(recipeUrl);
+                shareButton.textContent = 'Tautan disalin';
+            } catch (error) {
+                if (error.name !== 'AbortError') {
+                    shareButton.textContent = 'Gagal membagikan';
+                }
+            }
+        });
+    }
+
+    const checklists = document.querySelectorAll('[data-recipe-checklist]');
+    checklists.forEach((list) => {
+        const key = `racikara-recipe-${list.dataset.recipeId}-${list.classList.contains('ingredient-list') ? 'ingredients' : 'steps'}`;
+        let checkedItems = [];
+        try {
+            const storedItems = JSON.parse(localStorage.getItem(key) || '[]');
+            checkedItems = Array.isArray(storedItems) ? storedItems : [];
+        } catch (error) {
+            console.error('Tidak dapat membaca progres checklist resep:', error);
+        }
+
+        list.querySelectorAll('[data-check-item]').forEach((checkbox) => {
+            checkbox.checked = checkedItems.includes(checkbox.dataset.checkItem);
+            checkbox.addEventListener('change', () => {
+                const next = new Set(checkedItems);
+                if (checkbox.checked) next.add(checkbox.dataset.checkItem);
+                else next.delete(checkbox.dataset.checkItem);
+                checkedItems = Array.from(next);
+                localStorage.setItem(key, JSON.stringify(checkedItems));
+            });
+        });
+    });
+
+    const servingsControl = document.querySelector('[data-servings-control]');
+    if (servingsControl) {
+        const baseServings = Number(servingsControl.dataset.baseServings);
+        const ingredients = document.querySelectorAll('[data-ingredient-text]');
+
+        const toNumber = (value) => {
+            if (value.includes('/')) {
+                const [numerator, denominator] = value.split('/').map(Number);
+                return denominator ? numerator / denominator : null;
+            }
+            return Number(value.replace(',', '.'));
+        };
+
+        servingsControl.addEventListener('input', () => {
+            const targetServings = Number(servingsControl.value);
+            if (!Number.isInteger(targetServings) || targetServings < 1 || targetServings > 100) return;
+
+            ingredients.forEach((ingredient) => {
+                const original = ingredient.dataset.original;
+                const match = original.match(/^(\d+\s+\d+\/\d+|\d+\/\d+|\d+(?:[.,]\d+)?)(?=\s|$)/);
+                if (!match) {
+                    ingredient.textContent = original;
+                    return;
+                }
+
+                const quantity = match[1];
+                const parts = quantity.split(/\s+/);
+                const amount = parts.length === 2
+                    ? Number(parts[0]) + toNumber(parts[1])
+                    : toNumber(quantity);
+
+                if (amount === null || Number.isNaN(amount)) {
+                    ingredient.textContent = original;
+                    return;
+                }
+
+                const scaled = (amount * targetServings / baseServings)
+                    .toFixed(2)
+                    .replace(/\.?0+$/, '')
+                    .replace('.', ',');
+                ingredient.textContent = original.replace(match[1], scaled);
+            });
+        });
+    }
+</script>
+<style>
+    @media print {
+        .navbar, .recipe-actions, .meal-plan-add, .review-form, .review-actions, .back-link { display:none !important; }
+        .detail-page { padding:0; background:#fff; }
+        .detail-card, .info-card { break-inside:avoid; box-shadow:none; }
+    }
+</style>
 
 @endsection
