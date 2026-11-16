@@ -82,4 +82,31 @@ class ContactFormTest extends TestCase
 
         Mail::assertNothingSent();
     }
+
+    public function test_contact_form_shows_a_friendly_error_when_smtp_authentication_fails(): void
+    {
+        Config::set('mail.contact_to', 'support@racikara.test');
+
+        $pendingMail = \Mockery::mock(PendingMail::class);
+        $pendingMail->shouldReceive('send')
+            ->once()
+            ->with(\Mockery::type(ContactMessageMail::class))
+            ->andThrow(new TransportException('SMTP authentication failed.'));
+
+        Mail::shouldReceive('to')
+            ->once()
+            ->with('support@racikara.test')
+            ->andReturn($pendingMail);
+
+        $this->from(route('contact'))
+            ->post(route('contact.send'), [
+                'nama' => 'Sarah Abdullah',
+                'email' => 'sarah@example.test',
+                'subjek' => 'general',
+                'pesan' => 'Halo Racikara.',
+            ])
+            ->assertRedirect(route('contact'))
+            ->assertSessionHas('error', 'Email belum dapat dikirim. Periksa konfigurasi SMTP; untuk Gmail, gunakan App Password, bukan password akun biasa.')
+            ->assertSessionHasInput('pesan', 'Halo Racikara.');
+    }
 }
