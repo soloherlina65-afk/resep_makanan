@@ -35,24 +35,69 @@
 
     <section class="contact-container contact-main">
         <div class="contact-details">
-            <article><span class="contact-icon">✉</span><div><strong>Email</strong><p>halo@resepkita.id<br><small>Dibalas dalam 1×24 jam</small></p></div></article>
-            <article><span class="contact-icon">◌</span><div><strong>WhatsApp</strong><p>+62 812-0000-0000<br><small>Chat langsung dengan admin</small></p></div></article>
-            <article><span class="contact-icon">⌖</span><div><strong>Alamat</strong><p>Jl. Contoh No. 123<br><small>Kota Anda, Indonesia</small></p></div></article>
-            <article><span class="contact-icon">◷</span><div><strong>Jam Layanan</strong><p>Senin – Jumat, 09.00 – 17.00 WIB<br><small>Sabtu, 09.00 – 13.00 WIB</small></p></div></article>
-            <div class="contact-socials"><a href="#" aria-label="Instagram">◎</a><a href="#" aria-label="YouTube">▶</a><a href="#" aria-label="Facebook">f</a></div>
+            <article>
+                <span class="contact-icon">✉</span>
+                <div>
+                    <strong>Email Racikara</strong>
+                    <p>
+                        @if ($contactEmail)
+                            <a href="mailto:{{ $contactEmail }}">{{ $contactEmail }}</a>
+                        @else
+                            <span>Alamat email belum dikonfigurasi</span>
+                        @endif
+                        <br><small>Kirim pesan melalui formulir di samping.</small>
+                    </p>
+                </div>
+            </article>
+            <article>
+                <span class="contact-icon">↗</span>
+                <div>
+                    <strong>Pesan langsung ke tim</strong>
+                    <p>Pesan formulir dikirim ke email pengelola dan balasan dapat dikirim langsung ke alamat emailmu.</p>
+                </div>
+            </article>
         </div>
 
-        <form class="contact-form" action="mailto:halo@resepkita.id" method="post" enctype="text/plain">
+        <form class="contact-form" action="{{ route('contact.send') }}" method="POST">
+            @csrf
             <h2>Kirim Pesan</h2>
-            <p>Isi formulir di bawah ini dan kami akan menghubungi lewat email.</p>
+            <p>Isi formulir ini. Pesan akan dikirim melalui email Racikara.</p>
+            @if (session('success'))
+                <div class="contact-alert contact-alert-success" role="status">{{ session('success') }}</div>
+            @endif
+            @if (session('error'))
+                <div class="contact-alert contact-alert-error" role="alert">{{ session('error') }}</div>
+            @endif
             <div class="contact-form-grid">
-                <label>Nama Lengkap<input type="text" name="nama" placeholder="Contoh: Sarah Abdullah" required></label>
-                <label>Alamat Email<input type="email" name="email" placeholder="nama@email.com" required></label>
+                <label>
+                    Nama Lengkap
+                    <input type="text" name="nama" value="{{ old('nama') }}" maxlength="120" autocomplete="name" placeholder="Contoh: Sarah Abdullah" required>
+                    @error('nama') <small class="contact-field-error">{{ $message }}</small> @enderror
+                </label>
+                <label>
+                    Alamat Email
+                    <input type="email" name="email" value="{{ old('email') }}" maxlength="254" autocomplete="email" placeholder="nama@email.com" required>
+                    @error('email') <small class="contact-field-error">{{ $message }}</small> @enderror
+                </label>
             </div>
-            <label>Subjek<select name="subjek"><option>Saran resep</option><option>Kendala akun</option><option>Kerja sama</option><option>Pertanyaan umum</option></select></label>
-            <label>Pesan<textarea name="pesan" rows="5" placeholder="Tulis pesanmu di sini..." required></textarea></label>
+            <label>
+                Subjek
+                <select name="subjek" required>
+                    <option value="">Pilih subjek pesan</option>
+                    <option value="recipe_suggestion" @selected(old('subjek') === 'recipe_suggestion')>Saran resep</option>
+                    <option value="account_issue" @selected(old('subjek') === 'account_issue')>Kendala akun</option>
+                    <option value="partnership" @selected(old('subjek') === 'partnership')>Kerja sama</option>
+                    <option value="general" @selected(old('subjek') === 'general')>Pertanyaan umum</option>
+                </select>
+                @error('subjek') <small class="contact-field-error">{{ $message }}</small> @enderror
+            </label>
+            <label>
+                Pesan
+                <textarea name="pesan" rows="5" maxlength="5000" placeholder="Tulis pesanmu di sini..." required>{{ old('pesan') }}</textarea>
+                @error('pesan') <small class="contact-field-error">{{ $message }}</small> @enderror
+            </label>
             <button type="submit">➤ &nbsp; Kirim Pesan</button>
-            <small>Data kamu aman dan hanya dipakai untuk membalas pesan.</small>
+            <small>Informasi yang kamu kirim digunakan untuk menanggapi pesan ini.</small>
         </form>
     </section>
 
