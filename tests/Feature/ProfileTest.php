@@ -21,6 +21,28 @@ class ProfileTest extends TestCase
         $response->assertOk();
     }
 
+    public function test_admin_can_see_review_moderation_link_in_profile_settings(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+
+        $this->actingAs($admin)
+            ->get(route('profile.edit'))
+            ->assertOk()
+            ->assertSee(route('admin.reviews.index'), false)
+            ->assertSee('Moderasi Komentar');
+    }
+
+    public function test_regular_user_does_not_see_review_moderation_link_in_profile_settings(): void
+    {
+        $user = User::factory()->create(['is_admin' => false]);
+
+        $this->actingAs($user)
+            ->get(route('profile.edit'))
+            ->assertOk()
+            ->assertDontSee(route('admin.reviews.index'), false)
+            ->assertDontSee('Moderasi Komentar');
+    }
+
     public function test_profile_information_can_be_updated(): void
     {
         $user = User::factory()->create();
