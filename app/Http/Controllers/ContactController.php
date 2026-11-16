@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Mail\ContactMessageMail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Mail\PendingMail;
 use Illuminate\Support\Facades\Mail;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 class ContactController extends Controller
 {
@@ -40,12 +42,21 @@ class ContactController extends Controller
             );
         }
 
-        Mail::to($recipient)->send(new ContactMessageMail(
-            name: $validated['nama'],
-            email: $validated['email'],
-            subjectLabel: self::SUBJECTS[$validated['subjek']],
-            messageBody: $validated['pesan'],
-        ));
+        try {
+            Mail::to($recipient)->send(new ContactMessageMail(
+                name: $validated['nama'],
+                email: $validated['email'],
+                subjectLabel: self::SUBJECTS[$validated['subjek']],
+                messageBody: $validated['pesan'],
+            ));
+        } catch (TransportExceptionInterface $exception) {
+            report($exception);
+
+            return back()->withInput()->with(
+                'error',
+                'Email belum dapat dikirim. Periksa konfigurasi SMTP; untuk Gmail, gunakan App Password, bukan password akun biasa.',
+            );
+        }
 
         return redirect()->route('contact')
             ->with('success', 'Pesan berhasil dikirim. Terima kasih sudah menghubungi Racikara.');
