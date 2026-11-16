@@ -101,7 +101,7 @@
     <main class="liked-main">
         <header class="topbar">
             <div><h1>Resep Disukai</h1><p>Riwayat resep yang kamu sukai sebagai bentuk apresiasi.</p></div>
-            <div class="top-user"><span>♧</span><span class="avatar">{{ strtoupper(substr(auth()->user()->name,0,1)) }}</span>⌄</div>
+            <div class="top-user"><span>♧</span><x-user-avatar :user="auth()->user()" class="avatar" />⌄</div>
         </header>
         <nav class="category-bar" aria-label="Filter kategori">
             <a class="category-chip {{ !$selectedCategory ? 'active' : '' }}" href="{{ route('recipes.liked', $search ? ['search' => $search] : []) }}">Semua</a>

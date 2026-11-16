@@ -105,7 +105,7 @@
     <main class="create-main">
         <header class="topbar">
             <div><h1>Selamat datang di Dashboard, {{ auth()->user()->name }} 👋</h1><p>Bagikan kreasi masakan terbaikmu.</p></div>
-            <div class="topbar-user"><span>♧</span><span class="avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span></div>
+            <div class="topbar-user"><span>♧</span><x-user-avatar :user="auth()->user()" class="avatar" /></div>
         </header>
         <section class="share-banner"><span class="pot">🍲</span><div><h2>Bagikan Resep Andalanmu!</h2><p>Tulis resep masakan favoritmu dan inspirasi untuk orang lain.</p></div></section>
 

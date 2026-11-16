@@ -92,7 +92,7 @@
     <main class="recipes-main">
         <header class="topbar">
             <div><h1>Resep Saya</h1><p>Kelola dan atur resep masakan yang kamu buat.</p></div>
-            <div class="top-user"><span>♧</span><span class="avatar">{{ strtoupper(substr(auth()->user()->name,0,1)) }}</span>⌄</div>
+            <div class="top-user"><span>♧</span><x-user-avatar :user="auth()->user()" class="avatar" />⌄</div>
         </header>
         <section class="recipes-toolbar"><h2><span>▣</span>Resep Buatan Saya</h2><a class="add-recipe" href="{{ route('recipes.create') }}">＋ Tambah Resep Baru</a></section>
         @if (session('success'))<div class="success">{{ session('success') }}</div>@endif

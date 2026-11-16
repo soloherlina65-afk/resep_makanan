@@ -101,7 +101,7 @@
     <main class="favorites-main">
         <header class="topbar">
             <div><h1>Resep Favorit</h1><p>Kumpulan inspirasi masakan yang kamu simpan.</p></div>
-            <div class="top-user"><span>♧</span><span class="avatar">{{ strtoupper(substr(auth()->user()->name,0,1)) }}</span>⌄</div>
+            <div class="top-user"><span>♧</span><x-user-avatar :user="auth()->user()" class="avatar" />⌄</div>
         </header>
         <nav class="category-bar" aria-label="Filter kategori">
             <a class="category-chip {{ !$selectedCategory ? 'active' : '' }}" href="{{ route('recipes.favorites', $search ? ['search' => $search] : []) }}">Semua</a>
