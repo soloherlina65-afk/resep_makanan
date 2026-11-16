@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\MealPlanController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RecipeController;
@@ -22,13 +24,21 @@ use App\Http\Controllers\FollowController;
 */
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/search/suggestions', [HomeController::class, 'suggestions'])->name('recipes.suggestions');
 Route::get('/tentang-kami', [HomeController::class, 'about'])->name('about');
 Route::get('/kontak', [HomeController::class, 'contact'])->name('contact');
+Route::post('/kontak', [ContactController::class, 'store'])
+    ->middleware('throttle:5,1')
+    ->name('contact.send');
 Route::patch('/team-members', [TeamMemberController::class, 'update'])
     ->middleware(['auth', 'admin'])
     ->name('team-members.update');
 Route::get('/recipes', [RecipeController::class, 'index'])->name('recipes.index');
 Route::middleware('auth')->group(function () {
+    Route::get('/meal-plans', [MealPlanController::class, 'index'])->name('meal-plans.index');
+    Route::post('/meal-plans', [MealPlanController::class, 'store'])->name('meal-plans.store');
+    Route::delete('/meal-plans/{mealPlan}', [MealPlanController::class, 'destroy'])->name('meal-plans.destroy');
+
     Route::post('/users/{id}/follow', [FollowController::class, 'follow'])
     ->name('users.follow');
 
