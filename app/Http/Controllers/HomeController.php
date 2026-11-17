@@ -12,9 +12,7 @@ class HomeController extends Controller
 {
     public function index(Request $request)
     {
-        $categories = Category::withCount('recipes')
-            ->orderBy('nama_kategori')
-            ->get();
+        $categories = Category::orderBy('nama_kategori')->get();
         $filters = $request->validate([
             'search' => ['nullable', 'string', 'max:100'],
             'category_id' => ['nullable', 'integer', 'exists:categories,id'],

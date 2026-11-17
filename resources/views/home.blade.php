@@ -16,7 +16,6 @@
         <div class="nav-menu">
             <a href="/" class="{{ $hasFilters ? '' : 'active' }}">Beranda</a>
             <a href="#resep" class="{{ $hasFilters ? 'active' : '' }}">Resep</a>
-            <a href="#kategori">Kategori</a>
         </div>
 
         <div class="nav-actions">
@@ -91,82 +90,6 @@
     </div>
 
 </section>
-
-
-<!-- KATEGORI -->
-@if (!$search)
-<section class="category-section" id="kategori">
-
-    <div class="section-container">
-
-        <div class="section-header">
-
-            <div>
-                <span class="section-label">JELAJAHI</span>
-                <h2>Kategori Masakan</h2>
-            </div>
-
-            <a href="#kategori" class="see-all">
-                Lihat Semua →
-            </a>
-
-        </div>
-
-        <div class="category-grid">
-
-            @forelse ($categories as $category)
-
-            @php
-                $categoryName = mb_strtolower($category->nama_kategori);
-                $categoryIcon = match (true) {
-                    str_contains($categoryName, 'minum') => '🥤',
-                    str_contains($categoryName, 'nusantara') => '🍛',
-                    str_contains($categoryName, 'ayam') => '🍗',
-                    str_contains($categoryName, 'seafood'),
-                    str_contains($categoryName, 'ikan'),
-                    str_contains($categoryName, 'udang') => '🦐',
-                    str_contains($categoryName, 'burger') => '🍔',
-                    str_contains($categoryName, 'pizza') => '🍕',
-                    str_contains($categoryName, 'pasta') => '🍝',
-                    str_contains($categoryName, 'mie'),
-                    str_contains($categoryName, 'mi ') => '🍜',
-                    str_contains($categoryName, 'nasi') => '🍚',
-                    str_contains($categoryName, 'bubur') => '🥣',
-                    str_contains($categoryName, 'sate') => '🍢',
-                    str_contains($categoryName, 'goreng') => '🍳',
-                    str_contains($categoryName, 'kue'),
-                    str_contains($categoryName, 'dessert') => '🍰',
-                    str_contains($categoryName, 'sayur') => '🥗',
-                    str_contains($categoryName, 'sandwich') => '🥪',
-                    str_contains($categoryName, 'kukus') => '♨️',
-                    str_contains($categoryName, 'panggang'),
-                    str_contains($categoryName, 'barbeku') => '🍖',
-                    default => '🍽️',
-                };
-            @endphp
-
-            <a href="{{ route('home', ['category_id' => $category->id]) }}#resep" class="category-card">
-
-                <div class="category-icon" aria-hidden="true">{{ $categoryIcon }}</div>
-
-                    <h3>{{ $category->nama_kategori }}</h3>
-
-                <p>{{ $category->recipes_count }} resep tersedia</p>
-
-                </a>
-
-            @empty
-
-                <p>Belum ada kategori masakan.</p>
-
-            @endforelse
-
-        </div>
-
-    </div>
-
-</section>
-@endif
 
 
 <!-- RESEP TERBARU -->
@@ -410,7 +333,6 @@
                             <p>✓ Coba kata yang lebih umum agar hasil lebih banyak.</p>
                         </div>
                         <a class="clear-search empty-search-link" href="{{ route('home') }}">Hapus pencarian</a>
-                        <a class="browse-categories-link" href="{{ route('home') }}#kategori">Lihat semua kategori</a>
                     @endif
 
                 </div>
@@ -475,7 +397,6 @@
 
             <a href="/">Beranda</a>
             <a href="#resep">Resep</a>
-            <a href="#kategori">Kategori</a>
 
         </div>
 

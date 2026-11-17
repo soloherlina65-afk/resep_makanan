@@ -45,6 +45,26 @@ class RecipeDiscoveryTest extends TestCase
             });
     }
 
+    public function test_home_hides_category_cards_but_search_still_matches_category_names(): void
+    {
+        $user = User::factory()->create();
+        $category = Category::create(['nama_kategori' => 'Masakan Nusantara']);
+        $recipe = $this->createRecipe($user, $category, ['nama_resep' => 'Tumis Sayur']);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertDontSee('category-card', false)
+            ->assertSee('Masakan Nusantara');
+
+        $this->get(route('home', ['search' => 'Nusantara']))
+            ->assertOk()
+            ->assertSee('Tumis Sayur')
+            ->assertViewHas('recipes', function ($recipes) use ($recipe) {
+                return $recipes->total() === 1
+                    && $recipes->getCollection()->first()->is($recipe);
+            });
+    }
+
     public function test_filtered_results_are_paginated_and_keep_query_parameters(): void
     {
         $user = User::factory()->create();
