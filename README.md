@@ -25,7 +25,7 @@ Racikara adalah aplikasi berbagi resep masakan berbasis Laravel. Pengunjung dapa
 
 ## Persyaratan
 
-- PHP 8.1+ dengan ekstensi Laravel yang dibutuhkan, termasuk PDO untuk database
+- PHP 8.1+ dengan ekstensi Laravel yang dibutuhkan, termasuk PDO (PHP Data Objects) untuk database
 - Composer
 - Node.js dan npm
 - MySQL/MariaDB atau database Laravel yang kompatibel
