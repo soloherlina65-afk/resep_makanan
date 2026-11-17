@@ -6,7 +6,7 @@
 <nav class="navbar">
     <div class="nav-container">
         <a href="{{ route('home') }}" class="logo"><img src="{{ asset('images/racikara-logo.png') }}" alt="Racikara"></a>
-        <div class="nav-menu">
+        <div class="nav-menu" id="primary-navigation">
             <a href="{{ route('home') }}">Beranda</a>
             <a href="{{ route('home') }}#resep">Resep</a>
             <a href="{{ route('home') }}#kategori">Kategori</a>
@@ -21,6 +21,9 @@
                 <a href="{{ route('register') }}" class="register-btn">Daftar</a>
             @endauth
         </div>
+        <button class="nav-toggle" type="button" aria-label="Buka menu" aria-expanded="false" aria-controls="primary-navigation" data-mobile-nav-toggle>
+            <span></span><span></span><span></span>
+        </button>
     </div>
 </nav>
 

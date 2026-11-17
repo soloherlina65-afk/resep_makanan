@@ -1,3 +1,13 @@
+@php
+    $imageMap = [
+        'Ayam Kecap' => 'images/ayamkecap.png',
+        'Udang Saus Padang' => 'images/udangsauspadang.png',
+        'Nasi Goreng Spesial' => 'images/nasigorengspesial.png',
+        'Pancake Klasik Madu' => 'images/pancakeklasikmadu.png',
+        'Mocalatte Spesial' => 'images/mocalatte.png',
+        'Waterlemon' => 'images/waterlemon.png',
+    ];
+@endphp
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -384,9 +394,9 @@
                                 <tbody>
                                     @foreach ($latestRecipes as $recipe)
                                         @php
-                                            $photo = $recipe->foto;
+                                            $photo = $recipe->foto ?: ($imageMap[$recipe->nama_resep] ?? null);
                                             $photoUrl = $photo
-                                                ? (str_starts_with($photo, 'images/') ? asset($photo) : asset('storage/'.$photo))
+                                                ? (str_starts_with($photo, 'images/') ? asset($photo) : asset('storage/'.ltrim($photo, '/')))
                                                 : null;
                                             $ownerName = $recipe->user?->name ?? 'Pengguna dihapus';
                                             $ownerInitials = collect(preg_split('/\s+/', trim($ownerName)))
@@ -398,7 +408,7 @@
                                         <tr>
                                             <td>
                                                 <div class="recipe-cell">
-                                                    <span class="recipe-thumb">@if ($photoUrl)<img src="{{ $photoUrl }}" alt="">@else🍲@endif</span>
+                                                    <span class="recipe-thumb">@if ($photoUrl)<img src="{{ $photoUrl }}" alt="{{ $recipe->nama_resep }}">@else🍲@endif</span>
                                                     <span><a class="recipe-name" href="{{ route('recipes.show', $recipe) }}">{{ $recipe->nama_resep }}</a><span class="recipe-meta">{{ $recipe->waktu_masak }} menit · {{ $recipe->porsi }} porsi</span></span>
                                                 </div>
                                             </td>

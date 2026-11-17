@@ -7,6 +7,8 @@ use App\Models\Recipe;
 use App\Models\ResepBahan;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class RecipeDiscoveryTest extends TestCase
@@ -123,6 +125,36 @@ class RecipeDiscoveryTest extends TestCase
                 $recipe->steps->pluck('urutan')->all(),
             );
         }
+    }
+
+    public function test_user_can_upload_a_recipe_photo_and_see_it_on_the_recipe_page(): void
+    {
+        Storage::fake('public');
+        $user = User::factory()->create();
+        $category = Category::create(['nama_kategori' => 'Masakan']);
+        $photo = UploadedFile::fake()->image('resep.jpg');
+
+        $response = $this->actingAs($user)->post(route('recipes.store'), [
+            'nama_resep' => 'Resep dengan Foto',
+            'category_id' => $category->id,
+            'deskripsi' => 'Resep uji dengan foto yang diunggah.',
+            'waktu_masak' => 20,
+            'porsi' => 2,
+            'tingkat_kesulitan' => 'Mudah',
+            'foto' => $photo,
+            'bahan' => ['1 buah tomat'],
+            'langkah' => ['Potong tomat.'],
+        ]);
+
+        $recipe = Recipe::where('nama_resep', 'Resep dengan Foto')->firstOrFail();
+
+        $response->assertRedirect(route('recipes.show', $recipe));
+        Storage::disk('public')->assertExists($recipe->foto);
+
+        $this->actingAs($user)
+            ->get(route('recipes.show', $recipe))
+            ->assertOk()
+            ->assertSee(asset('storage/'.$recipe->foto), false);
     }
 
     private function createRecipe(User $user, Category $category, array $attributes = []): Recipe

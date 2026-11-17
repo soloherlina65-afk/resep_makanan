@@ -6,7 +6,7 @@
 <nav class="navbar">
     <div class="nav-container">
         <a href="{{ route('home') }}" class="logo"><img src="{{ asset('images/racikara-logo.png') }}" alt="Racikara"></a>
-        <div class="nav-menu">
+        <div class="nav-menu" id="primary-navigation">
             <a href="{{ route('home') }}">Beranda</a>
             <a href="{{ route('home') }}#resep">Resep</a>
             <a href="{{ route('home') }}#kategori">Kategori</a>
@@ -20,6 +20,9 @@
                 <a href="{{ route('register') }}" class="register-btn">Daftar</a>
             @endauth
         </div>
+        <button class="nav-toggle" type="button" aria-label="Buka menu" aria-expanded="false" aria-controls="primary-navigation" data-mobile-nav-toggle>
+            <span></span><span></span><span></span>
+        </button>
     </div>
 </nav>
 
@@ -32,11 +35,7 @@
                 <p>Racikara lahir dari satu keyakinan sederhana: masakan rumahan yang enak seharusnya mudah dibuat siapa saja. Kami mengumpulkan resep praktis dari dapur Nusantara agar setiap momen bersama keluarga terasa lebih hangat.</p>
                 <div class="about-actions">
                     <a class="about-primary-button" href="{{ route('home') }}#resep">Jelajahi Resep</a>
-                    <a class="about-secondary-button" href="{{ route('register') }}">Gabung Komunitas</a>
                 </div>
-            </div>
-            <div class="about-illustration" aria-hidden="true">
-                <div class="about-plate">🍲</div>
             </div>
         </div>
     </section>
@@ -152,10 +151,6 @@
         @endauth
     </section>
 
-    <section class="about-container about-join">
-        <div><h2>Siap memasak bersama kami?</h2><p>Daftar gratis, simpan resep favoritmu, dan bagikan masakan terbaikmu dengan komunitas.</p></div>
-        <a href="{{ route('register') }}">Daftar Sekarang</a>
-    </section>
 </main>
 
 <footer>

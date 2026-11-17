@@ -13,7 +13,7 @@
             <img src="{{ asset('images/racikara-logo.png') }}" alt="Racikara">
         </a>
 
-        <div class="nav-menu">
+        <div class="nav-menu" id="primary-navigation">
             <a href="/" class="{{ $hasFilters ? '' : 'active' }}">Beranda</a>
             <a href="#resep" class="{{ $hasFilters ? 'active' : '' }}">Resep</a>
             <a href="#kategori" class="{{ $categoryId !== null ? 'active' : '' }}">Kategori</a>
@@ -24,6 +24,9 @@
             <a href="{{ route('register') }}" class="register-btn">Daftar</a>
         </div>
 
+        <button class="nav-toggle" type="button" aria-label="Buka menu" aria-expanded="false" aria-controls="primary-navigation" data-mobile-nav-toggle>
+            <span></span><span></span><span></span>
+        </button>
     </div>
 </nav>
 

@@ -209,6 +209,30 @@ class RoleAccessTest extends TestCase
             });
     }
 
+    public function test_admin_dashboard_displays_bundled_and_uploaded_recipe_photos(): void
+    {
+        $admin = User::factory()->create();
+        $admin->role = User::ROLE_ADMIN;
+        $admin->save();
+        $owner = User::factory()->create();
+        $category = Category::create(['nama_kategori' => 'Masakan']);
+        $bundledPhotoRecipe = $this->createRecipe($owner, $category, [
+            'nama_resep' => 'Ayam Kecap',
+        ]);
+        $uploadedPhotoRecipe = $this->createRecipe($owner, $category, [
+            'nama_resep' => 'Resep Foto Unggahan',
+            'foto' => 'recipes/foto-unggahan.jpg',
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.dashboard'))
+            ->assertOk()
+            ->assertSee('src="'.asset('images/ayamkecap.png').'"', false)
+            ->assertSee('src="'.asset('storage/recipes/foto-unggahan.jpg').'"', false)
+            ->assertSee($bundledPhotoRecipe->nama_resep)
+            ->assertSee($uploadedPhotoRecipe->nama_resep);
+    }
+
     public function test_only_admins_can_change_user_roles_and_last_admin_is_preserved(): void
     {
         $admin = User::factory()->create();
