@@ -51,16 +51,16 @@ Route::delete('/team-members/{teamMember}', [TeamMemberController::class, 'destr
     ->middleware(['auth', 'admin'])
     ->name('team-members.destroy');
 Route::get('/recipes', [RecipeController::class, 'index'])->name('recipes.index');
+Route::get('/users/{id}', [FollowController::class, 'show'])->name('users.show');
+Route::get('/users/{id}/followers', [FollowController::class, 'followers'])->name('users.followers');
+Route::get('/users/{id}/following', [FollowController::class, 'following'])->name('users.following');
+
 Route::middleware('auth')->group(function () {
     Route::get('/meal-plans', [MealPlanController::class, 'index'])->name('meal-plans.index');
     Route::post('/meal-plans', [MealPlanController::class, 'store'])->name('meal-plans.store');
     Route::delete('/meal-plans/{mealPlan}', [MealPlanController::class, 'destroy'])->name('meal-plans.destroy');
-
-    Route::post('/users/{id}/follow', [FollowController::class, 'follow'])
-    ->name('users.follow');
-
-Route::delete('/users/{id}/unfollow', [FollowController::class, 'unfollow'])
-    ->name('users.unfollow');
+    Route::post('/users/{id}/follow', [FollowController::class, 'follow'])->name('users.follow');
+    Route::delete('/users/{id}/unfollow', [FollowController::class, 'unfollow'])->name('users.unfollow');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
     Route::post('/notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
@@ -114,18 +114,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    // Profil Publik Pengguna
-Route::get('/users/{id}', [FollowController::class, 'show'])
-    ->name('users.show');
-
-// Daftar Followers
-Route::get('/users/{id}/followers', [FollowController::class, 'followers'])
-    ->name('users.followers');
-
-// Daftar Following
-Route::get('/users/{id}/following', [FollowController::class, 'following'])
-    ->name('users.following');
-    
 });
 
 
