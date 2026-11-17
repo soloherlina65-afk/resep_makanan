@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Mail\ContactMessageMail;
 use Illuminate\Mail\PendingMail;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 use Symfony\Component\Mailer\Exception\TransportException;
@@ -11,6 +12,8 @@ use Tests\TestCase;
 
 class ContactFormTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_contact_page_renders_the_application_form_instead_of_a_mailto_link(): void
     {
         Config::set('mail.contact_to', null);

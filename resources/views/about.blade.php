@@ -49,7 +49,10 @@
     </section>
 
     <section class="about-container about-story">
-        <div class="story-visual"><div class="story-plate">🍛</div><span><strong>Sejak 2024</strong><br>Dari dapur kecil, untuk dapur semua orang</span></div>
+        <div class="story-visual">
+            <img class="story-photo" src="{{ asset('images/about-story-dining.png') }}" alt="Hidangan yang disajikan di meja makan">
+            <span><strong>Sejak 2024</strong><br>Dari dapur kecil, untuk dapur semua orang</span>
+        </div>
         <div class="story-copy">
             <span class="about-label">CERITA KAMI</span>
             <h2>Dimulai dari meja makan keluarga</h2>
@@ -67,7 +70,7 @@
         </div>
     </section>
 
-    <section class="about-container about-team">
+    <section class="about-container about-team" id="team">
         <div class="about-section-heading"><span class="about-label">TIM KAMI</span><h2>Orang-orang di balik Racikara</h2><p>Tim kecil yang gemar memasak, mencoba, dan berbagi.</p></div>
         <div class="team-grid">
             @foreach ($teamMembers as $member)
@@ -84,7 +87,13 @@
         </div>
 
         @auth
-            @if (auth()->user()->is_admin)
+            @if (auth()->user()->isAdmin())
+            @if (session('success'))
+                <p class="team-status" role="status">{{ session('success') }}</p>
+            @endif
+            @if (session('error'))
+                <p class="team-status" role="alert">{{ session('error') }}</p>
+            @endif
             @if (session('status'))
                 <p class="team-status">{{ session('status') }}</p>
             @endif
@@ -114,6 +123,31 @@
                 </div>
                 <button type="submit">Simpan perubahan</button>
             </form>
+            <form method="POST" action="{{ route('team-members.store') }}" class="team-edit-form" enctype="multipart/form-data">
+                @csrf
+                <h3>Tambah anggota tim</h3>
+                <label>
+                    Nama anggota
+                    <input type="text" name="name" maxlength="100" required>
+                </label>
+                <label>
+                    Divisi
+                    <input type="text" name="division" maxlength="100" required>
+                </label>
+                <label>
+                    Foto anggota
+                    <input type="file" name="photo" accept="image/jpeg,image/png,image/webp">
+                </label>
+                <button type="submit">Tambah anggota</button>
+            </form>
+            @foreach ($teamMembers as $member)
+                <form method="POST" action="{{ route('team-members.destroy', $member) }}" class="team-edit-form" onsubmit="return confirm('Hapus anggota {{ $member->name }}?')">
+                    @csrf
+                    @method('DELETE')
+                    <span>Hapus anggota: {{ $member->name }}</span>
+                    <button type="submit">Hapus anggota</button>
+                </form>
+            @endforeach
             @endif
         @endauth
     </section>

@@ -29,6 +29,9 @@
         .side-divider { margin: 20px 10px; border: 0; border-top: 1px solid #f1e4dc; }
         .logout { width: 100%; border: 0; background: #fff0e3; color: #b9571d; cursor: pointer; text-align: left; }
         .create-main { width: min(100%, 1120px); margin: 0 auto; padding: 25px 22px 40px; }
+        .create-back { display: inline-flex; min-height: 38px; align-items: center; gap: 8px; margin-bottom: 18px; padding: 0 14px; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--orange-dark); font-size: 12px; font-weight: 800; text-decoration: none; transition: background .2s, border-color .2s, transform .2s; }
+        .create-back:hover { transform: translateX(-2px); border-color: #b7c8a0; background: #f7faf3; }
+        .create-back:focus-visible { outline: 3px solid rgba(122, 143, 92, .3); outline-offset: 2px; }
         .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
         .topbar h1 { margin: 0; color: var(--brown); font-size: 28px; }
         .topbar p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
@@ -70,9 +73,8 @@
         .upload-icon { color: var(--orange); font-size: 40px; }
         .preview { display: none; width: 100%; height: 145px; margin-top: 10px; border-radius: 9px; object-fit: cover; }
         .error { margin-top: 4px; color: #c83d2d; font-size: 11px; }
-        .form-actions { display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; padding-top: 16px; border-top: 1px solid #f5e8df; }
+        .form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; padding-top: 16px; border-top: 1px solid #f5e8df; }
         .button { display: inline-block; padding: 10px 20px; border-radius: 20px; font-size: 12px; font-weight: 800; text-decoration: none; cursor: pointer; }
-        .back-button { border: 1px solid var(--orange); color: var(--orange-dark); background: #fff; }
         .post-button { border: 0; color: #fff; background: var(--orange); }
         .post-button:hover { background: var(--orange-dark); }
         @media (max-width: 760px) {
@@ -103,6 +105,7 @@
         <form method="POST" action="{{ route('logout') }}" data-logout-form>@csrf<button class="logout" type="submit"><span class="nav-icon">↪</span>Logout</button></form>
     </aside>
     <main class="create-main">
+        <a class="create-back" href="{{ route('recipes.mine') }}" onclick="if (window.history.length > 1) { window.history.back(); return false; }"><span aria-hidden="true">←</span>Kembali</a>
         <header class="topbar">
             <div><h1>Selamat datang di Dashboard, {{ auth()->user()->name }} 👋</h1><p>Bagikan kreasi masakan terbaikmu.</p></div>
             <div class="topbar-user"><span>♧</span><x-user-avatar :user="auth()->user()" class="avatar" /></div>
@@ -129,7 +132,7 @@
                 </div>
                 <aside class="upload-panel"><span class="panel-title">📷 Foto Resep</span><small style="color: var(--muted);">Unggah foto menarik untuk resep kamu</small>@if ($recipe?->foto)<img class="preview" style="display:block;" src="{{ str_starts_with($recipe->foto, 'images/') ? asset($recipe->foto) : asset('storage/' . $recipe->foto) }}" alt="Foto {{ $recipe->nama_resep }}">@endif<label class="upload-box" for="foto"><span class="upload-icon">⇧</span><strong>{{ $isEditing ? 'Ganti foto resep' : 'Klik untuk upload foto' }}</strong><small>atau drag & drop<br>Format: JPG, PNG | Maks: 2MB</small></label><input id="foto" name="foto" type="file" accept=".jpg,.jpeg,.png,.webp" hidden><img id="preview" class="preview" alt="Pratinjau foto resep">@error('foto')<div class="error">{{ $message }}</div>@enderror</aside>
             </div>
-            <div class="form-actions"><a class="button back-button" href="{{ route('recipes.mine') }}">← &nbsp;Kembali</a><button class="button post-button" type="submit">➤ &nbsp;{{ $isEditing ? 'Simpan Perubahan' : 'Posting Resep' }}</button></div>
+            <div class="form-actions"><button class="button post-button" type="submit">➤ &nbsp;{{ $isEditing ? 'Simpan Perubahan' : 'Posting Resep' }}</button></div>
         </form>
     </main>
 </div>

@@ -33,7 +33,9 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        return redirect()->intended(
+            $request->user()->isAdmin() ? route('admin.dashboard') : RouteServiceProvider::HOME,
+        );
     }
 
     public function redirectToGoogle(): RedirectResponse
@@ -57,7 +59,7 @@ class AuthenticatedSessionController extends Controller
             ->first();
 
         if (! $user) {
-            $user = User::create([
+            $user = new User([
                 'name' => $googleUser->getName() ?: $googleUser->getNickname() ?: 'Pengguna Racikara',
                 'email' => $googleUser->getEmail(),
                 'google_id' => $googleUser->getId(),
@@ -65,6 +67,8 @@ class AuthenticatedSessionController extends Controller
                 'email_verified_at' => now(),
                 'avatar' => $googleUser->getAvatar(),
             ]);
+            $user->role = User::ROLE_USER;
+            $user->save();
         } else {
             $user->forceFill([
                 'google_id' => $user->google_id ?: $googleUser->getId(),
@@ -75,7 +79,9 @@ class AuthenticatedSessionController extends Controller
 
         Auth::login($user, true);
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        return redirect()->intended(
+            $user->isAdmin() ? route('admin.dashboard') : RouteServiceProvider::HOME,
+        );
     }
 
     /**

@@ -54,6 +54,8 @@ class RecipeDiscoveryTest extends TestCase
         $this->get(route('home'))
             ->assertOk()
             ->assertDontSee('category-card', false)
+            ->assertSee('href="#kategori"', false)
+            ->assertSee('id="kategori"', false)
             ->assertSee('Masakan Nusantara');
 
         $this->get(route('home', ['search' => 'Nusantara']))
@@ -71,7 +73,7 @@ class RecipeDiscoveryTest extends TestCase
         $category = Category::create(['nama_kategori' => 'Masakan']);
 
         for ($index = 1; $index <= 10; $index++) {
-            $this->createRecipe($user, $category, ['nama_resep' => 'Resep ' . $index]);
+            $this->createRecipe($user, $category, ['nama_resep' => 'Resep '.$index]);
         }
 
         $this->get(route('home', ['category_id' => $category->id, 'page' => 2]))
@@ -82,7 +84,7 @@ class RecipeDiscoveryTest extends TestCase
                     && $recipes->currentPage() === 2
                     && $recipes->count() === 1;
             })
-            ->assertSee('category_id=' . $category->id, false);
+            ->assertSee('category_id='.$category->id, false);
     }
 
     public function test_search_suggestions_match_ingredients(): void
@@ -103,6 +105,24 @@ class RecipeDiscoveryTest extends TestCase
                 'category' => 'Minuman',
                 'url' => route('recipes.show', $recipe),
             ]);
+    }
+
+    public function test_pancake_and_udang_padang_recipes_have_ingredients_and_cooking_steps(): void
+    {
+        foreach (['Pancake Klasik Madu', 'Udang Saus Padang'] as $name) {
+            $recipe = Recipe::with(['bahan', 'steps'])
+                ->where('nama_resep', $name)
+                ->firstOrFail();
+
+            $this->assertNotEmpty($recipe->deskripsi);
+            $this->assertNotEmpty($recipe->foto);
+            $this->assertGreaterThanOrEqual(6, $recipe->bahan->count());
+            $this->assertGreaterThanOrEqual(5, $recipe->steps->count());
+            $this->assertSame(
+                range(1, $recipe->steps->count()),
+                $recipe->steps->pluck('urutan')->all(),
+            );
+        }
     }
 
     private function createRecipe(User $user, Category $category, array $attributes = []): Recipe

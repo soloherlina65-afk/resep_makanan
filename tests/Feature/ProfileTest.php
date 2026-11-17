@@ -23,7 +23,9 @@ class ProfileTest extends TestCase
 
     public function test_admin_can_see_review_moderation_link_in_profile_settings(): void
     {
-        $admin = User::factory()->create(['is_admin' => true]);
+        $admin = User::factory()->create();
+        $admin->role = User::ROLE_ADMIN;
+        $admin->save();
 
         $this->actingAs($admin)
             ->get(route('profile.edit'))
@@ -34,7 +36,7 @@ class ProfileTest extends TestCase
 
     public function test_regular_user_does_not_see_review_moderation_link_in_profile_settings(): void
     {
-        $user = User::factory()->create(['is_admin' => false]);
+        $user = User::factory()->create();
 
         $this->actingAs($user)
             ->get(route('profile.edit'))

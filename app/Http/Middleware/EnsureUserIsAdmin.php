@@ -10,7 +10,14 @@ class EnsureUserIsAdmin
 {
     public function handle(Request $request, Closure $next): Response
     {
-        abort_unless($request->user()?->is_admin, 403);
+        if (! $request->user()?->isAdmin()) {
+            if ($request->expectsJson()) {
+                abort(403, 'Anda tidak memiliki izin untuk mengakses halaman tersebut.');
+            }
+
+            return redirect()->route('dashboard')
+                ->with('error', 'Anda tidak memiliki izin untuk mengakses halaman tersebut.');
+        }
 
         return $next($request);
     }

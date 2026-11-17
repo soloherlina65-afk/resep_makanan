@@ -1,6 +1,13 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Admin\ActivityController;
+use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\NotificationManagementController;
+use App\Http\Controllers\Admin\RecipeManagementController;
+use App\Http\Controllers\Admin\SettingController as AdminSettingController;
+use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\MealPlanController;
@@ -11,6 +18,10 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\TeamMemberController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FollowController;
+use App\Models\Category;
+use App\Models\Recipe;
+use App\Models\Review;
+use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +44,12 @@ Route::post('/kontak', [ContactController::class, 'store'])
 Route::patch('/team-members', [TeamMemberController::class, 'update'])
     ->middleware(['auth', 'admin'])
     ->name('team-members.update');
+Route::post('/team-members', [TeamMemberController::class, 'store'])
+    ->middleware(['auth', 'admin'])
+    ->name('team-members.store');
+Route::delete('/team-members/{teamMember}', [TeamMemberController::class, 'destroy'])
+    ->middleware(['auth', 'admin'])
+    ->name('team-members.destroy');
 Route::get('/recipes', [RecipeController::class, 'index'])->name('recipes.index');
 Route::middleware('auth')->group(function () {
     Route::get('/meal-plans', [MealPlanController::class, 'index'])->name('meal-plans.index');
@@ -60,6 +77,21 @@ Route::delete('/users/{id}/unfollow', [FollowController::class, 'unfollow'])
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 });
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', AdminDashboardController::class)->name('dashboard');
+    Route::get('/recipes', [RecipeManagementController::class, 'index'])->name('recipes.index');
+    Route::delete('/recipes/{recipe}', [RecipeController::class, 'destroy'])->name('recipes.destroy');
+    Route::get('/categories', [AdminCategoryController::class, 'index'])->name('categories.index');
+    Route::post('/categories', [AdminCategoryController::class, 'store'])->name('categories.store');
+    Route::patch('/categories/{category}', [AdminCategoryController::class, 'update'])->name('categories.update');
+    Route::delete('/categories/{category}', [AdminCategoryController::class, 'destroy'])->name('categories.destroy');
+    Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
+    Route::patch('/users/{user}/role', [UserManagementController::class, 'updateRole'])->name('users.role');
+    Route::delete('/users/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
+    Route::get('/activities', [ActivityController::class, 'index'])->name('activities.index');
+    Route::get('/notifications', [NotificationManagementController::class, 'index'])->name('notifications.index');
+    Route::delete('/notifications/{notification}', [NotificationManagementController::class, 'destroy'])->name('notifications.destroy');
+    Route::get('/settings', [AdminSettingController::class, 'edit'])->name('settings.edit');
+    Route::patch('/settings', [AdminSettingController::class, 'update'])->name('settings.update');
     Route::get('/reviews', [ReviewController::class, 'adminIndex'])->name('reviews.index');
     Route::patch('/reviews/{review}/visibility', [ReviewController::class, 'toggleVisibility'])->name('reviews.visibility');
 });

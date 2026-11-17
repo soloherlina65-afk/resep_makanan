@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Recipe;
 use App\Models\TeamMember;
+use App\Models\SiteSetting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -152,7 +153,7 @@ class HomeController extends Controller
     public function contact()
     {
         return view('contact', [
-            'contactEmail' => config('mail.contact_to'),
+            'contactEmail' => SiteSetting::valueFor('contact_to_address', config('mail.contact_to')),
         ]);
     }
 }

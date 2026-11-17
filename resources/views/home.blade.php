@@ -16,6 +16,7 @@
         <div class="nav-menu">
             <a href="/" class="{{ $hasFilters ? '' : 'active' }}">Beranda</a>
             <a href="#resep" class="{{ $hasFilters ? 'active' : '' }}">Resep</a>
+            <a href="#kategori" class="{{ $categoryId !== null ? 'active' : '' }}">Kategori</a>
         </div>
 
         <div class="nav-actions">
@@ -111,7 +112,7 @@
         <form action="{{ route('home') }}" method="GET" class="recipe-filters">
             <input type="hidden" name="search" value="{{ $search }}">
 
-            <label>
+            <label id="kategori" style="scroll-margin-top: 130px;">
                 <span>Kategori</span>
                 <select name="category_id">
                     <option value="">Semua kategori</option>

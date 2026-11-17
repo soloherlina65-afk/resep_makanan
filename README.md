@@ -65,6 +65,23 @@ Racikara adalah aplikasi berbagi resep berbasis Laravel. Pengguna dapat mencari 
 - Rating dan moderasi ulasan.
 - Form kontak berbasis Laravel.
 - Perencana menu mingguan dan daftar belanja berdasarkan bahan resep.
+- Role `admin`/`user` dengan pembatasan route admin dan otorisasi kepemilikan resep serta ulasan.
+
+## Role dan akses admin
+
+Setelah menjalankan `php artisan migrate`, kolom `users.role` dibuat dengan nilai bawaan `user`. Migrasi mengubah akun lama yang memiliki `is_admin = true` menjadi role `admin`, tanpa mengubah data resep atau akun. Registrasi email maupun Google selalu membuat akun baru dengan role `user`.
+
+Admin yang sudah ada dapat membuka `/admin/dashboard` untuk mengelola resep, kategori, pengguna dan role, moderasi komentar, anggota tim, notifikasi, pengaturan kontak, serta aktivitas. User biasa yang mencoba URL admin akan diarahkan ke dashboard pengguna dengan pesan akses ditolak. Policy juga membatasi edit/hapus resep dan ulasan milik pengguna lain.
+
+Untuk instalasi baru yang belum memiliki admin, daftarkan akun terlebih dahulu lalu promosikan akun tersebut langsung di database menggunakan email akun sendiri:
+
+```sql
+UPDATE users
+SET role = 'admin', is_admin = 1
+WHERE email = 'email-admin-anda@example.com';
+```
+
+Setelah admin pertama dibuat, gunakan halaman `/admin/users` untuk mengatur role. Sistem mencegah penghapusan atau penurunan role admin terakhir.
 
 ## Menjalankan tes
 

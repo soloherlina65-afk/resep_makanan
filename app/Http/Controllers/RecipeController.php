@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Recipe;
+use App\Services\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -70,17 +71,17 @@ class RecipeController extends Controller
         ]);
     }
 
-    public function destroy(Request $request, Recipe $recipe): RedirectResponse
+    public function destroy(Request $request, Recipe $recipe, ActivityLogger $activityLogger): RedirectResponse
     {
-        abort_unless($recipe->user_id === $request->user()->id, 403);
-
+        $this->authorize('delete', $recipe);
         if ($recipe->foto && ! str_starts_with($recipe->foto, 'images/')) {
             Storage::disk('public')->delete($recipe->foto);
         }
 
+        $activityLogger->log('Menghapus resep ' . $recipe->nama_resep, $recipe);
         $recipe->delete();
 
-        return redirect()->route('recipes.mine')
+        return redirect()->route($request->user()->isAdmin() ? 'admin.recipes.index' : 'recipes.mine')
             ->with('success', 'Resep berhasil dihapus.');
     }
 
@@ -93,7 +94,7 @@ class RecipeController extends Controller
 
     public function edit(Request $request, Recipe $recipe)
     {
-        abort_unless($recipe->user_id === $request->user()->id, 403);
+        $this->authorize('update', $recipe);
 
         $recipe->load(['category', 'bahan', 'steps']);
 
@@ -103,7 +104,7 @@ class RecipeController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, ActivityLogger $activityLogger): RedirectResponse
     {
         $validated = $request->validate([
             'nama_resep' => ['required', 'string', 'max:255'],
@@ -153,14 +154,15 @@ class RecipeController extends Controller
 
             return $recipe;
         });
+        $activityLogger->log('Membuat resep ' . $recipe->nama_resep, $recipe);
 
         return redirect()->route('recipes.show', $recipe)
             ->with('success', 'Resep berhasil diposting.');
     }
 
-    public function update(Request $request, Recipe $recipe): RedirectResponse
+    public function update(Request $request, Recipe $recipe, ActivityLogger $activityLogger): RedirectResponse
     {
-        abort_unless($recipe->user_id === $request->user()->id, 403);
+        $this->authorize('update', $recipe);
 
         $validated = $request->validate([
             'nama_resep' => ['required', 'string', 'max:255'],
@@ -216,6 +218,7 @@ class RecipeController extends Controller
         if ($request->hasFile('foto') && $oldPhoto && ! str_starts_with($oldPhoto, 'images/')) {
             Storage::disk('public')->delete($oldPhoto);
         }
+        $activityLogger->log('Memperbarui resep ' . $recipe->nama_resep, $recipe);
 
         return redirect()->route('recipes.show', $recipe)
             ->with('success', 'Resep berhasil diperbarui.');

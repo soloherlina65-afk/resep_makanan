@@ -232,9 +232,9 @@
 <body>
 <main class="admin-page">
     <header class="admin-topbar">
-        <a class="back-link" href="{{ route('dashboard') }}">
+        <a class="back-link" href="{{ route('admin.dashboard') }}" onclick="if (window.history.length > 1) { window.history.back(); return false; }">
             <span aria-hidden="true">←</span>
-            Kembali ke Dashboard
+            Kembali
         </a>
         <div class="admin-heading">
             <span class="admin-heading-icon" aria-hidden="true">✓</span>

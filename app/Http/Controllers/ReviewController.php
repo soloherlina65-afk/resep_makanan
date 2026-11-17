@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Recipe;
 use App\Models\Review;
 use App\Notifications\ActivityNotification;
+use App\Services\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -12,6 +13,8 @@ class ReviewController extends Controller
 {
     public function adminIndex(): \Illuminate\Contracts\View\View
     {
+        $this->authorize('viewAny', Review::class);
+
         return view('admin.reviews', [
             'reviews' => Review::with(['user', 'recipe'])
                 ->latest()
@@ -19,16 +22,22 @@ class ReviewController extends Controller
         ]);
     }
 
-    public function toggleVisibility(Review $review): RedirectResponse
+    public function toggleVisibility(Review $review, ActivityLogger $activityLogger): RedirectResponse
     {
+        $this->authorize('moderate', $review);
+
         $review->update(['is_visible' => ! $review->is_visible]);
+        $activityLogger->log(
+            ($review->is_visible ? 'Menampilkan' : 'Menyembunyikan') . ' komentar pada resep #' . $review->recipe_id,
+            $review,
+        );
 
         return back()->with('success', $review->is_visible
             ? 'Komentar ditampilkan kembali.'
             : 'Komentar disembunyikan.');
     }
 
-    public function store(Request $request, Recipe $recipe): RedirectResponse
+    public function store(Request $request, Recipe $recipe, ActivityLogger $activityLogger): RedirectResponse
     {
         $validated = $request->validate([
             'rating' => ['required', 'integer', 'between:1,5'],
@@ -39,10 +48,11 @@ class ReviewController extends Controller
             'comment.max' => 'Komentar maksimal 1000 karakter.',
         ]);
 
-        $request->user()->reviews()->updateOrCreate(
+        $review = $request->user()->reviews()->updateOrCreate(
             ['recipe_id' => $recipe->id],
             $validated,
         );
+        $activityLogger->log('Memberi atau memperbarui rating resep ' . $recipe->nama_resep, $review);
 
         if ($recipe->user_id && $recipe->user_id !== $request->user()->id) {
             $owner = $recipe->user;
@@ -59,9 +69,9 @@ class ReviewController extends Controller
         return back()->with('success', 'Rating dan komentar berhasil disimpan.');
     }
 
-    public function update(Request $request, Review $review): RedirectResponse
+    public function update(Request $request, Review $review, ActivityLogger $activityLogger): RedirectResponse
     {
-        abort_unless($review->user_id === $request->user()->id, 403);
+        $this->authorize('update', $review);
 
         $validated = $request->validate([
             'rating' => ['required', 'integer', 'between:1,5'],
@@ -73,17 +83,16 @@ class ReviewController extends Controller
         ]);
 
         $review->update($validated);
+        $activityLogger->log('Memperbarui komentar pada resep #' . $review->recipe_id, $review);
 
         return back()->with('success', 'Komentar berhasil diperbarui.');
     }
 
-    public function destroy(Request $request, Review $review): RedirectResponse
+    public function destroy(Request $request, Review $review, ActivityLogger $activityLogger): RedirectResponse
     {
-        abort_unless(
-            $review->user_id === $request->user()->id || $request->user()->is_admin,
-            403,
-        );
+        $this->authorize('delete', $review);
 
+        $activityLogger->log('Menghapus komentar pada resep #' . $review->recipe_id, $review);
         $review->delete();
 
         return back()->with('success', 'Komentar berhasil dihapus.');

@@ -3,11 +3,29 @@
 @section('title', 'Mengikuti - RACIKARA')
 
 @section('content')
+<style>
+    .profile-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 18px;
+        padding: 9px 14px;
+        border: 1px solid #d5e0c5;
+        border-radius: 10px;
+        background: #fff;
+        color: #5f7446;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: background .2s, border-color .2s, transform .2s;
+    }
+    .profile-back:hover { transform: translateX(-2px); border-color: #b7c8a0; background: #f4f8ef; }
+    .profile-back:focus-visible { outline: 3px solid rgba(122, 143, 92, .3); outline-offset: 2px; }
+</style>
 <div class="container py-5">
 
-    <a href="{{ route('users.show', $user->id) }}"
-       class="text-decoration-none text-muted">
-        &larr; Kembali ke Profil
+    <a href="{{ route('users.show', $user->id) }}" class="profile-back" onclick="if (window.history.length > 1) { window.history.back(); return false; }">
+        <span aria-hidden="true">&larr;</span>Kembali
     </a>
 
     <h3 class="fw-bold mt-3 mb-4">

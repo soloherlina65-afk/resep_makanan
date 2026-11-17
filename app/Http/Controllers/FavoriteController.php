@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Favorite;
 use App\Models\Recipe;
 use App\Notifications\ActivityNotification;
+use App\Services\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class FavoriteController extends Controller
 {
-    public function toggle(Request $request, Recipe $recipe): RedirectResponse
+    public function toggle(Request $request, Recipe $recipe, ActivityLogger $activityLogger): RedirectResponse
     {
         $type = $request->validate([
             'type' => ['required', 'in:like,favorite'],
@@ -23,12 +24,14 @@ class FavoriteController extends Controller
 
         if ($favorite) {
             $favorite->delete();
+            $activityLogger->log('Menghapus ' . ($type === 'like' ? 'like' : 'favorit') . ' resep ' . $recipe->nama_resep, $recipe);
         } else {
             Favorite::create([
                 'user_id' => $request->user()->id,
                 'recipe_id' => $recipe->id,
                 'type' => $type,
             ]);
+            $activityLogger->log('Menambahkan ' . ($type === 'like' ? 'like' : 'favorit') . ' resep ' . $recipe->nama_resep, $recipe);
 
             if ($recipe->user_id && $recipe->user_id !== $request->user()->id) {
                 $owner = $recipe->user;

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MealPlan;
+use App\Services\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -55,7 +56,7 @@ class MealPlanController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, ActivityLogger $activityLogger): RedirectResponse
     {
         $weekEnd = now()->endOfWeek()->toDateString();
         $validated = $request->validate([
@@ -64,19 +65,21 @@ class MealPlanController extends Controller
             'meal_type' => ['required', 'in:' . implode(',', array_keys(self::MEAL_TYPES))],
         ]);
 
-        $request->user()->mealPlans()
+        $plan = $request->user()->mealPlans()
             ->whereDate('planned_date', $validated['planned_date'])
             ->where('meal_type', $validated['meal_type'])
             ->updateOrCreate([], $validated);
+        $activityLogger->log('Memperbarui menu mingguan dengan resep ' . $plan->recipe->nama_resep, $plan);
 
         return redirect()->route('meal-plans.index')
             ->with('success', 'Resep berhasil ditambahkan ke rencana menu.');
     }
 
-    public function destroy(Request $request, MealPlan $mealPlan): RedirectResponse
+    public function destroy(Request $request, MealPlan $mealPlan, ActivityLogger $activityLogger): RedirectResponse
     {
         abort_unless($mealPlan->user_id === $request->user()->id, 403);
 
+        $activityLogger->log('Menghapus resep dari menu mingguan.', $mealPlan);
         $mealPlan->delete();
 
         return back()->with('success', 'Resep dihapus dari rencana menu.');

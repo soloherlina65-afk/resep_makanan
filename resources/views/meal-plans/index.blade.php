@@ -10,6 +10,9 @@
         * { box-sizing:border-box; }
         body { margin:0; min-height:100vh; background:#f4f8ef; color:var(--ink); font-family:Figtree,Arial,sans-serif; }
         .planner { width:100%; min-height:100vh; padding:clamp(20px,4vw,54px); }
+        .planner-back { display:inline-flex; min-height:38px; align-items:center; gap:8px; margin-bottom:20px; padding:0 14px; border:1px solid var(--line); border-radius:10px; background:#fff; color:var(--sage); font-size:12px; font-weight:800; text-decoration:none; transition:background .2s, border-color .2s, transform .2s; }
+        .planner-back:hover { transform:translateX(-2px); border-color:#b7c8a0; background:#edf3e6; }
+        .planner-back:focus-visible { outline:3px solid rgba(122,143,92,.3); outline-offset:2px; }
         .planner-header { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; margin-bottom:24px; }
         .planner-header h1 { margin:0; font-size:clamp(28px,4vw,40px); }
         .planner-header p { margin:7px 0 0; color:var(--muted); font-size:14px; }
@@ -50,13 +53,13 @@
 </head>
 <body>
 <main class="planner">
+    <a class="planner-back" href="{{ route('dashboard') }}" onclick="if (window.history.length > 1) { window.history.back(); return false; }"><span aria-hidden="true">←</span>Kembali</a>
     <header class="planner-header">
         <div>
             <h1>Menu Mingguan</h1>
             <p>Rencanakan masakanmu dan siapkan bahan belanja untuk minggu ini.</p>
         </div>
         <div class="planner-links">
-            <a class="planner-link" href="{{ route('dashboard') }}">← Dashboard</a>
             <a class="planner-link primary" href="{{ route('home') }}#resep">Cari resep</a>
         </div>
     </header>

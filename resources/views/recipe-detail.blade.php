@@ -19,21 +19,26 @@
     .back-link {
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        color: #e56b27;
+        gap: 8px;
+        min-height: 38px;
+        padding: 0 14px;
+        border: 1px solid #d5e0c5;
+        color: #5f7446;
         text-decoration: none;
-        font-weight: 600;
+        font-weight: 700;
         font-size: 13px;
-        background: #fff3ec;
-        padding: 8px 16px;
-        border-radius: 12px;
+        background: #fff;
+        border-radius: 10px;
         margin-bottom: 25px;
-        transition: background 0.2s;
+        transition: background .2s, border-color .2s, transform .2s;
     }
 
     .back-link:hover {
-        background: #ffe6db;
+        transform: translateX(-2px);
+        border-color: #b7c8a0;
+        background: #f4f8ef;
     }
+    .back-link:focus-visible { outline: 3px solid rgba(122, 143, 92, .3); outline-offset: 2px; }
 
     .recipe-header {
         margin-bottom: 25px;
@@ -570,8 +575,8 @@
 <section class="detail-page">
     <div class="detail-container">
 
-        <a href="{{ url('/') }}" class="back-link">
-            &larr; Kembali ke Beranda
+        <a href="{{ url('/') }}" class="back-link" onclick="if (window.history.length > 1) { window.history.back(); return false; }">
+            &larr; Kembali
         </a>
 
         <div class="recipe-header">

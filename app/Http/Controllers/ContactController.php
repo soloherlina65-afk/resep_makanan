@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\ContactMessageMail;
+use App\Models\SiteSetting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Mail\PendingMail;
@@ -34,7 +35,7 @@ class ContactController extends Controller
             'pesan.max' => 'Pesan maksimal 5.000 karakter.',
         ]);
 
-        $recipient = config('mail.contact_to');
+        $recipient = SiteSetting::valueFor('contact_to_address', config('mail.contact_to'));
         if (! is_string($recipient) || filter_var($recipient, FILTER_VALIDATE_EMAIL) === false) {
             return back()->withInput()->with(
                 'error',

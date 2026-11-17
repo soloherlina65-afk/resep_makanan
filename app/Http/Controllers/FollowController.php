@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Services\ActivityLogger;
 
 class FollowController extends Controller
 {
-    public function follow($id)
+    public function follow($id, ActivityLogger $activityLogger)
     {
         $user = User::findOrFail($id);
 
@@ -15,16 +16,24 @@ class FollowController extends Controller
             return back()->with('error', 'Tidak bisa mengikuti akun sendiri.');
         }
 
+        $alreadyFollowing = auth()->user()->following()->whereKey($user->id)->exists();
         auth()->user()->following()->syncWithoutDetaching([$user->id]);
+        if (! $alreadyFollowing) {
+            $activityLogger->log('Mulai mengikuti ' . $user->name, $user);
+        }
 
         return back()->with('success', 'Berhasil mengikuti pengguna.');
     }
 
-    public function unfollow($id)
+    public function unfollow($id, ActivityLogger $activityLogger)
     {
         $user = User::findOrFail($id);
 
+        $wasFollowing = auth()->user()->following()->whereKey($user->id)->exists();
         auth()->user()->following()->detach($user->id);
+        if ($wasFollowing) {
+            $activityLogger->log('Berhenti mengikuti ' . $user->name, $user);
+        }
 
         return back()->with('success', 'Berhasil berhenti mengikuti pengguna.');
     }

@@ -93,7 +93,8 @@
             <a href="{{ route('recipes.favorites') }}"><span class="nav-icon">♡</span>Resep Favorit</a>
             <a href="{{ route('recipes.liked') }}"><span class="nav-icon">♥</span>Resep Disukai</a>
             <a href="{{ route('recipes.mine') }}"><span class="nav-icon">♨</span>Resep Saya</a>
-            @if ($user->is_admin)
+            @if ($user->isAdmin())
+                <a href="{{ route('admin.dashboard') }}"><span class="nav-icon">▦</span>Dashboard Admin</a>
                 <a href="{{ route('admin.reviews.index') }}"><span class="nav-icon">✓</span>Moderasi Komentar</a>
             @endif
         </nav>

@@ -54,12 +54,22 @@
             position: fixed;
             top: 24px;
             left: 28px;
+            display: inline-flex;
+            min-height: 36px;
+            align-items: center;
+            gap: 8px;
+            padding: 0 12px;
+            border: 1px solid #d5e0c5;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, .86);
             color: #5f7446;
             font-size: 12px;
             font-weight: 700;
             text-decoration: none;
+            transition: background .2s, transform .2s;
         }
-        .back-link:hover { color: var(--sage); }
+        .back-link:hover { transform: translateX(-2px); background: #fff; }
+        .back-link:focus-visible { outline: 3px solid rgba(122, 143, 92, .3); outline-offset: 2px; }
         .signup-subtitle {
             margin: 9px 0 28px;
             color: #806b61;
@@ -137,7 +147,7 @@
 <main class="signup-card">
     <section class="signup-form-side">
         <img class="auth-logo" src="{{ asset('images/racikara-logo.png') }}" alt="Racikara">
-        <a class="back-link" href="{{ url('/') }}">← Kembali</a>
+        <a class="back-link" href="{{ url('/') }}" onclick="if (window.history.length > 1) { window.history.back(); return false; }">← Kembali</a>
         <h1 class="signup-title">Buat akun</h1>
         <p class="signup-subtitle">Daftar dengan email dan kata sandi yang valid.</p>
 

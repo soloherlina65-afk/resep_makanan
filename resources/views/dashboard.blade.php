@@ -41,6 +41,8 @@
         .dashboard-nav { display: grid; gap: 5px; }
         .dashboard-nav a, .dashboard-logout { display: flex; align-items: center; gap: 13px; padding: 11px 12px; border-radius: 11px; color: #3f5635; font-size: 14px; font-weight: 600; transition: .2s; }
         .dashboard-nav a:hover, .dashboard-nav a.active { background: var(--dash-orange); color: #fff; }
+        .dashboard-nav .admin-dashboard-link { border: 1px solid var(--dash-line); background: var(--dash-sage-light); color: var(--dash-orange-dark); }
+        .dashboard-nav .admin-dashboard-link:hover { background: var(--dash-orange); color: #fff; }
         .dashboard-nav .nav-icon { width: 20px; text-align: center; font-size: 19px; }
         .sidebar-divider { margin: 20px 10px; border: 0; border-top: 1px solid #d5e0c5; }
         .dashboard-logout { width: 100%; border: 0; background: #e4ebd8; color: #5f7446; cursor: pointer; text-align: left; }
@@ -157,7 +159,8 @@
             <a href="{{ route('recipes.liked') }}"><span class="nav-icon">♥</span>Resep Disukai</a>
             <a href="{{ route('recipes.mine') }}"><span class="nav-icon">♨</span>Resep Saya</a>
             <a href="{{ route('meal-plans.index') }}"><span class="nav-icon">▦</span>Menu Mingguan</a>
-            @if ($user->is_admin)
+            @if ($user->isAdmin())
+                <a class="admin-dashboard-link" href="{{ route('admin.dashboard') }}"><span class="nav-icon">▦</span>Dashboard Admin</a>
                 <a href="{{ route('admin.reviews.index') }}"><span class="nav-icon">✓</span>Moderasi Komentar</a>
             @endif
         </nav>
@@ -224,6 +227,11 @@
                 <img src="{{ asset('images/dashboard-food.png') }}" alt="Salad segar">
             </div>
         </section>
+        @if (session('error'))
+            <p role="alert" style="margin: 14px 0; padding: 12px 16px; border: 1px solid #e8b8b2; border-radius: 10px; background: #fff1ef; color: #a33a2d;">
+                {{ session('error') }}
+            </p>
+        @endif
 
         <section class="profile-card">
             <x-user-avatar :user="$user" class="profile-avatar" />

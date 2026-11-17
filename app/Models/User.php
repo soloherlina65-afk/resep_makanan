@@ -12,6 +12,10 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    public const ROLE_ADMIN = 'admin';
+
+    public const ROLE_USER = 'user';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -52,6 +56,11 @@ class User extends Authenticatable
         'is_admin' => 'boolean',
     ];
 
+    public function isAdmin(): bool
+    {
+        return $this->role === self::ROLE_ADMIN || $this->is_admin;
+    }
+
     public function avatarUrl(): ?string
     {
         if (! $this->avatar) {
@@ -91,6 +100,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(MealPlan::class);
     }
+
     
     public function followers()
 {

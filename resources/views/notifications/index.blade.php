@@ -17,11 +17,13 @@
         * { box-sizing: border-box; }
         body { min-height: 100vh; margin: 0; background: var(--cream); color: var(--brown); font-family: Figtree, Arial, sans-serif; }
         .page { width: min(100% - 32px, 860px); margin: 0 auto; padding: 28px 0 48px; }
-        .topbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 18px 22px; border: 1px solid var(--line); border-radius: 16px; background: #fff; box-shadow: 0 8px 24px rgba(48, 64, 42, .06); }
+        .topbar { display: flex; align-items: flex-start; flex-direction: column; gap: 14px; padding: 18px 22px; border: 1px solid var(--line); border-radius: 16px; background: #fff; box-shadow: 0 8px 24px rgba(48, 64, 42, .06); }
         .brand { color: var(--brown); font-size: 19px; font-weight: 850; }
         .brand span { color: var(--sage); }
         .back-link, .read-all, .recipe-link { border: 0; border-radius: 999px; font-weight: 800; text-decoration: none; cursor: pointer; }
-        .back-link { padding: 10px 17px; background: var(--sage-light); color: var(--sage-dark); font-size: 13px; }
+        .back-link { display:inline-flex; align-items:center; gap:8px; padding:9px 14px; border:1px solid var(--line); background:var(--sage-light); color:var(--sage-dark); font-size:12px; transition:background .2s, transform .2s; }
+        .back-link:hover { transform:translateX(-2px); background:#dce7cf; }
+        .back-link:focus-visible { outline:3px solid rgba(122,143,92,.3); outline-offset:2px; }
         .heading { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin: 34px 3px 18px; }
         .kicker { margin: 0 0 6px; color: var(--sage); font-size: 11px; font-weight: 850; letter-spacing: .12em; text-transform: uppercase; }
         h1 { margin: 0; font-size: clamp(28px, 5vw, 36px); letter-spacing: -.03em; }
@@ -55,8 +57,8 @@
 <body>
     <main class="page">
         <header class="topbar">
+            <a class="back-link" href="{{ route('dashboard') }}" onclick="if (window.history.length > 1) { window.history.back(); return false; }"><span aria-hidden="true">←</span>Kembali</a>
             <div class="brand">Notifikasi <span>Aktivitas</span></div>
-            <a class="back-link" href="{{ route('dashboard') }}">← Dashboard</a>
         </header>
 
         <section class="heading">

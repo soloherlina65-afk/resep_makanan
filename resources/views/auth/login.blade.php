@@ -63,13 +63,20 @@
             left: 28px;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
+            min-height: 36px;
+            padding: 0 12px;
+            border: 1px solid #d5e0c5;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, .86);
             color: #7a8f5c;
             font-size: 11px;
             font-weight: 700;
             text-decoration: none;
+            transition: background .2s, transform .2s;
         }
-        .back-link:hover { color: var(--sage); }
+        .back-link:hover { transform: translateX(-2px); background: #fff; }
+        .back-link:focus-visible { outline: 3px solid rgba(122, 143, 92, .3); outline-offset: 2px; }
         .login-form-wrap .intro {
             margin: 0 0 22px;
             text-align: center;
@@ -173,7 +180,7 @@
 <main class="login-page">
     <section class="login-form-wrap">
         <img class="auth-logo" src="{{ asset('images/racikara-logo.png') }}" alt="Racikara">
-        <a class="back-link" href="{{ url('/') }}">← Kembali</a>
+        <a class="back-link" href="{{ url('/') }}" onclick="if (window.history.length > 1) { window.history.back(); return false; }">← Kembali</a>
         <h1>Masuk</h1>
         <p class="intro">Belum punya akun? <a href="{{ route('register') }}">Daftar</a></p>
 
