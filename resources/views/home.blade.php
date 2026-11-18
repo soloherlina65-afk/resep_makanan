@@ -6,8 +6,6 @@
 @section('content')
 
 <style>
-    .nav-logout-form { margin: 0; }
-    .nav-logout-button { border: 0; cursor: pointer; font: inherit; }
     .recipe-social-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 10px; color: #7a8f5c; font-size: 12px; }
     .recipe-owner { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .recipe-owner a:hover { text-decoration: underline !important; }
@@ -34,16 +32,8 @@
         </div>
 
         <div class="nav-actions">
-            @auth
-                <a href="{{ route('dashboard') }}" class="login-btn">Dashboard Saya</a>
-                <form method="POST" action="{{ route('logout') }}" class="nav-logout-form">
-                    @csrf
-                    <button type="submit" class="register-btn nav-logout-button">Keluar</button>
-                </form>
-            @else
-                <a href="{{ route('login') }}" class="login-btn">Masuk</a>
-                <a href="{{ route('register') }}" class="register-btn">Daftar</a>
-            @endauth
+            <a href="{{ route('login') }}" class="login-btn">Masuk</a>
+            <a href="{{ route('register') }}" class="register-btn">Daftar</a>
         </div>
 
         <button class="nav-toggle" type="button" aria-label="Buka menu" aria-expanded="false" aria-controls="primary-navigation" data-mobile-nav-toggle>
