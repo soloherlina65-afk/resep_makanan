@@ -61,6 +61,14 @@ Berikut beberapa tampilan Racikara dari aplikasi lokal:
 - Blade, HTML, CSS, dan JavaScript
 - Tailwind CSS dan Vite
 
+## 📋 Persyaratan
+
+- PHP 8.1+ dengan ekstensi Laravel yang dibutuhkan, termasuk PDO (PHP Data Objects) untuk database
+- Composer
+- Node.js dan npm
+- MySQL/MariaDB atau database Laravel yang kompatibel
+- PDO SQLite jika ingin menjalankan tes
+
 ## ⚙️ Instalasi dan Konfigurasi
 
 ### 1. Clone Repository
