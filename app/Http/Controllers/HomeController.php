@@ -30,6 +30,7 @@ class HomeController extends Controller
             || $difficulty !== '' || $sort === 'rating';
 
         $recipesQuery = Recipe::with(['category', 'user'])
+            ->where('is_visible', true)
             ->withAvg('visibleReviews', 'rating');
 
         if ($search !== '') {
@@ -66,6 +67,9 @@ class HomeController extends Controller
         $recipes = $recipesQuery
             ->paginate($hasFilters ? 9 : 6)
             ->withQueryString();
+        $followingUserIds = auth()->check()
+            ? auth()->user()->following()->pluck('users.id')->map(fn ($id) => (int) $id)->all()
+            : [];
 
         return view('home', compact(
             'categories',
@@ -76,6 +80,7 @@ class HomeController extends Controller
             'difficulty',
             'sort',
             'hasFilters',
+            'followingUserIds',
         ));
     }
 
@@ -91,6 +96,7 @@ class HomeController extends Controller
         }
 
         $recipes = Recipe::with('category')
+            ->where('is_visible', true)
             ->where(function ($query) use ($search) {
                 $query->where('nama_resep', 'like', '%' . $search . '%')
                     ->orWhereHas('category', function ($categoryQuery) use ($search) {

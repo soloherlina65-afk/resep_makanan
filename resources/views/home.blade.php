@@ -5,6 +5,19 @@
 
 @section('content')
 
+<style>
+    .nav-logout-form { margin: 0; }
+    .nav-logout-button { border: 0; cursor: pointer; font: inherit; }
+    .recipe-social-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 10px; color: #7a8f5c; font-size: 12px; }
+    .recipe-owner { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .recipe-owner a:hover { text-decoration: underline !important; }
+    .recipe-social-row form { flex: 0 0 auto; margin: 0; }
+    .recipe-follow-button { display: inline-flex; min-height: 28px; align-items: center; justify-content: center; padding: 5px 10px; border: 1px solid #d5e0c5; border-radius: 999px; background: #e4ebd8; color: #4f6638; font: inherit; font-size: 11px; font-weight: 800; text-decoration: none; cursor: pointer; white-space: nowrap; }
+    .recipe-follow-button:hover { border-color: #7a8f5c; background: #7a8f5c; color: #fff; }
+    .recipe-following-label { flex: 0 0 auto; color: #5f7446; font-size: 11px; font-weight: 800; white-space: nowrap; }
+    @media (max-width: 480px) { .recipe-social-row { align-items: flex-start; } }
+</style>
+
 <!-- NAVBAR -->
 <nav class="navbar">
     <div class="nav-container">
@@ -17,11 +30,20 @@
             <a href="/" class="{{ $hasFilters ? '' : 'active' }}">Beranda</a>
             <a href="#resep" class="{{ $hasFilters ? 'active' : '' }}">Resep</a>
             <a href="#kategori" class="{{ $categoryId !== null ? 'active' : '' }}">Kategori</a>
+            <a href="{{ route('users.community') }}">Komunitas</a>
         </div>
 
         <div class="nav-actions">
-            <a href="{{ route('login') }}" class="login-btn">Masuk</a>
-            <a href="{{ route('register') }}" class="register-btn">Daftar</a>
+            @auth
+                <a href="{{ route('dashboard') }}" class="login-btn">Dashboard Saya</a>
+                <form method="POST" action="{{ route('logout') }}" class="nav-logout-form">
+                    @csrf
+                    <button type="submit" class="register-btn nav-logout-button">Keluar</button>
+                </form>
+            @else
+                <a href="{{ route('login') }}" class="login-btn">Masuk</a>
+                <a href="{{ route('register') }}" class="register-btn">Daftar</a>
+            @endauth
         </div>
 
         <button class="nav-toggle" type="button" aria-label="Buka menu" aria-expanded="false" aria-controls="primary-navigation" data-mobile-nav-toggle>
@@ -272,11 +294,36 @@
                                 {{ $recipe->deskripsi ?? 'Resep masakan pilihan untuk dicoba di rumah.' }}
                             </p>
 
-                            <div style="margin-top:10px; color:#7a8f5c; font-size:12px;">
+                            <div class="recipe-social-row" onclick="event.stopPropagation()" onkeydown="event.stopPropagation()">
+                                <span class="recipe-owner">
                                 👤 Diposting oleh
                                 <strong style="color:#5f7446;">
-                                    {{ $recipe->user?->name ?? 'Tim Racikara' }}
+                                    @if ($recipe->user)
+                                        <a
+                                            href="{{ route('users.show', $recipe->user) }}"
+                                            onclick="event.stopPropagation()"
+                                            onkeydown="event.stopPropagation()"
+                                            style="color:inherit; text-decoration:none;"
+                                        >{{ $recipe->user->name }}</a>
+                                    @else
+                                        Tim Racikara
+                                    @endif
                                 </strong>
+                                </span>
+                                @if ($recipe->user && auth()->id() !== $recipe->user->id)
+                                    @auth
+                                        @if (in_array((int) $recipe->user->id, $followingUserIds, true))
+                                            <span class="recipe-following-label">✓ Mengikuti</span>
+                                        @else
+                                            <form method="POST" action="{{ route('users.follow', $recipe->user) }}">
+                                                @csrf
+                                                <button class="recipe-follow-button" type="submit">+ Ikuti</button>
+                                            </form>
+                                        @endif
+                                    @else
+                                        <a class="recipe-follow-button" href="{{ route('login') }}">+ Ikuti</a>
+                                    @endauth
+                                @endif
                             </div>
 
                             <div class="recipe-info">

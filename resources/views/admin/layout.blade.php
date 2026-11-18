@@ -55,6 +55,8 @@
         <a href="{{ route('admin.categories.index') }}">Kategori</a>
         <a href="{{ route('admin.users.index') }}">Pengguna</a>
         <a href="{{ route('admin.reviews.index') }}">Moderasi Komentar</a>
+        <a href="{{ route('admin.reports.index') }}">Laporan</a>
+        <a href="{{ route('admin.messages.index') }}">Pesan Masuk</a>
         <a href="{{ route('about') }}">Anggota Tim</a>
         <a href="{{ route('admin.notifications.index') }}">Notifikasi</a>
         <a href="{{ route('admin.activities.index') }}">Aktivitas</a>

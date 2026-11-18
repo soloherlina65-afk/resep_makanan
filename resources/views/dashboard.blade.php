@@ -23,6 +23,7 @@
             --dash-orange: #7a8f5c;
             --dash-orange-dark: #5f7446;
             --dash-sage: #7a8f5c;
+            --dash-sage-dark: #5f7446;
             --dash-sage-light: #e4ebd8;
             --dash-cream: #f4f8ef;
             --dash-brown: #30402a;
@@ -116,12 +117,13 @@
         .recipe-link { display: inline-block; margin-top: 5px; color: var(--dash-orange-dark); font-size: 10px; font-weight: 700; }
         @media (min-width: 980px) {
             .dashboard-main { display: grid; grid-template-columns: minmax(0, 1fr) 288px; align-content: start; column-gap: 16px; }
-            .dashboard-topbar, .welcome-card, .stats-grid, .dashboard-columns, .created-section { grid-column: 1 / -1; }
+            .dashboard-topbar, .welcome-card, .stats-grid, .dashboard-columns, .created-section, .activity-columns { grid-column: 1 / -1; }
             .welcome-card { grid-column: 1; }
             .profile-card { grid-column: 2; grid-row: 2; }
             .stats-grid { grid-row: 3; }
             .dashboard-columns { grid-row: 4; }
             .created-section { grid-row: 5; }
+            .activity-columns { grid-row: 6; }
         }
         @media (max-width: 979px) {
             .dashboard-sidebar { width: 190px; flex-basis: 190px; }
@@ -158,6 +160,9 @@
             <a href="{{ route('recipes.favorites') }}"><span class="nav-icon">♡</span>Resep Favorit</a>
             <a href="{{ route('recipes.liked') }}"><span class="nav-icon">♥</span>Resep Disukai</a>
             <a href="{{ route('recipes.mine') }}"><span class="nav-icon">♨</span>Resep Saya</a>
+            <a href="{{ route('reviews.mine.comments') }}"><span class="nav-icon">✎</span>Komentar Saya</a>
+            <a href="{{ route('reviews.mine.ratings') }}"><span class="nav-icon">★</span>Rating Saya</a>
+            <a href="{{ route('users.following', $user->id) }}"><span class="nav-icon">♧</span>Pengguna Diikuti</a>
             <a href="{{ route('meal-plans.index') }}"><span class="nav-icon">▦</span>Menu Mingguan</a>
             @if ($user->isAdmin())
                 <a class="admin-dashboard-link" href="{{ route('admin.dashboard') }}"><span class="nav-icon">▦</span>Dashboard Admin</a>
@@ -244,12 +249,15 @@
         </section>
 
         <section class="stats-grid" aria-label="Ringkasan aktivitas">
-            <div class="stat-card"><div class="stat-icon">♡</div><div><span>Total Favorit</span><strong>{{ $favorites->count() }}</strong><span>Resep tersimpan</span></div></div>
-            <div class="stat-card"><div class="stat-icon">♥</div><div><span>Total Like</span><strong>{{ $likedRecipes->count() }}</strong><span>Resep disukai</span></div></div>
-            <div class="stat-card"><div class="stat-icon">♨</div><div><span>Resep Saya</span><strong>{{ $userRecipes->count() }}</strong><span>Resep yang dibuat</span></div></div>
+            <div class="stat-card"><div class="stat-icon">♡</div><div><span>Total Favorit</span><strong>{{ $favoritesCount }}</strong><span>Resep tersimpan</span></div></div>
+            <div class="stat-card"><div class="stat-icon">♥</div><div><span>Total Like</span><strong>{{ $likedRecipesCount }}</strong><span>Resep disukai</span></div></div>
+            <div class="stat-card"><div class="stat-icon">♨</div><div><span>Resep Saya</span><strong>{{ $userRecipesCount }}</strong><span>Resep yang dibuat</span></div></div>
+            <div class="stat-card"><div class="stat-icon">✎</div><div><span>Komentar Saya</span><strong>{{ $commentsCount }}</strong><span>Komentar pada resep</span></div></div>
+            <div class="stat-card"><div class="stat-icon">★</div><div><span>Rating Saya</span><strong>{{ $ratingsCount }}</strong><span>Penilaian diberikan</span></div></div>
+            <div class="stat-card"><div class="stat-icon">♥</div><div><span>Like Resep Saya</span><strong>{{ $likesReceivedCount }}</strong><span>Apresiasi pada resep buatanmu</span></div></div>
         </section>
 
-        <div class="dashboard-columns">
+        <div class="dashboard-columns activity-columns">
             <section id="favorites" class="dashboard-section">
                 <div class="section-heading"><h2><span>☆</span>Resep Favorit</h2><a href="{{ route('recipes.favorites') }}">Lihat Semua →</a></div>
                 @if ($favorites->isNotEmpty())
@@ -311,6 +319,44 @@
                 <div class="empty-card">🍳<br>Belum ada resep buatanmu.</div>
             @endif
         </section>
+
+        <div class="dashboard-columns">
+            <section class="dashboard-section">
+                <div class="section-heading">
+                    <h2><span>✎</span>Komentar Terbaru</h2>
+                    <a href="{{ route('reviews.mine.comments') }}">Lihat Semua →</a>
+                </div>
+                @forelse ($latestComments as $review)
+                    <article class="profile-card" style="margin-top:10px">
+                        <div>
+                            <a class="recipe-link" href="{{ route('recipes.show', $review->recipe) }}">{{ $review->recipe?->nama_resep ?? 'Resep dihapus' }}</a>
+                            <p>{{ \Illuminate\Support\Str::limit($review->comment, 120) }}</p>
+                            <small>{{ $review->created_at->diffForHumans() }} · Rating {{ $review->rating }}/5</small>
+                        </div>
+                    </article>
+                @empty
+                    <div class="empty-card">Belum ada komentar.</div>
+                @endforelse
+            </section>
+
+            <section class="dashboard-section">
+                <div class="section-heading">
+                    <h2><span>♧</span>Pengguna yang Diikuti</h2>
+                    <a href="{{ route('users.following', $user->id) }}">Lihat Semua ({{ $followingCount }}) →</a>
+                </div>
+                @forelse ($followingUsers as $followedUser)
+                    <article class="profile-card" style="margin-top:10px">
+                        <x-user-avatar :user="$followedUser" class="user-avatar" />
+                        <div>
+                            <a class="recipe-link" href="{{ route('users.show', $followedUser->id) }}">{{ $followedUser->name }}</a>
+                            <p>{{ $followedUser->recipes_count ?? $followedUser->recipes()->count() }} resep</p>
+                        </div>
+                    </article>
+                @empty
+                    <div class="empty-card">Kamu belum mengikuti pengguna lain.</div>
+                @endforelse
+            </section>
+        </div>
     </main>
 </div>
     <script>

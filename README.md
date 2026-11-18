@@ -1,175 +1,200 @@
-# Racikara
+# 🍳 RACIKARA – Sistem Informasi Resep Masakan
 
-Racikara adalah aplikasi berbagi resep masakan berbasis Laravel. Pengunjung dapat menjelajahi resep, sementara pengguna terdaftar dapat menyimpan resep favorit, menyusun menu mingguan, berbagi resep, serta berinteraksi dengan pengguna lain.
+**Racikara** adalah aplikasi berbasis website yang menyediakan informasi berbagai resep masakan. Aplikasi ini memungkinkan pengguna mencari resep, membagikan resep, menyimpan resep favorit, memberikan rating, serta berinteraksi dengan pengguna lainnya.
 
-> **Status:** source code dapat dipasang pada hosting yang mendukung Laravel. Untuk menayangkan aplikasi, siapkan server, domain, database, email, dan environment produksi sendiri; repository ini tidak menyertakan kredensial atau layanan hosting.
+## 📌 Tentang Proyek
 
-## Fitur
+Racikara dikembangkan sebagai Sistem Informasi Resep Masakan untuk memudahkan masyarakat dalam menemukan inspirasi dan informasi mengenai berbagai jenis masakan.
 
-- Jelajahi, cari, dan filter resep berdasarkan nama, bahan, kategori, waktu memasak, dan tingkat kesulitan.
-- Lihat detail resep, bahan, langkah memasak, rating, dan komentar.
-- Daftar, masuk, verifikasi email, reset kata sandi, dan login Google opsional.
-- Simpan resep favorit, beri like, rating, dan komentar.
-- Buat, edit, dan hapus resep sendiri beserta foto, bahan, dan langkahnya.
-- Susun menu mingguan dan daftar belanja.
-- Kelola profil, preferensi notifikasi, notifikasi, serta ikuti pengguna lain.
-- Gunakan profil pengguna dan daftar followers/following yang dapat dilihat publik.
-- Akses dashboard admin dan pengelolaan resep, kategori, pengguna, moderasi komentar, anggota tim, notifikasi, pengaturan, dan aktivitas.
+## ✨ Fitur Utama
 
-## Teknologi
+### Tangkapan Layar
 
+Berikut beberapa tampilan Racikara dari aplikasi lokal:
+
+<p align="center">
+  <img src="docs/screenshots/home.png" alt="Beranda Racikara" width="48%">
+  <img src="docs/screenshots/recipe-detail.png" alt="Detail resep" width="48%">
+</p>
+<p align="center">
+  <img src="docs/screenshots/community.png" alt="Direktori komunitas" width="48%">
+  <img src="docs/screenshots/public-profile.png" alt="Profil publik pengguna" width="48%">
+</p>
+<p align="center">
+  <img src="docs/screenshots/login.png" alt="Halaman masuk" width="48%">
+  <img src="docs/screenshots/register.png" alt="Halaman pendaftaran" width="48%">
+</p>
+<p align="center">
+  <img src="docs/screenshots/about.png" alt="Tentang Racikara" width="48%">
+</p>
+
+### Pengguna (User)
+
+- Registrasi dan login.
+- Melihat dan mencari resep masakan.
+- Melihat resep berdasarkan kategori.
+- Membuat resep sendiri.
+- Mengedit dan menghapus resep milik sendiri.
+- Menyimpan resep ke favorit.
+- Memberikan like pada resep.
+- Memberikan rating dan komentar.
+- Mengikuti pengguna lain.
+- Mengelola profil pengguna.
+
+### Administrator (Admin)
+
+- Dashboard statistik.
+- Manajemen pengguna.
+- Manajemen resep.
+- Manajemen kategori.
+- Manajemen komentar.
+- Manajemen rating.
+- Manajemen laporan pengguna.
+- Pengelolaan pesan masuk.
+- Pengaturan sistem.
+
+## 🛠️ Teknologi yang Digunakan
+
+- PHP 8.1+
 - Laravel 10
-- PHP 8.1 atau lebih baru
-- MySQL/MariaDB untuk deployment (SQLite in-memory digunakan pada tes)
-- Vite, Tailwind CSS, dan JavaScript
+- MySQL
+- Blade, HTML, CSS, dan JavaScript
+- Tailwind CSS dan Vite
 
-## Persyaratan
+## ⚙️ Instalasi dan Konfigurasi
 
-- PHP 8.1+ dengan ekstensi Laravel yang dibutuhkan, termasuk PDO untuk database
-- Composer
-- Node.js dan npm
-- MySQL/MariaDB atau database Laravel yang kompatibel
-- PDO SQLite jika ingin menjalankan tes
+### 1. Clone Repository
 
-## Instalasi lokal
-
-1. Clone repository, lalu masuk ke direktori proyek:
-
-   ```sh
-   git clone https://github.com/soloherlina65-afk/resep_makanan.git
-   cd resep_makanan
-   ```
-
-2. Pasang dependensi:
-
-   ```sh
-   composer install
-   npm install
-   ```
-
-3. Buat file environment lokal dan application key:
-
-   ```sh
-   cp .env.example .env
-   php artisan key:generate
-   ```
-
-   Di Windows PowerShell, gunakan:
-
-   ```powershell
-   Copy-Item .env.example .env
-   php artisan key:generate
-   ```
-
-4. Buat database, lalu atur `DB_*` pada `.env` sesuai konfigurasi lokal. Terapkan migrasi:
-
-   ```sh
-   php artisan migrate
-   ```
-
-   Jangan gunakan `migrate:fresh` pada database yang memiliki data karena perintah itu menghapus seluruh tabel.
-
-5. Siapkan penyimpanan foto dan aset frontend:
-
-   ```sh
-   php artisan storage:link
-   npm run build
-   ```
-
-6. Jalankan aplikasi lokal:
-
-   ```sh
-   php artisan serve
-   ```
-
-   Untuk hot reload aset selama pengembangan, jalankan `npm run dev` di terminal terpisah.
-
-## Role dan administrasi
-
-Setiap pendaftaran baru mendapat role `user`. Role admin tidak dapat dipilih melalui form registrasi. Akun lama yang ditandai sebagai admin dipertahankan oleh migrasi role.
-
-Route `/admin/*` dibatasi middleware admin. Policy dan validasi server membatasi pengguna biasa untuk mengubah resep dan komentar milik pengguna lain. Admin dapat membuka `/admin/dashboard` setelah masuk.
-
-Untuk instalasi baru yang belum memiliki admin:
-
-1. Daftarkan akun melalui aplikasi.
-2. Promosikan akun pertama melalui database dengan email akun yang benar:
-
-   ```sql
-   UPDATE users
-   SET role = 'admin', is_admin = 1
-   WHERE email = 'email-admin-anda@example.com';
-   ```
-
-3. Masuk kembali dan buka `/admin/dashboard`. Setelah admin pertama dibuat, role dapat dikelola melalui `/admin/users`.
-
-Sistem mencegah penghapusan atau penurunan role admin terakhir.
-
-## Pengaturan opsional
-
-- **Google OAuth:** isi `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, dan `GOOGLE_REDIRECT_URI`. Daftarkan callback URL yang sama di Google OAuth Console, yaitu `${APP_URL}/auth/google/callback`.
-- **Email dan form kontak:** konfigurasikan `MAIL_*` dan `CONTACT_TO_ADDRESS`. Tanpa penerima dan layanan SMTP yang berfungsi, aplikasi tidak dapat mengirim pesan kontak.
-- **Foto unggahan:** file publik disimpan pada disk `public` dan dilayani melalui `public/storage`. Jalankan `php artisan storage:link` pada mesin deployment.
-
-Jangan commit `.env`, application key, kata sandi, kredensial OAuth, atau rahasia lain.
-
-## Deployment produksi
-
-Repository menyediakan [`.env.production.example`](./.env.production.example) sebagai template non-rahasia. Semua nilai contoh di dalamnya harus diganti di server. Template ini tidak membuat aplikasi otomatis tersedia di internet.
-
-1. Pilih hosting yang mendukung persyaratan PHP proyek. Arahkan document root domain ke direktori `public` Laravel—jangan arahkan ke root repository.
-2. Salin `.env.production.example` menjadi `.env` **di server**, atau masukkan nilainya melalui panel environment hosting. Isi domain HTTPS, `APP_KEY`, koneksi database produksi, SMTP, dan integrasi OAuth bila digunakan.
-3. Untuk instalasi baru, hasilkan `APP_KEY` satu kali:
-
-   ```sh
-   php artisan key:generate --force
-   ```
-
-   Jangan mengganti key pada aplikasi yang sudah aktif tanpa rencana migrasi karena data/session terenkripsi mungkin tidak dapat dibaca.
-
-4. Pasang dependensi dan build aset:
-
-   ```sh
-   composer install --no-dev --optimize-autoloader
-   npm ci
-   npm run build
-   ```
-
-5. Pastikan backup database tersedia, kemudian jalankan:
-
-   ```sh
-   php artisan migrate --force
-   php artisan storage:link
-   php artisan optimize
-   ```
-
-6. Verifikasi konfigurasi produksi:
-   - `APP_ENV=production`
-   - `APP_DEBUG=false`
-   - `APP_URL` menggunakan domain HTTPS yang benar
-   - `SESSION_SECURE_COOKIE=true`
-   - Database dan SMTP dapat diakses dari hosting.
-   - Proses web dapat menulis ke `storage` dan `bootstrap/cache`.
-   - HTTPS aktif dan perpanjangan sertifikat terurus.
-
-7. Setelah deployment, uji halaman publik, registrasi/login, reset password, form kontak, upload foto, serta dashboard admin. Siapkan backup dan pemantauan log rutin.
-
-`public/robots.txt` mengizinkan crawler mengunjungi situs. Izin ini tidak menjamin mesin pencari akan mengindeksnya; pastikan domain publik benar dan halaman dapat diakses sebelum mengirim sitemap ke layanan webmaster.
-
-## Pengujian
-
-Tes menggunakan SQLite in-memory sesuai konfigurasi `phpunit.xml`, sehingga tidak mengubah database aplikasi:
-
-```sh
-php artisan test
+```bash
+git clone https://github.com/soloherlina65-afk/resep_makanan.git
 ```
 
-Build aset produksi:
+### 2. Masuk ke Folder Proyek
 
-```sh
+```bash
+cd resep_makanan
+```
+
+### 3. Install Dependensi
+
+```bash
+composer install
+npm install
+```
+
+### 4. Salin File Environment
+
+```powershell
+Copy-Item .env.example .env
+```
+
+### 5. Generate Application Key
+
+```bash
+php artisan key:generate
+```
+
+### 6. Konfigurasi Database
+
+Buka file `.env`, kemudian sesuaikan konfigurasi database:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=nama_database
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+Sesuaikan dengan konfigurasi MySQL lokal masing-masing. Buat databasenya terlebih dahulu, lalu isi nilai `DB_*` di `.env`.
+
+### 7. Jalankan Migration
+
+```bash
+php artisan migrate
+```
+
+Perintah ini menerapkan migration tanpa menghapus tabel atau data yang sudah ada. Hindari `migrate:fresh` pada database yang berisi data.
+
+### 8. Jalankan Aplikasi
+
+Siapkan penyimpanan foto dan build aset frontend:
+
+```bash
+php artisan storage:link
 npm run build
 ```
 
-## Lisensi dan kontribusi
+Kemudian jalankan Laravel:
 
-Periksa lisensi dan ketentuan penggunaan sebelum menggunakan atau mendistribusikan kode. Untuk laporan bug atau usulan fitur, silakan buat issue di repository GitHub.
+```bash
+php artisan serve
+```
+
+Buka browser:
+
+```text
+http://127.0.0.1:8000
+```
+
+Selama pengembangan, jalankan `npm run dev` di terminal terpisah untuk hot reload aset.
+
+## 📂 Struktur Proyek
+
+```text
+resep_makanan/
+├── app/
+│   ├── Http/
+│   └── Models/
+├── database/
+│   ├── migrations/
+│   └── seeders/
+├── public/
+├── resources/
+│   └── views/
+├── routes/
+├── storage/
+├── tests/
+├── .env.example
+├── artisan
+├── composer.json
+└── README.md
+```
+
+## 🔐 Hak Akses
+
+Racikara memiliki dua jenis pengguna:
+
+- **User:** Diberikan otomatis saat mendaftar; dapat mengelola resep dan interaksi miliknya sendiri melalui `/dashboard`.
+- **Admin:** Dapat mengelola data sistem melalui `/admin/dashboard`. Role admin tidak dapat dipilih dari formulir pendaftaran.
+
+Untuk menjadikan akun lokal sebagai admin pertama, pilih database yang dikonfigurasi pada `DB_DATABASE` di phpMyAdmin, lalu jalankan query berikut dengan email akun yang benar:
+
+```sql
+UPDATE users
+SET role = 'admin', is_admin = 1
+WHERE email = 'email-akun-anda@example.com';
+```
+
+## 🧪 Pengujian
+
+Jalankan Feature Test dengan:
+
+```bash
+php artisan test
+```
+
+## 🌐 Website
+
+Proyek ini saat ini dijalankan secara lokal. Buka `http://127.0.0.1:8000` setelah menjalankan `php artisan serve`.
+
+## 👩‍💻 Pengembang
+
+**Nama Proyek:** Racikara
+
+**Jenis Proyek:** Sistem Informasi Resep Masakan
+
+**Framework:** Laravel
+
+**Database:** MySQL

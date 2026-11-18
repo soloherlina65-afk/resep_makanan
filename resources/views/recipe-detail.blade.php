@@ -87,6 +87,11 @@
     .recipe-author strong {
         color: #5f7446;
     }
+    .recipe-author a {
+        color: inherit;
+        text-decoration: none;
+    }
+    .recipe-author a:hover { text-decoration: underline; }
 
     .recipe-image {
         width: 100%;
@@ -391,6 +396,42 @@
         margin-bottom: 22px;
     }
 
+    .review-success {
+        padding: 10px 12px;
+        border-radius: 9px;
+        background: #eff9ee;
+        color: #287835;
+        font-size: 13px;
+    }
+
+    .report-form {
+        margin: 14px 0;
+        padding: 12px 14px;
+        border: 1px solid #f0dfd1;
+        border-radius: 12px;
+        background: #fff9f3;
+    }
+
+    .report-form summary {
+        color: #b95622;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .report-form form { display: grid; gap: 8px; margin-top: 12px; }
+    .report-form label { color: #51443d; font-size: 12px; font-weight: 700; }
+    .report-form select {
+        min-height: 38px;
+        padding: 8px 10px;
+        border: 1px solid #eadfd5;
+        border-radius: 9px;
+        background: #fff;
+        color: #51443d;
+        font: inherit;
+        font-size: 12px;
+    }
+
     .review-form label {
         display: block;
         margin-bottom: 8px;
@@ -592,7 +633,13 @@
 
             <div class="recipe-author">
                 <span>👤</span>
-                <span>Diposting oleh <strong>{{ $recipe->user?->name ?? 'Tim Racikara' }}</strong></span>
+                <span>Diposting oleh
+                    @if ($recipe->user)
+                        <a href="{{ route('users.show', $recipe->user) }}"><strong>{{ $recipe->user->name }}</strong></a>
+                    @else
+                        <strong>Tim Racikara</strong>
+                    @endif
+                </span>
             </div>
         </div>
 
@@ -799,6 +846,8 @@
 
         <div class="detail-card">
             <h2>⭐ Rating dan Komentar</h2>
+            @if (session('success'))<p class="review-success" role="status">{{ session('success') }}</p>@endif
+            @if (session('error'))<p class="auth-error" role="alert">{{ session('error') }}</p>@endif
 
             <div class="review-summary">
                 <span class="review-stars" aria-label="{{ $averageRating ? number_format($averageRating, 1) . ' dari 5' : 'Belum ada rating' }}">
@@ -834,6 +883,30 @@
                 </form>
             @else
                 <p><a class="review-login" href="{{ route('login') }}">Masuk untuk memberi rating dan komentar.</a></p>
+            @endauth
+
+            @auth
+                @if ($recipe->user_id !== auth()->id())
+                    <details class="report-form">
+                        <summary>Laporkan resep ini</summary>
+                        <form method="POST" action="{{ route('recipes.reports.store', $recipe) }}">
+                            @csrf
+                            <label for="recipe-report-reason">Alasan laporan</label>
+                            <select id="recipe-report-reason" name="reason" required>
+                                <option value="">Pilih alasan</option>
+                                <option value="spam">Spam atau promosi</option>
+                                <option value="inappropriate">Konten tidak pantas</option>
+                                <option value="misinformation">Informasi menyesatkan</option>
+                                <option value="other">Lainnya</option>
+                            </select>
+                            <textarea class="review-textarea" name="details" maxlength="1000" placeholder="Detail tambahan (opsional)"></textarea>
+                            @error('reason') <p class="auth-error">{{ $message }}</p> @enderror
+                            <button class="review-submit" type="submit">Kirim laporan</button>
+                        </form>
+                    </details>
+                @endif
+            @else
+                <p><a class="review-login" href="{{ route('login') }}">Masuk untuk melaporkan konten.</a></p>
             @endauth
 
             @forelse ($recipe->visibleReviews as $review)
@@ -877,6 +950,23 @@
                                     placeholder="Tulis komentar...">{{ $review->comment }}</textarea>
                                 <button class="review-submit" type="submit">Simpan perubahan</button>
                             </form>
+                        @else
+                            <details class="report-form">
+                                <summary>Laporkan komentar</summary>
+                                <form method="POST" action="{{ route('reviews.reports.store', $review) }}">
+                                    @csrf
+                                    <label for="review-report-reason-{{ $review->id }}">Alasan laporan</label>
+                                    <select id="review-report-reason-{{ $review->id }}" name="reason" required>
+                                        <option value="">Pilih alasan</option>
+                                        <option value="spam">Spam atau promosi</option>
+                                        <option value="inappropriate">Konten tidak pantas</option>
+                                        <option value="misinformation">Informasi menyesatkan</option>
+                                        <option value="other">Lainnya</option>
+                                    </select>
+                                    <textarea class="review-textarea" name="details" maxlength="1000" placeholder="Detail tambahan (opsional)"></textarea>
+                                    <button class="review-submit" type="submit">Kirim laporan</button>
+                                </form>
+                            </details>
                         @endif
                     @endauth
                 </article>

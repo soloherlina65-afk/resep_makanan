@@ -107,6 +107,7 @@
                         </div>
                         <div class="recipe-content">
                             <span class="category">{{ $recipe->category->nama_kategori ?? 'Umum' }}</span>
+                            <span class="category">{{ $recipe->is_visible ? 'Tampil' : 'Menunggu moderasi' }}</span>
                             <h3 title="{{ $recipe->nama_resep }}">{{ $recipe->nama_resep }}</h3>
                             <p class="recipe-meta">Waktu memasak: {{ $recipe->waktu_masak }} menit</p>
                             <div class="card-actions">

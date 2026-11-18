@@ -69,6 +69,10 @@ class AuthenticatedSessionController extends Controller
             ]);
             $user->role = User::ROLE_USER;
             $user->save();
+        } elseif (! $user->is_active) {
+            return redirect()->route('login')->withErrors([
+                'email' => 'Akun ini sedang dinonaktifkan. Hubungi administrator.',
+            ]);
         } else {
             $user->forceFill([
                 'google_id' => $user->google_id ?: $googleUser->getId(),

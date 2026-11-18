@@ -8,9 +8,36 @@ use App\Notifications\ActivityNotification;
 use App\Services\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class ReviewController extends Controller
 {
+    public function myComments(Request $request): View
+    {
+        return $this->myReviews($request, true);
+    }
+
+    public function myRatings(Request $request): View
+    {
+        return $this->myReviews($request, false);
+    }
+
+    private function myReviews(Request $request, bool $commentsOnly): View
+    {
+        $reviews = $request->user()->reviews()
+            ->with(['recipe.category'])
+            ->when($commentsOnly, fn ($query) => $query
+                ->whereNotNull('comment')
+                ->where('comment', '<>', ''))
+            ->latest()
+            ->paginate(12);
+
+        return view('reviews.mine', [
+            'reviews' => $reviews,
+            'commentsOnly' => $commentsOnly,
+        ]);
+    }
+
     public function adminIndex(): \Illuminate\Contracts\View\View
     {
         $this->authorize('viewAny', Review::class);

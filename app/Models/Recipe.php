@@ -20,12 +20,14 @@ class Recipe extends Model
         'waktu_masak',
         'porsi',
         'tingkat_kesulitan',
+        'is_visible',
     ];
 
     protected $casts = [
         'category_id' => 'integer',
         'waktu_masak' => 'integer',
         'porsi' => 'integer',
+        'is_visible' => 'boolean',
     ];
 
     public function category()
@@ -67,5 +69,10 @@ class Recipe extends Model
     public function visibleReviews()
     {
         return $this->hasMany(Review::class)->where('is_visible', true)->latest();
+    }
+
+    public function reports()
+    {
+        return $this->morphMany(Report::class, 'reportable');
     }
 }

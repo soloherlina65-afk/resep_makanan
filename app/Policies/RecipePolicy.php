@@ -7,9 +7,9 @@ use App\Models\User;
 
 class RecipePolicy
 {
-    public function before(User $user, string $ability): ?bool
+    public function before(?User $user, string $ability): ?bool
     {
-        return $user->isAdmin() ? true : null;
+        return $user?->isAdmin() ? true : null;
     }
 
     public function viewAny(User $user): bool
@@ -19,7 +19,7 @@ class RecipePolicy
 
     public function view(?User $user, Recipe $recipe): bool
     {
-        return true;
+        return $recipe->is_visible || $user?->is($recipe->user) === true;
     }
 
     public function create(User $user): bool

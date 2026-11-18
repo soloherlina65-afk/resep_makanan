@@ -54,6 +54,7 @@ class User extends Authenticatable
         'notify_likes' => 'boolean',
         'notify_favorites' => 'boolean',
         'is_admin' => 'boolean',
+        'is_active' => 'boolean',
     ];
 
     public function isAdmin(): bool
@@ -94,6 +95,11 @@ class User extends Authenticatable
     public function reviews()
     {
         return $this->hasMany(Review::class);
+    }
+
+    public function reports()
+    {
+        return $this->hasMany(Report::class);
     }
 
     public function mealPlans()

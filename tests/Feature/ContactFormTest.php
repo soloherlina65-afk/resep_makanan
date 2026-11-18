@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Mail\ContactMessageMail;
+use App\Models\ContactMessage;
 use Illuminate\Mail\PendingMail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
@@ -49,6 +50,13 @@ class ContactFormTest extends TestCase
                 && $mail->hasReplyTo('sarah@example.test')
                 && str_contains($content, 'Saya ingin menyarankan resep baru.');
         });
+        $this->assertDatabaseHas('contact_messages', [
+            'name' => 'Sarah Abdullah',
+            'email' => 'sarah@example.test',
+            'subject' => 'Saran resep',
+            'message' => 'Saya ingin menyarankan resep baru.',
+            'status' => ContactMessage::STATUS_NEW,
+        ]);
     }
 
     public function test_contact_form_rejects_invalid_input_without_sending_mail(): void
@@ -68,7 +76,7 @@ class ContactFormTest extends TestCase
         Mail::assertNothingSent();
     }
 
-    public function test_contact_form_does_not_claim_success_when_no_recipient_is_configured(): void
+    public function test_contact_form_saves_message_when_no_email_recipient_is_configured(): void
     {
         Mail::fake();
         Config::set('mail.contact_to', null);
@@ -81,9 +89,11 @@ class ContactFormTest extends TestCase
                 'pesan' => 'Halo Racikara.',
             ])
             ->assertRedirect(route('contact'))
+            ->assertSessionHas('success', 'Pesan tersimpan di kotak masuk Racikara.')
             ->assertSessionHas('error');
 
         Mail::assertNothingSent();
+        $this->assertDatabaseHas('contact_messages', ['email' => 'sarah@example.test']);
     }
 
     public function test_contact_form_shows_a_friendly_error_when_smtp_authentication_fails(): void
@@ -109,7 +119,9 @@ class ContactFormTest extends TestCase
                 'pesan' => 'Halo Racikara.',
             ])
             ->assertRedirect(route('contact'))
-            ->assertSessionHas('error', 'Email belum dapat dikirim. Periksa konfigurasi SMTP; untuk Gmail, gunakan App Password, bukan password akun biasa.')
-            ->assertSessionHasInput('pesan', 'Halo Racikara.');
+            ->assertSessionHas('error', 'Notifikasi email gagal dikirim. Admin tetap dapat membaca pesan di dashboard.')
+            ->assertSessionHas('success', 'Pesan tersimpan di kotak masuk Racikara.');
+
+        $this->assertDatabaseHas('contact_messages', ['email' => 'sarah@example.test', 'status' => ContactMessage::STATUS_NEW]);
     }
 }

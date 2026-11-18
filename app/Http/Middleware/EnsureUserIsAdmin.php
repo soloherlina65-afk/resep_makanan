@@ -10,7 +10,17 @@ class EnsureUserIsAdmin
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (! $request->user()?->isAdmin()) {
+        $user = $request->user();
+
+        if (! $user) {
+            if ($request->expectsJson()) {
+                abort(401, 'Silakan masuk terlebih dahulu untuk melanjutkan.');
+            }
+
+            return response()->view('auth.admin-access-required', [], Response::HTTP_UNAUTHORIZED);
+        }
+
+        if (! $user->isAdmin()) {
             if ($request->expectsJson()) {
                 abort(403, 'Anda tidak memiliki izin untuk mengakses halaman tersebut.');
             }

@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\Category;
+use App\Models\ContactMessage;
 use App\Models\Favorite;
 use App\Models\MealPlan;
 use App\Models\Recipe;
+use App\Models\Report;
 use App\Models\Review;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -48,14 +50,42 @@ class DashboardController extends Controller
             'categoriesCount' => Category::count(),
             'reviewsCount' => Review::count(),
             'pendingReviewsCount' => Review::where('is_visible', false)->count(),
+            'reportsCount' => Report::count(),
+            'pendingReportsCount' => Report::whereIn('status', [Report::STATUS_NEW, Report::STATUS_REVIEWING])->count(),
+            'messagesCount' => ContactMessage::count(),
+            'newMessagesCount' => ContactMessage::where('status', ContactMessage::STATUS_NEW)->count(),
             'favoritesCount' => Favorite::count(),
             'mealPlansCount' => MealPlan::count(),
             'followsCount' => DB::table('follows')->count(),
             'latestActivities' => ActivityLog::with('user')->latest()->limit(8)->get(),
+            'userGrowth' => $this->monthlyCounts(User::class),
+            'recipeGrowth' => $this->monthlyCounts(Recipe::class),
             'latestRecipes' => $recipesQuery->paginate(8)->withQueryString(),
             'categories' => Category::orderBy('nama_kategori')->get(),
             'search' => $search,
             'categoryId' => $categoryId,
         ]);
+    }
+
+    private function monthlyCounts(string $model): array
+    {
+        $firstMonth = now()->startOfMonth()->subMonths(5);
+        $months = [];
+
+        for ($offset = 0; $offset < 6; $offset++) {
+            $month = $firstMonth->copy()->addMonths($offset);
+            $months[] = [
+                'label' => $month->translatedFormat('M'),
+                'count' => $model::query()
+                    ->where('created_at', '>=', $month)
+                    ->where('created_at', '<', $month->copy()->addMonth())
+                    ->count(),
+            ];
+        }
+
+        return [
+            'months' => $months,
+            'max' => max(1, max(array_column($months, 'count'))),
+        ];
     }
 }

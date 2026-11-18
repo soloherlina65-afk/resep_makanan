@@ -97,7 +97,7 @@
         .section-title { margin: 0; color: var(--admin-muted); font-size: 11px; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
         .today-label { padding: 6px 11px; border: 1px solid var(--admin-border); border-radius: 999px; background: #fff; color: var(--admin-muted); font-size: 10px; }
         .stats-primary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-        .stats-secondary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+        .stats-secondary { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
         .stat-card { min-width: 0; padding: 17px; border: 1px solid var(--admin-border); border-radius: 16px; background: var(--admin-surface); box-shadow: var(--admin-shadow); transition: box-shadow .18s, border-color .18s, transform .18s; }
         .stat-card:hover { transform: translateY(-2px); border-color: rgba(79, 99, 54, .28); box-shadow: 0 8px 24px -4px rgba(79, 99, 54, .1), 0 2px 6px rgba(30, 36, 27, .04); }
         .stat-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
@@ -108,6 +108,15 @@
         .stat-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 14px; padding-top: 10px; border-top: 1px solid rgba(228, 233, 220, .8); color: var(--admin-muted); font-size: 9px; }
         .stat-pill { padding: 3px 7px; border-radius: 999px; background: var(--admin-soft); color: var(--admin-soft-text); font-size: 9px; font-weight: 700; white-space: nowrap; }
         .stat-pill.warning { background: #fff3dc; color: #815b16; }
+        .growth-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+        .growth-card { min-width: 0; padding: 18px; border: 1px solid var(--admin-border); border-radius: 16px; background: #fff; box-shadow: var(--admin-shadow); }
+        .growth-card h2 { margin: 0; font-size: 13px; }
+        .growth-card p { margin: 4px 0 16px; color: var(--admin-muted); font-size: 10px; }
+        .chart-bars { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); align-items: end; gap: 9px; min-height: 120px; }
+        .chart-item { display: grid; min-width: 0; height: 120px; grid-template-rows: auto 1fr auto; justify-items: center; gap: 6px; color: var(--admin-muted); font-size: 9px; }
+        .chart-track { display: flex; width: min(100%, 28px); height: 100%; align-items: end; overflow: hidden; border-radius: 8px; background: var(--admin-bg); }
+        .chart-bar { width: 100%; min-height: 3px; border-radius: 8px 8px 3px 3px; background: linear-gradient(180deg, var(--admin-soft-hover), var(--admin-primary)); }
+        .chart-value { color: var(--admin-text); font-size: 9px; font-weight: 700; }
         .panel { overflow: hidden; border: 1px solid var(--admin-border); border-radius: 16px; background: #fff; box-shadow: var(--admin-shadow); }
         .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 17px 20px; border-bottom: 1px solid var(--admin-border); }
         .panel-title { margin: 0; font-size: 14px; font-weight: 800; letter-spacing: -.02em; }
@@ -171,6 +180,7 @@
             .add-recipe-link span { display: none; }
             .stats-primary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
             .stats-secondary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .growth-grid { grid-template-columns: 1fr; }
             .panel-head { align-items: flex-start; flex-direction: column; }
             .recipe-tools { width: 100%; }
             .filter-select { max-width: none; flex: 1; }
@@ -251,6 +261,8 @@
                                 @endif
                             </a>
                         </li>
+                        <li><a class="nav-link" href="{{ route('admin.reports.index') }}"><svg class="icon"><use href="#icon-shield"/></svg>Laporan @if ($pendingReportsCount > 0)<span class="nav-count">{{ $pendingReportsCount }}</span>@endif</a></li>
+                        <li><a class="nav-link" href="{{ route('admin.messages.index') }}"><svg class="icon"><use href="#icon-message"/></svg>Pesan Masuk @if ($newMessagesCount > 0)<span class="nav-count">{{ $newMessagesCount }}</span>@endif</a></li>
                         <li><a class="nav-link" href="{{ route('about') }}#team"><svg class="icon"><use href="#icon-shield"/></svg>Kelola Anggota Tim</a></li>
                     </ul>
                 </div>
@@ -340,7 +352,34 @@
                             <div class="stat-top"><div><p class="stat-label">Aktivitas mengikuti</p><p class="stat-value">{{ number_format($followsCount) }}</p></div><span class="stat-icon"><svg class="icon"><use href="#icon-follow"/></svg></span></div>
                             <div class="stat-footer"><span>Relasi antar pengguna</span><span class="stat-pill">Komunitas</span></div>
                         </article>
+                        <article class="stat-card">
+                            <div class="stat-top"><div><p class="stat-label">Laporan</p><p class="stat-value">{{ number_format($reportsCount) }}</p></div><span class="stat-icon"><svg class="icon"><use href="#icon-shield"/></svg></span></div>
+                            <div class="stat-footer"><span>Masuk untuk ditinjau</span><span class="stat-pill {{ $pendingReportsCount > 0 ? 'warning' : '' }}">{{ number_format($pendingReportsCount) }} belum selesai</span></div>
+                        </article>
+                        <article class="stat-card">
+                            <div class="stat-top"><div><p class="stat-label">Pesan masuk</p><p class="stat-value">{{ number_format($messagesCount) }}</p></div><span class="stat-icon"><svg class="icon"><use href="#icon-message"/></svg></span></div>
+                            <div class="stat-footer"><span>Pesan dari pengunjung</span><span class="stat-pill {{ $newMessagesCount > 0 ? 'warning' : '' }}">{{ number_format($newMessagesCount) }} baru</span></div>
+                        </article>
                     </div>
+                </section>
+
+                <section class="growth-grid" aria-label="Grafik pertumbuhan">
+                    @foreach ([['title' => 'Pertumbuhan pengguna', 'data' => $userGrowth], ['title' => 'Pertumbuhan resep', 'data' => $recipeGrowth]] as $chart)
+                        <article class="growth-card">
+                            <h2>{{ $chart['title'] }}</h2>
+                            <p>Data enam bulan terakhir dari database</p>
+                            <div class="chart-bars">
+                                @foreach ($chart['data']['months'] as $month)
+                                    @php $barHeight = $month['count'] ? max(5, (int) round($month['count'] / $chart['data']['max'] * 100)) : 0; @endphp
+                                    <div class="chart-item" aria-label="{{ $month['label'] }}: {{ $month['count'] }}">
+                                        <span class="chart-value">{{ $month['count'] }}</span>
+                                        <div class="chart-track"><span class="chart-bar" style="height: {{ $barHeight }}%"></span></div>
+                                        <span>{{ $month['label'] }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </article>
+                    @endforeach
                 </section>
 
                 <section class="panel" aria-label="Akses cepat">
@@ -357,6 +396,8 @@
                                 <span class="quick-count">{{ $pendingReviewsCount }}</span>
                             @endif
                         </a>
+                        <a class="quick-link" href="{{ route('admin.reports.index') }}">Laporan @if ($pendingReportsCount > 0)<span class="quick-count">{{ $pendingReportsCount }}</span>@endif</a>
+                        <a class="quick-link" href="{{ route('admin.messages.index') }}">Pesan Masuk @if ($newMessagesCount > 0)<span class="quick-count">{{ $newMessagesCount }}</span>@endif</a>
                         <a class="quick-link" href="{{ route('about') }}#team"><svg class="icon"><use href="#icon-shield"/></svg>Kelola Anggota Tim</a>
                         <a class="quick-link" href="{{ route('admin.notifications.index') }}"><svg class="icon"><use href="#icon-bell"/></svg>Notifikasi</a>
                         <a class="quick-link" href="{{ route('admin.activities.index') }}"><svg class="icon"><use href="#icon-activity"/></svg>Aktivitas Pengguna</a>
@@ -389,7 +430,7 @@
                         <div class="table-scroll">
                             <table class="recipe-table">
                                 <thead>
-                                    <tr><th>Resep</th><th>Kategori</th><th>Pemilik</th><th>Dibuat</th><th style="text-align:right">Aksi</th></tr>
+                                    <tr><th>Resep</th><th>Kategori</th><th>Pemilik</th><th>Status</th><th>Dibuat</th><th style="text-align:right">Aksi</th></tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($latestRecipes as $recipe)
@@ -414,6 +455,7 @@
                                             </td>
                                             <td><span class="category-pill">{{ $recipe->category?->nama_kategori ?? 'Tanpa kategori' }}</span></td>
                                             <td><span class="owner-cell"><span class="owner-avatar">{{ $ownerInitials ?: '?' }}</span>{{ $ownerName }}</span></td>
+                                            <td>{{ $recipe->is_visible ? 'Tampil' : 'Disembunyikan' }}</td>
                                             <td>{{ $recipe->created_at->format('d M Y') }}</td>
                                             <td>
                                                 <div class="recipe-actions">

@@ -19,7 +19,11 @@ class RoleAccessTest extends TestCase
         $user = User::factory()->create();
 
         $this->get(route('admin.dashboard'))
-            ->assertRedirect(route('login'));
+            ->assertUnauthorized()
+            ->assertViewIs('auth.admin-access-required')
+            ->assertSee(route('login'), false)
+            ->assertSee(route('register'), false)
+            ->assertSee('hanya dapat dibuka oleh akun yang memiliki hak admin');
 
         $this->actingAs($user)
             ->get(route('admin.dashboard'))
